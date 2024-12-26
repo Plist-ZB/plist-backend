@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: PlistBackend
+  profiles:
+    include: secret
+
+  datasource:
+    driver-class-name: ${db_class_name}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+
+  jpa:
+    hibernate:
+      ddl-auto: ${ddl_auto}
+    open-in-view: true
+    show-sql: true
+    database: ${database}
+    properties:
+      hibernate:
+        format_sql: true
