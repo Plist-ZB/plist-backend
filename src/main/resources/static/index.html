@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room</title>
+</head>
+<body>
+<div id="chatRoom">
+  <h2>채팅방 ID: <span id="chatRoomIdDisplay"></span></h2>
+  <div id="chatMessages" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px;">
+    <!-- 메시지가 이곳에 추가됩니다 -->
+  </div>
+</div>
+
+<input type="text" id="message" placeholder="메시지 입력" />
+<button onclick="sendMessage()">Send</button>
+
+<script src="https://cdn.jsdelivr.net/sockjs/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+  // 1. URL 파라미터에서 채팅방 ID와 사용자 이름 추출
+  const urlParams = new URLSearchParams(window.location.search);
+  const chatRoomId = urlParams.get('chatRoomId'); // ?chatRoomId=3
+  const username = urlParams.get('username'); // ?username=Alice
+
+  // 채팅방 ID 표시
+  document.getElementById("chatRoomIdDisplay").textContent = chatRoomId;
+
+  // 2. WebSocket 연결
+  const socket = new SockJS('/ws-connect'); // WebSocket 엔드포인트
+  const stompClient = Stomp.over(socket);
+
+  stompClient.connect({}, function (frame) {
+    console.log(`Connected to WebSocket: ${frame}`);
+
+    // 3. 채팅방에 입장 시, 입장 메시지 받기
+    stompClient.subscribe(`/sub/chat.${chatRoomId}`, function (message) {
+
+      // 메시지를 JSON 형식으로 파싱
+      const chatMessage = JSON.parse(message.body);
+
+      if (chatMessage.username && !chatMessage.message) {
+        displayMessage("Plist", chatMessage.username);  // 입장 메시지는 "Plist"로 표시
+      } else if (chatMessage.username && chatMessage.message) {
+        // 채팅 메시지 처리: 사용자 이름과 메시지가 모두 있다면 일반 메시지
+        displayMessage(chatMessage.username, chatMessage.message);
+      }
+    });
+
+    // 4. 채팅방 입장 시 인사 메시지 전송
+    const enterMessage = {
+      username: username,
+      message: `${username}님 어서오세요!`
+    };
+
+    // 서버로 채팅방 입장 메시지 전송
+    stompClient.send(`/pub/chat.enter/${chatRoomId}`, {}, JSON.stringify(enterMessage));
+
+    console.log(`Subscribed to chat room: ${chatRoomId}`);
+  });
+
+  // 메시지 전송
+  function sendMessage() {
+    const messageContent = document.getElementById("message").value;
+
+    if (!messageContent.trim()) {
+      alert("메시지를 입력하세요!");
+      return;
+    }
+
+    const message = {
+      username: username,
+      message: messageContent
+    };
+
+    stompClient.send(`/pub/chat.${chatRoomId}`, {}, JSON.stringify(message));
+
+    // 입력 필드 초기화
+    document.getElementById("message").value = '';
+  }
+
+  // 채팅 메시지를 화면에 표시
+  function displayMessage(username, message) {
+    const chatMessagesDiv = document.getElementById("chatMessages");
+
+    // 메시지 요소 생성
+    const messageElement = document.createElement("div");
+    messageElement.style.marginBottom = "5px";
+
+    // 메시지 내용 추가
+    messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+
+    // 메시지를 화면에 추가
+    chatMessagesDiv.appendChild(messageElement);
+
+    // 스크롤을 맨 아래로 이동
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+  }
+</script>
+</body>
+</html>
