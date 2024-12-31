@@ -30,7 +30,7 @@ public class ChatController {
 
   /**
    * 방 입장시 환영 메시지 출력
-   * @param request
+   * @param request.getUsername
    * @param chatRoomId
    */
   @MessageMapping("/chat.enter/{chatRoomId}")
