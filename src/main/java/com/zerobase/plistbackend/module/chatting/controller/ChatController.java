@@ -16,7 +16,7 @@ public class ChatController {
 
   /**
    * 같은 방 인원 끼리 채팅
-   * @param request
+   * @param request.getUsername
    * @param chatRoomId
    */
   @MessageMapping("/chat.{chatRoomId}")
