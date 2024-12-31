@@ -2,7 +2,7 @@ package com.zerobase.plistbackend.module.userplaylist.entity;
 
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.userplaylist.model.Video;
-import com.zerobase.plistbackend.module.userplaylist.util.VideoConverter;
+import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistVideoConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -40,6 +40,6 @@ public class UserPlaylist {
 
   @Lob
   @Column(name = "video")
-  @Convert(converter = VideoConverter.class)
+  @Convert(converter = UserPlaylistVideoConverter.class)
   private Video video;
 }
