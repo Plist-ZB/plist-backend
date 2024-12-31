@@ -7,7 +7,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class VideoConverter implements AttributeConverter<Video, String> {
+public class UserPlaylistVideoConverter implements AttributeConverter<Video, String> {
 
   private final ObjectMapper mapper = new ObjectMapper();
 
