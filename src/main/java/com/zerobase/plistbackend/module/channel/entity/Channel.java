@@ -60,7 +60,6 @@ public class Channel {
   private List<Participant> channelParticipants = new ArrayList<>();
 
   public static Channel createChannel(ChannelRequest request) {
-    Date date = new Date();
     return Channel.builder()
         .channelName(request.getChannelName())
         .channelCategory(request.getChannelCategory())
