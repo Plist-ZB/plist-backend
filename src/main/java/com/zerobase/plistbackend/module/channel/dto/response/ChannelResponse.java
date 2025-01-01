@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
-import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.playlist.entity.Playlist;
@@ -30,7 +29,7 @@ public class ChannelResponse {
   private List<Participant> channelParticipants;
 
 
-  public static ChannelResponse createChannelResponse (Channel channel) {
+  public static ChannelResponse createChannelResponse(Channel channel) {
     return ChannelResponse.builder()
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
