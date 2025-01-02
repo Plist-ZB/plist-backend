@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-  private final Long EXPIRES_IN_SECONDS = 600000L;
+  private final Long EXPIRES_IN_MS = 600000L;
 
   private final JwtUtil jwtUtil;
 
@@ -35,7 +35,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     GrantedAuthority auth = iterator.next();
     String role = auth.getAuthority();
 
-    String token = jwtUtil.createJwt(email, role, EXPIRES_IN_SECONDS);
+    String token = jwtUtil.createJwt(email, role, EXPIRES_IN_MS);
 
     response.addCookie(createCookie("Authorization", token));
     response.sendRedirect(request.getContextPath() + "/"); // 추후 변경
@@ -43,7 +43,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
   private Cookie createCookie(String key, String value) {
     Cookie cookie = new Cookie(key, value);
-    cookie.setMaxAge(EXPIRES_IN_SECONDS.intValue());
+    cookie.setMaxAge(EXPIRES_IN_MS.intValue() / 1000);
     cookie.setPath("/");
     cookie.setHttpOnly(true);
     return cookie;
