@@ -19,7 +19,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
   security:
     oauth2:
       client:
@@ -31,6 +30,6 @@ spring:
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: profile, email
-
   jwt:
     secret: ${jwt_secret}
+youtube_data_api_key: ${youtube_data_api_key}
