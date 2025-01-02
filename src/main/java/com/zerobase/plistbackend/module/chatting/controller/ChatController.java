@@ -36,8 +36,7 @@ public class ChatController {
 
   @Operation(
       summary = "채널 입장시 환영 메시지를 출력합니다",
-      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다.",
-      responses = {}
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
   )
   @PostMapping("/chat.enter/{chatRoomId}")
   @MessageMapping("/chat.enter/{chatRoomId}")
