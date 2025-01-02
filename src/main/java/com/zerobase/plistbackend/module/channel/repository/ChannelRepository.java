@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
-  Optional<List<Channel>> findByChannelNameLike(String channelName);
+  List<Channel> findAllByChannelStatus(boolean b);
 
-  Optional<List<Channel>> findByChannelCategory(String channelCategory);
+  List<Channel> findByChannelStatusAndChannelNameLike(boolean b, String channelName);
+
+  List<Channel> findByChannelStatusAndChannelCategory(boolean b, String channelCategory);
 }

@@ -25,6 +25,7 @@ public class ChannelResponse {
   private Timestamp channelCreatedAt;
   private Timestamp channelFinishedAt;
   private Long channelCapacity;
+  private boolean channelStatus;
   private List<Playlist> channelPlaylists;
   private List<Participant> channelParticipants;
 
@@ -38,6 +39,7 @@ public class ChannelResponse {
         .channelCreatedAt(channel.getChannelCreatedAt())
         .channelFinishedAt(channel.getChannelFinishedAt())
         .channelCapacity(channel.getChannelCapacity())
+        .channelStatus(channel.isChannelStatus())
         .channelPlaylists(channel.getChannelPlaylists())
         .channelParticipants(channel.getChannelParticipants())
         .build();

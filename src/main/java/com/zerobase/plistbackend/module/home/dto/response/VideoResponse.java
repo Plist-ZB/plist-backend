@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.channel.dto.response;
+package com.zerobase.plistbackend.module.home.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
