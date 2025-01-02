@@ -1,5 +1,8 @@
 package com.zerobase.plistbackend.module.user.config;
 
+import com.zerobase.plistbackend.module.user.jwt.JwtFilter;
+import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
+import com.zerobase.plistbackend.module.user.oauth2.CustomSuccessHandler;
 import com.zerobase.plistbackend.module.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -16,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private final CustomOAuth2UserService customOAuth2UserService;
+  private final CustomSuccessHandler customSuccessHandler;
+  private final JwtUtil jwtUtil;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,6 +37,10 @@ public class SecurityConfig {
     http
         .httpBasic(AbstractHttpConfigurer::disable);
 
+    // JwtFilter 추가
+    http
+        .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
     // oauth2
     http
         .oauth2Login((oauth2) ->
@@ -38,6 +48,7 @@ public class SecurityConfig {
                 .loginPage("/login")
                 .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                 .userService(customOAuth2UserService)))
+                .successHandler(customSuccessHandler)
         );
 
 
