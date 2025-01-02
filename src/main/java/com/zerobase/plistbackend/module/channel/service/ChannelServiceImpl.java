@@ -29,7 +29,7 @@ public class ChannelServiceImpl implements ChannelService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public List<ChannelResponse> findChannelList() {
     List<Channel> channelList = channelRepository.findAllByChannelStatus(true);
 
@@ -38,7 +38,7 @@ public class ChannelServiceImpl implements ChannelService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public List<ChannelResponse> findChannelFromChannelName(String channelName) {
     List<Channel> channelList = channelRepository.findByChannelStatusAndChannelNameLike(true,
         channelName);// TODO : 예외처리
@@ -47,7 +47,7 @@ public class ChannelServiceImpl implements ChannelService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public List<ChannelResponse> findChannelFromChannelCategory(String channelCategory) {
     List<Channel> channelList = channelRepository.findByChannelStatusAndChannelCategory(true,
         channelCategory);// TODO : 예외처리
