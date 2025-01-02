@@ -14,7 +14,9 @@ import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,9 +24,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Table(name = "user")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
   @Id
