@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.module.userplaylist.model.Video;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import lombok.RequiredArgsConstructor;
 
 @Converter
+@RequiredArgsConstructor
 public class PlaylistVideoConverter implements AttributeConverter<Video, String> {
 
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper;
 
   @Override
   public String convertToDatabaseColumn(Video video) {

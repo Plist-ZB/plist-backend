@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.common.websocket.config;
+package com.zerobase.plistbackend.common.app.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
