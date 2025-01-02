@@ -35,7 +35,7 @@ public class HomeServiceImpl implements HomeService {
       JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
       JSONArray items = (JSONArray) jsonObject.get("items");
 
-      for (int i = 1; i <= items.size(); i++) {
+      for (int i = 0; i < items.size(); i++) {
         JSONObject item = (JSONObject) items.get(i);
         JSONObject id = (JSONObject) item.get("id");
         JSONObject snippet = (JSONObject) item.get("snippet");
