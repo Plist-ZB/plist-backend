@@ -6,6 +6,7 @@ import com.zerobase.plistbackend.module.user.dto.response.GoogleResponse;
 import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
+import com.zerobase.plistbackend.module.user.type.RegistrationId;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -23,13 +25,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
   private final UserRepository userRepository;
 
   @Override
+  @Transactional
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
     OAuth2User oAuth2User = super.loadUser(userRequest);
-    String registrationId = userRequest.getClientRegistration().getRegistrationId();
+    RegistrationId registrationId = RegistrationId.fromId(userRequest.getClientRegistration().getRegistrationId());
 
     OAuth2Response oAuth2Response = null;
-    if(registrationId.equals("google")) {
+    if(RegistrationId.GOOGLE.equals(registrationId)) {
       oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
     }else {
       return null;
