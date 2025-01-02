@@ -1,7 +1,6 @@
 package com.zerobase.plistbackend.common.app.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zerobase.plistbackend.common.app.domain.YouTubeApiProperties;
 import jakarta.persistence.EntityListeners;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
