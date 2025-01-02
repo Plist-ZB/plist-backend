@@ -53,6 +53,9 @@ public class Channel {
   @Column(name = "channel_capacity", nullable = false)
   private Long channelCapacity;
 
+  @Column(name = "channel_status", nullable = false)
+  private boolean channelStatus;
+
   @OneToMany(mappedBy = "channel")
   private List<Playlist> channelPlaylists = new ArrayList<>();
 
@@ -65,12 +68,14 @@ public class Channel {
         .channelCategory(request.getChannelCategory())
         .channelThumbnail(request.getChannelThumbnail())
         .channelCapacity(request.getChannelCapacity())
+        .channelStatus(true)
         .build();
   }
 
   public static Channel closeChannel(Channel channel) {
     Date date = new Date();
     channel.channelFinishedAt = new Timestamp(date.getTime());
+    channel.channelStatus = false;
     return channel;
   }
 }
