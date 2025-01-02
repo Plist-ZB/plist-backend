@@ -1,21 +1,11 @@
 package com.zerobase.plistbackend.module.channel.service;
 
-import com.zerobase.plistbackend.common.app.config.YoutubeDataApiKey;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ChannelResponse;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
-import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ChannelServiceImpl implements ChannelService {
 
-   // 웹 페이지에서 재생가능한 동영상만 검색
+  // 웹 페이지에서 재생가능한 동영상만 검색
   private final ChannelRepository channelRepository;
 
 
