@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME) // 런타임에 접근 가능하도록 설정
 @Target(ElementType.METHOD)
-public @interface TryCatch {
+public @interface IOExceptionHandler {
 
 }
