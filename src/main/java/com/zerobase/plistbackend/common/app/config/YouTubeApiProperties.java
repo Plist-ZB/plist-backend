@@ -43,7 +43,6 @@ public class YouTubeApiProperties {
     this.apiKey = apiKey;
   }
 
-  @TryCatch
   private String getVideoAsString(String videoId, ObjectMapper objectMapper) throws IOException {
     URL selectOneQueryURL = new URL(String.format(this.selectVideoUrl, this.getApiKey(), videoId));
 
