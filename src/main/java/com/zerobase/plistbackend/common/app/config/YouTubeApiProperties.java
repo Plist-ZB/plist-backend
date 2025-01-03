@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.common.app.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.common.app.aop.IOExceptionHandler;
@@ -42,6 +43,13 @@ public class YouTubeApiProperties {
     this.apiKey = apiKey;
   }
 
+  @IOExceptionHandler
+  public VideoResponse createVideoResponse(String videoId, ObjectMapper objectMapper)
+      throws IOException {
+    String videoAsString = getVideoAsString(videoId, objectMapper);
+    return getVideoResponse(objectMapper, videoAsString);
+  }
+
   private String getVideoAsString(String videoId, ObjectMapper objectMapper) throws IOException {
     URL selectOneQueryURL = new URL(String.format(this.selectVideoUrl, this.getApiKey(), videoId));
 
@@ -59,11 +67,8 @@ public class YouTubeApiProperties {
         .writeValueAsString(objectMapper.readTree(sb.toString()));
   }
 
-  @IOExceptionHandler
-  public VideoResponse createVideoResponse(String videoId, ObjectMapper objectMapper)
-      throws IOException {
-    String videoAsString = getVideoAsString(videoId, objectMapper);
-
+  private VideoResponse getVideoResponse(ObjectMapper objectMapper, String videoAsString)
+      throws JsonProcessingException {
     JsonNode rootNode = objectMapper.readTree(videoAsString);
     JsonNode itemsNode = rootNode.get("items");
 
