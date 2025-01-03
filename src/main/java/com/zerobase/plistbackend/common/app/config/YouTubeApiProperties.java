@@ -69,6 +69,8 @@ public class YouTubeApiProperties {
 
   private VideoResponse getVideoResponse(ObjectMapper objectMapper, String videoAsString)
       throws JsonProcessingException {
+    final Long selectOneId = 1L;
+
     JsonNode rootNode = objectMapper.readTree(videoAsString);
     JsonNode itemsNode = rootNode.get("items");
 
@@ -80,6 +82,7 @@ public class YouTubeApiProperties {
       JsonNode thumbnailDefaultNode = thumbnailsNode.get("default");
 
       response = VideoResponse.builder()
+          .id(selectOneId)
           .videoId(idNode.asText())
           .videoName(snippetNode.get("title").asText())
           .videoThumbnail(thumbnailDefaultNode.get("url").asText())
