@@ -1,9 +1,8 @@
 package com.zerobase.plistbackend.common.app.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zerobase.plistbackend.common.app.aop.TryCatch;
+import com.zerobase.plistbackend.common.app.aop.IOExceptionHandler;
 import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,7 +59,7 @@ public class YouTubeApiProperties {
         .writeValueAsString(objectMapper.readTree(sb.toString()));
   }
 
-  @TryCatch
+  @IOExceptionHandler
   public VideoResponse createVideoResponse(String videoId, ObjectMapper objectMapper)
       throws IOException {
     String videoAsString = getVideoAsString(videoId, objectMapper);
