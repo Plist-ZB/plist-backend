@@ -44,10 +44,10 @@ public class YouTubeApiProperties {
   }
 
   @IOExceptionHandler
-  public Video createVideoResponse(String videoId, ObjectMapper objectMapper)
+  public Video createVideo(String videoId, ObjectMapper objectMapper)
       throws IOException {
     String videoAsString = getVideoAsString(videoId, objectMapper);
-    return getVideoResponse(objectMapper, videoAsString);
+    return getVideo(objectMapper, videoAsString);
   }
 
   private String getVideoAsString(String videoId, ObjectMapper objectMapper) throws IOException {
@@ -67,7 +67,7 @@ public class YouTubeApiProperties {
         .writeValueAsString(objectMapper.readTree(sb.toString()));
   }
 
-  private Video getVideoResponse(ObjectMapper objectMapper, String videoAsString)
+  private Video getVideo(ObjectMapper objectMapper, String videoAsString)
       throws JsonProcessingException {
     final Long selectOneId = 1L;
 
