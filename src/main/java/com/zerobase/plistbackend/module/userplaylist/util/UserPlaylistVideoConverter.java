@@ -2,7 +2,7 @@ package com.zerobase.plistbackend.module.userplaylist.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zerobase.plistbackend.module.userplaylist.model.Video;
+import com.zerobase.plistbackend.module.userplaylist.domain.Video;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.RequiredArgsConstructor;
