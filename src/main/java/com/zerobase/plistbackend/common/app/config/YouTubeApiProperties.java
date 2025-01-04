@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.common.app.aop.IOExceptionHandler;
-import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
+import com.zerobase.plistbackend.module.userplaylist.domain.Video;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,7 +44,7 @@ public class YouTubeApiProperties {
   }
 
   @IOExceptionHandler
-  public VideoResponse createVideoResponse(String videoId, ObjectMapper objectMapper)
+  public Video createVideoResponse(String videoId, ObjectMapper objectMapper)
       throws IOException {
     String videoAsString = getVideoAsString(videoId, objectMapper);
     return getVideoResponse(objectMapper, videoAsString);
@@ -67,28 +67,27 @@ public class YouTubeApiProperties {
         .writeValueAsString(objectMapper.readTree(sb.toString()));
   }
 
-  private VideoResponse getVideoResponse(ObjectMapper objectMapper, String videoAsString)
+  private Video getVideoResponse(ObjectMapper objectMapper, String videoAsString)
       throws JsonProcessingException {
     final Long selectOneId = 1L;
 
     JsonNode rootNode = objectMapper.readTree(videoAsString);
     JsonNode itemsNode = rootNode.get("items");
 
-    VideoResponse response = new VideoResponse();
+    Video video = new Video();
     for (JsonNode itemNode : itemsNode) {
       JsonNode idNode = itemNode.get("id");
       JsonNode snippetNode = itemNode.get("snippet");
       JsonNode thumbnailsNode = snippetNode.get("thumbnails");
       JsonNode thumbnailDefaultNode = thumbnailsNode.get("default");
 
-      response = VideoResponse.builder()
-          .id(selectOneId)
+      video = Video.builder()
           .videoId(idNode.asText())
           .videoName(snippetNode.get("title").asText())
           .videoThumbnail(thumbnailDefaultNode.get("url").asText())
-          .videoDescription(snippetNode.get("description").asText())
           .build();
+
     }
-    return response;
+    return video;
   }
 }
