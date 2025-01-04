@@ -44,4 +44,4 @@ application-secret.properties
 **/src/main/resources/templates/
 
 ### Scratch ###
-/src/test/http
+**/src/test/http/
