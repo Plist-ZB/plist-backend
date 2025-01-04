@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.userplaylist.entity;
 
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.userplaylist.model.Video;
+import com.zerobase.plistbackend.module.userplaylist.domain.Video;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistVideoConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -16,12 +16,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "userplaylist")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPlaylist {
