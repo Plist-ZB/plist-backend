@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Video {
 
   private String videoName;
@@ -16,3 +16,4 @@ public class Video {
   private String videoId;
 
 }
+
