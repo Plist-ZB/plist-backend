@@ -1,14 +1,18 @@
 package com.zerobase.plistbackend.module.channel.entity;
 
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
+import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.playlist.entity.Playlist;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
@@ -27,6 +32,7 @@ import org.springframework.data.annotation.CreatedDate;
 @AllArgsConstructor
 @Table(name = "channel")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Channel {
 
   @Id
@@ -34,7 +40,7 @@ public class Channel {
   @Column(name = "channel_id")
   private Long channelId;
 
-  @Column(name = "channel_name", length = 100, nullable = false)
+  @Column(name = "channel_name", length = 50, nullable = false)
   private String channelName;
 
   @Column(name = "channel_category", length = 50, nullable = false)
@@ -44,7 +50,7 @@ public class Channel {
   private String channelThumbnail;
 
   @CreatedDate
-  @Column(name = "channel_created_at", nullable = false)
+  @Column(name = "channel_created_at")
   private Timestamp channelCreatedAt;
 
   @Column(name = "channel_finished_at")
@@ -54,28 +60,29 @@ public class Channel {
   private Long channelCapacity;
 
   @Column(name = "channel_status", nullable = false)
-  private boolean channelStatus;
+  private ChannelStatus channelStatus;
+
+  @OneToOne(mappedBy = "channel", cascade = CascadeType.ALL)
+  private Playlist channelPlaylist;
 
   @OneToMany(mappedBy = "channel")
-  private List<Playlist> channelPlaylists = new ArrayList<>();
+  private List<Participant> channelParticipants;
 
-  @OneToMany(mappedBy = "channel")
-  private List<Participant> channelParticipants = new ArrayList<>();
-
-  public static Channel createChannel(ChannelRequest request) {
+  public static Channel createChannel(ChannelRequest request, Playlist playlist) {
     return Channel.builder()
         .channelName(request.getChannelName())
         .channelCategory(request.getChannelCategory())
         .channelThumbnail(request.getChannelThumbnail())
         .channelCapacity(request.getChannelCapacity())
-        .channelStatus(true)
+        .channelParticipants(new ArrayList<>())
+        .channelPlaylist(playlist)
+        .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .build();
   }
 
-  public static Channel closeChannel(Channel channel) {
+  public static void closeChannel(Channel channel) {
     Date date = new Date();
     channel.channelFinishedAt = new Timestamp(date.getTime());
-    channel.channelStatus = false;
-    return channel;
+    channel.channelStatus = ChannelStatus.CHANNEL_STATUS_CLOSED;
   }
 }
