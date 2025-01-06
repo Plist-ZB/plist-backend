@@ -18,4 +18,5 @@ public interface UserPlaylistService {
   UserPlaylistResponse removeVideo(CustomOAuth2User customOAuth2User, Long userPlaylistId, Long id);
 
   void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
+
 }

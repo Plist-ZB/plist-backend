@@ -42,3 +42,6 @@ application-secret.properties
 ### HAKSUYOON TEST ###
 **/src/main/java/com/zerobase/plistbackend/test/
 **/src/main/resources/templates/
+
+### Scratch ###
+**/src/test/http/

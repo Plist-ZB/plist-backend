@@ -45,7 +45,7 @@ public class SecurityConfig {
     http
         .oauth2Login((oauth2) ->
             oauth2
-                .loginPage("/login")
+                .loginPage("/oauth2/authorization/google")
                 .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                 .userService(customOAuth2UserService)))
                 .successHandler(customSuccessHandler)

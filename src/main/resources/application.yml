@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: PlistBackend
@@ -43,3 +44,4 @@ youtube-api:
   videoEmbeddable: "true" # 웹 페이지에서 재생가능한 동영상만 검색
   topicId: "/m/04rlf" # 검색 결과를 음악으로 제한함
   apiKey: ${youtube_api_key} # 자신의 API 키
+
