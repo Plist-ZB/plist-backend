@@ -26,7 +26,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "userplaylist")
 @Builder
 @AllArgsConstructor
