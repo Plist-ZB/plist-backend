@@ -28,13 +28,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
     OAuth2User oAuth2User = super.loadUser(userRequest);
-    OAuth2Response oAuth2Response = RegistrationId.fromId(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
+    OAuth2Response oAuth2Response = RegistrationId.fromId(
+        userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
 
     String email = oAuth2Response.findEmail();
     log.info("Request Login email: {}", email);
     User existData = userRepository.findByUserEmail(email);
+    Boolean isMember = true;
 
-    if(existData == null) {
+    if (existData == null) {
+      isMember = false;
       existData = User.builder()
           .userEmail(email)
           .userName(oAuth2Response.findName())
@@ -47,7 +50,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     UserDetail userDetail = UserDetail.builder()
         .name(existData.getUserName())
         .email(existData.getUserEmail())
-        .role(String.valueOf(existData.getUserRole())).build();
+        .role(String.valueOf(existData.getUserRole()))
+        .isMember(isMember).build();
 
     return new CustomOAuth2User(userDetail);
   }
