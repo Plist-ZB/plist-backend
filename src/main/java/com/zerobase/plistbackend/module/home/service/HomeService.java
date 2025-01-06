@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface HomeService {
 
-  List<VideoResponse> searchVideo(String searchValue);
+  List<VideoResponse> searchVideo(String keyword);
 }
