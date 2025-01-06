@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.home.dto.response;
+package com.zerobase.plistbackend.module.userplaylist.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoResponse {
+public class Video {
 
-  private Long id;
-  private String videoId;
   private String videoName;
   private String videoThumbnail;
-  private String videoDescription;
+  private String videoId;
 
 }
+
