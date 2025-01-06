@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -27,57 +29,30 @@ public class HomeServiceImpl implements HomeService {
   private final ObjectMapper objectMapper;
 
   @Override
-  public List<VideoResponse> searchVideo(String searchValue) {
-
+  @Transactional
+  public List<VideoResponse> searchVideo(String keyword) {
     List<VideoResponse> videoResponseList = new ArrayList<>();
-    String result;
-
     try {
-      StringBuilder sb = makeApiUrl(searchValue);
-      result = sb.toString();
-
-      JSONParser jsonParser = new JSONParser();
-      JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
-      JSONArray items = (JSONArray) jsonObject.get("items");
-
-      for (int i = 0; i < items.size(); i++) {
-        JSONObject item = (JSONObject) items.get(i);
-        JSONObject id = (JSONObject) item.get("id");
-        JSONObject snippet = (JSONObject) item.get("snippet");
-        JSONObject thumbnails = (JSONObject) snippet.get("thumbnails");
-        JSONObject thumbnail_default = (JSONObject) thumbnails.get("default");
-
-        VideoResponse videoResponse = VideoResponse.builder()
-            .id((long) i)
-            .videoId((String) id.get("videoId"))
-            .videoName((String) snippet.get("title"))
-            .videoThumbnail((String) thumbnail_default.get("url"))
-            .videoDescription((String) snippet.get("description"))
-            .build();
-
-        videoResponseList.add(videoResponse);
-      }
-    } catch (Exception e) {
-      e.printStackTrace(); // TODO : 예외처리
+      StringBuilder search = search(keyword);
+      jsonParsingToVideoResponseList(videoResponseList, search);
+    }catch (IOException e) {
+      e.printStackTrace();
+    }catch (ParseException e) {
+      e.printStackTrace(); //TODO: try catch 문 어노테이션으로 변경.
     }
-
     return videoResponseList;
   }
 
-  @Override
-  public Video getVideo(String videoId) throws IOException {
-    return youTubeApiProperties.createVideo(videoId, objectMapper);
-  }
-
-
-  private StringBuilder makeApiUrl(String searchValue) throws IOException {
+  private StringBuilder search(String keyword) throws IOException {
 
     URL url = new URL(
-        String.format(youTubeApiProperties.getUrl(), youTubeApiProperties.getApiKey(), searchValue,
+        String.format(youTubeApiProperties.getUrl(), youTubeApiProperties.getApiKey(), keyword,
             youTubeApiProperties.getType(),
-            youTubeApiProperties.getPart(), youTubeApiProperties.getMaxResults(),
-            youTubeApiProperties.getOrder(), youTubeApiProperties.getRelevanceLanguage(),
-            youTubeApiProperties.getVideoEmbeddable()));
+            youTubeApiProperties.getPart(), youTubeApiProperties.getOrder(),
+            youTubeApiProperties.getRelevanceLanguage(),
+            youTubeApiProperties.getVideoEmbeddable(),
+            youTubeApiProperties.getMaxResults(),
+            youTubeApiProperties.getTopicId()));
 
     BufferedReader br;
 
@@ -91,4 +66,30 @@ public class HomeServiceImpl implements HomeService {
     return sb;
   }
 
+  private void jsonParsingToVideoResponseList (List<VideoResponse> videoResponseList, StringBuilder search)
+      throws ParseException {
+    String result = search.toString();
+
+    JSONParser jsonParser = new JSONParser();
+    JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+    JSONArray items = (JSONArray) jsonObject.get("items");
+
+    for (int i = 0; i < items.size(); i++) {
+      JSONObject item = (JSONObject) items.get(i);
+      JSONObject id = (JSONObject) item.get("id");
+      JSONObject snippet = (JSONObject) item.get("snippet");
+      JSONObject thumbnails = (JSONObject) snippet.get("thumbnails");
+      JSONObject thumbnail_default = (JSONObject) thumbnails.get("default");
+
+      VideoResponse videoResponse = VideoResponse.builder()
+          .id((long) i)
+          .videoId((String) id.get("videoId"))
+          .videoName((String) snippet.get("title"))
+          .videoThumbnail((String) thumbnail_default.get("url"))
+          .videoDescription((String) snippet.get("description"))
+          .build();
+
+      videoResponseList.add(videoResponse);
+    }
+  }
 }

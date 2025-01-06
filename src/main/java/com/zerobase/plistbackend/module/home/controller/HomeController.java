@@ -10,31 +10,23 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/v3/api")
 @RequiredArgsConstructor
 @Tag(name = "Application의 Home API", description = "Home에서 검색기능을 담당하는 API Controller")
 public class HomeController {
 
   private final HomeService homeService;
 
-  @GetMapping("/service/search")
-  public ResponseEntity<List<VideoResponse>> searchVideo(@RequestParam("searchValue") String searchValue) {
+  @GetMapping("/search-video")
+  public ResponseEntity<List<VideoResponse>> searchVideo(@RequestParam("keyword") String keyword) {
 
-    List<VideoResponse> videoResponseList = homeService.searchVideo(searchValue);
+    List<VideoResponse> videoResponseList = homeService.searchVideo(keyword);
 
     return ResponseEntity.ok(videoResponseList);
-  }
-
-  @Operation(
-      summary = "Video를 단건으로 조회하는 API 입니다.",
-      description = "전체 검색으로 VideoList를 끌고와서  UserPlaylist에 영상 추가시 사용될 API 입니다."
-  )
-  @GetMapping("/service/search/{videoId}")
-  public ResponseEntity<Video> getVideo(@PathVariable String videoId) throws IOException {
-    return ResponseEntity.ok(homeService.getVideo(videoId));
   }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface HomeService {
 
-  List<VideoResponse> searchVideo(String searchValue);
-
-  Video getVideo(String videoId) throws IOException;
+  List<VideoResponse> searchVideo(String keyword);
+  
 }
