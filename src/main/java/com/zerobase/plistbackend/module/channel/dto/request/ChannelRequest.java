@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ChannelRequest {
 
   private String channelName;
+  private Long userPlaylistId;
   private String channelCategory;
   private String channelThumbnail;
   private Long channelCapacity;
