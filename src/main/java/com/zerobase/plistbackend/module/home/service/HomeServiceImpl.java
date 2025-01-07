@@ -3,7 +3,6 @@ package com.zerobase.plistbackend.module.home.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.common.app.config.YouTubeApiProperties;
 import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
-import com.zerobase.plistbackend.module.userplaylist.domain.Video;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
