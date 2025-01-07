@@ -1,10 +1,9 @@
 package com.zerobase.plistbackend.module.user.service;
 
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
-import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
-import com.zerobase.plistbackend.module.user.dto.response.GoogleResponse;
 import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import com.zerobase.plistbackend.module.user.entity.User;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
+import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.RegistrationId;
 import com.zerobase.plistbackend.module.user.type.UserRole;
@@ -29,20 +28,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
     OAuth2User oAuth2User = super.loadUser(userRequest);
-    RegistrationId registrationId = RegistrationId.fromId(userRequest.getClientRegistration().getRegistrationId());
-
-    OAuth2Response oAuth2Response = null;
-    if(RegistrationId.GOOGLE.equals(registrationId)) {
-      oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-    }else {
-      return null;
-    }
+    OAuth2Response oAuth2Response = RegistrationId.fromId(
+        userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
 
     String email = oAuth2Response.findEmail();
     log.info("Request Login email: {}", email);
     User existData = userRepository.findByUserEmail(email);
+    Boolean isMember = true;
 
-    if(existData == null) {
+    if (existData == null) {
+      isMember = false;
       existData = User.builder()
           .userEmail(email)
           .userName(oAuth2Response.findName())
@@ -55,7 +50,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     UserDetail userDetail = UserDetail.builder()
         .name(existData.getUserName())
         .email(existData.getUserEmail())
-        .role(String.valueOf(existData.getUserRole())).build();
+        .role(String.valueOf(existData.getUserRole()))
+        .isMember(isMember).build();
 
     return new CustomOAuth2User(userDetail);
   }

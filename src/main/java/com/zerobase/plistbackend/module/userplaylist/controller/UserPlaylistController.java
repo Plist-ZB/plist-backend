@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v3/api")
+
 public class UserPlaylistController {
 
   private final UserPlaylistService userPlaylistService;

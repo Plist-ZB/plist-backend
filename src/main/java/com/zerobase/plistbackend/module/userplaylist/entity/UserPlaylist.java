@@ -26,8 +26,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "userplaylist")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPlaylist {

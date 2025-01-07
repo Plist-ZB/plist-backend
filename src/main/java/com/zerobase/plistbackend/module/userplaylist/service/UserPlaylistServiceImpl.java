@@ -23,6 +23,7 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
   @Override
   @Transactional
+
   public UserPlaylistResponse createUserPlayList(String userPlaylistName,
       CustomOAuth2User customOAuth2User) {
     //1. 현재 로그인 중인 유저의 정보 받아오기

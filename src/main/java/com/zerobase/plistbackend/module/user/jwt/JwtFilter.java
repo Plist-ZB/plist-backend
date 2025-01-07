@@ -2,12 +2,15 @@ package com.zerobase.plistbackend.module.user.jwt;
 
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,37 +24,64 @@ public class JwtFilter extends OncePerRequestFilter {
 
   private final JwtUtil jwtUtil;
 
+  private static final Set<String> ALLOWED_PATHS = Set.of("/v3/api/", "/favicon.ico",
+      "/v3/api/auth/access", "/");
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    String authorization = null;
-    Cookie[] cookies = request.getCookies();
-    for (Cookie cookie : cookies) {
-      if (cookie.getName().equals("Authorization")) {
-        authorization = cookie.getValue();
-      }
-    }
-
-    if (authorization == null) {
-      log.warn("Authorization cookie not found");
+    // 특정 경로에 대한 필터 건너뛰기
+    String path = request.getRequestURI();
+    if (ALLOWED_PATHS.stream().anyMatch(path::equals)) {
+      SecurityContextHolder.getContext().setAuthentication(
+          new UsernamePasswordAuthenticationToken(null, null, new ArrayList<>()));
       filterChain.doFilter(request, response);
       return;
     }
 
-    if (jwtUtil.isExpired(authorization)) {
-      log.warn("Authorization expired");
+    String accessToken = request.getHeader("Authorization");
+    if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+    accessToken = accessToken.substring("Bearer ".length());
+    String refreshToken = jwtUtil.findToken(request, "refresh");
+    log.info("access token: {}, refresh token : {}", accessToken, refreshToken);
+
+    if(refreshToken == null) {
+      log.error("refresh token is null");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       filterChain.doFilter(request, response);
       return;
     }
 
-    String email = jwtUtil.findEmail(authorization);
-    String role = jwtUtil.findRole(authorization);
+    try {
+      jwtUtil.isExpired(accessToken);
+    } catch (ExpiredJwtException e) {
+      log.error("access token expired");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    // access token 인지 확인
+    String category = jwtUtil.findCategory(accessToken);
+    if (!category.equals("access")) {
+      PrintWriter writer = response.getWriter();
+      writer.print("invalid token");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    String email = jwtUtil.findEmail(accessToken);
+    String role = jwtUtil.findRole(accessToken);
 
     UserDetail userDetail = UserDetail.builder().email(email).role(role).build();
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDetail);
 
-    Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+    Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null,
+        customOAuth2User.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(authToken);
 
     filterChain.doFilter(request, response);

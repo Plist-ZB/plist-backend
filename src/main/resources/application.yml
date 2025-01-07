@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: PlistBackend
@@ -33,6 +34,13 @@ spring:
   jwt:
     secret: ${jwt_secret}
 
+# 시간 설정 (개발중에는 access 1일로 임시 지정)
+# Access Token: 30 min
+# Refresh Token: 7 days
+jwt:
+  access: 68400000
+  refresh: 478800000
+
 youtube-api:
   url: "https://www.googleapis.com/youtube/v3/search?key=%s&q=%s&type=%s&part=%s&order=%s&relevanceLanguage=%s&videoEmbeddable=%s&maxResults=%d&topicId=%s"
   type: "video" # 검색할 타입
@@ -43,3 +51,4 @@ youtube-api:
   videoEmbeddable: "true" # 웹 페이지에서 재생가능한 동영상만 검색
   topicId: "/m/04rlf" # 검색 결과를 음악으로 제한함
   apiKey: ${youtube_api_key} # 자신의 API 키
+
