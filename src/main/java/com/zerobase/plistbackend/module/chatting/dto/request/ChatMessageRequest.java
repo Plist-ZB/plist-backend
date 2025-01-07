@@ -6,7 +6,5 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ChatMessageRequest {
-  private String sender;
   private String message;
-  private String thumbnail;
 }
