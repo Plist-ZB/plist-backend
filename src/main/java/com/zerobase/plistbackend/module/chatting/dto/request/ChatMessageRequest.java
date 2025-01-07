@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageRequest {
-  private String username;
+  private String sender;
   private String message;
+  private String thumbnail;
 }
