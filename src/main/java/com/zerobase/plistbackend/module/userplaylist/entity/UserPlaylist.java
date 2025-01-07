@@ -2,7 +2,7 @@ package com.zerobase.plistbackend.module.userplaylist.entity;
 
 import com.zerobase.plistbackend.module.playlist.entity.Playlist;
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.userplaylist.domain.Video;
+import com.zerobase.plistbackend.module.userplaylist.model.Video;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistVideoConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
