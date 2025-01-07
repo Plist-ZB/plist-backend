@@ -4,13 +4,13 @@ import com.zerobase.plistbackend.common.app.exception.ErrorStatus;
 import lombok.Getter;
 
 @Getter
-public class OAuth2UserExceptionm extends RuntimeException{
+public class OAuth2UserException extends RuntimeException{
   private final ErrorStatus errorStatus;
   private final int errorCode;
   private final String errorType;
   private final String message;
 
-  public OAuth2UserExceptionm(ErrorStatus errorStatus) {
+  public OAuth2UserException(ErrorStatus errorStatus) {
     super(errorStatus.getMessage());
     this.errorStatus = errorStatus;
     this.errorCode = errorStatus.getErrorCode();
