@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,5 +41,5 @@ public class Playlist {
   @Lob
   @Column(name = "video")
   @Convert(converter = PlaylistVideoConverter.class)
-  private Video video;
+  private List<Video> video;
 }
