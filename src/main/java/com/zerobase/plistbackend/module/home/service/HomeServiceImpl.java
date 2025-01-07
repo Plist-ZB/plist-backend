@@ -26,19 +26,20 @@ public class HomeServiceImpl implements HomeService {
   @Override
   @Transactional
   public List<VideoResponse> searchVideo(String keyword) {
+    keyword = parseKeyword(keyword);
     List<VideoResponse> videoResponseList = new ArrayList<>();
     try {
-      StringBuilder search = search(keyword);
+      BufferedReader search = search(keyword);
       jsonParsingToVideoResponseList(videoResponseList, search);
-    }catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-    }catch (ParseException e) {
+    } catch (ParseException e) {
       e.printStackTrace(); //TODO: try catch 문 어노테이션으로 변경.
     }
     return videoResponseList;
   }
 
-  private StringBuilder search(String keyword) throws IOException {
+  private BufferedReader search(String keyword) throws IOException {
 
     URL url = new URL(
         String.format(youTubeApiProperties.getUrl(), youTubeApiProperties.getApiKey(), keyword,
@@ -53,20 +54,15 @@ public class HomeServiceImpl implements HomeService {
 
     br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
 
-    StringBuilder sb = new StringBuilder();
-    String inputLine;
-    while ((inputLine = br.readLine()) != null) {
-      sb.append(inputLine);
-    }
-    return sb;
+    return br;
   }
 
-  private void jsonParsingToVideoResponseList (List<VideoResponse> videoResponseList, StringBuilder search)
-      throws ParseException {
-    String result = search.toString();
+  private void jsonParsingToVideoResponseList(List<VideoResponse> videoResponseList,
+      BufferedReader search)
+      throws ParseException, IOException {
 
     JSONParser jsonParser = new JSONParser();
-    JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+    JSONObject jsonObject = (JSONObject) jsonParser.parse(search);
     JSONArray items = (JSONArray) jsonObject.get("items");
 
     for (int i = 0; i < items.size(); i++) {
@@ -86,5 +82,15 @@ public class HomeServiceImpl implements HomeService {
 
       videoResponseList.add(videoResponse);
     }
+  }
+
+  private String parseKeyword(String keyword) {
+    if (keyword.contains("v=")) {
+      String[] splitKeyword = keyword.split("v=");
+      keyword = splitKeyword[splitKeyword.length-1];
+    } else if (keyword.length() != 11) {
+      keyword = keyword + "%20Official%20Audio";
+    }
+    return keyword;
   }
 }
