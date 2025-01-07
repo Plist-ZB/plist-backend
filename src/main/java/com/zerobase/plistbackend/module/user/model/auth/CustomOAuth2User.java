@@ -39,4 +39,12 @@ public class CustomOAuth2User implements OAuth2User {
     return userDetail.getEmail();
   }
 
+  public Boolean findIsMember() {
+    return userDetail.getIsMember();
+  }
+
+  public Long findId() {
+    return userDetail.getId();
+  }
+
 }

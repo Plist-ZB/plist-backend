@@ -39,4 +39,9 @@ public class Refresh {
 
   @Column(name = "refresh_expiration")
   private Timestamp refreshExpiration;
+
+  public void updateRefreshToken(String refreshToken, Timestamp expirationTime) {
+    this.refreshToken = refreshToken;
+    this.refreshExpiration = expirationTime;
+  }
 }

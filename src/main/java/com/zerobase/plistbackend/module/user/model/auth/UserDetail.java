@@ -7,7 +7,9 @@ import lombok.Getter;
 @Builder
 public class UserDetail {
 
+  private Long id;
   private String role;
   private String name;
   private String email;
+  private Boolean isMember;
 }
