@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.common.app.exception;
 
+import com.zerobase.plistbackend.module.channel.exception.ChannelException;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,6 +15,11 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(UserPlaylistException.class)
   public ErrorResponse handleJsonParseException(UserPlaylistException e) {
+    return ErrorResponse.create(e.getErrorStatus());
+  }
+
+  @ExceptionHandler(ChannelException.class)
+  public ErrorResponse handleChannelException(ChannelException e) {
     return ErrorResponse.create(e.getErrorStatus());
   }
 }
