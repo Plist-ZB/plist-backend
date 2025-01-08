@@ -2,10 +2,7 @@ package com.zerobase.plistbackend.module.home.controller;
 
 import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
 import com.zerobase.plistbackend.module.home.service.HomeService;
-import com.zerobase.plistbackend.module.userplaylist.domain.Video;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
