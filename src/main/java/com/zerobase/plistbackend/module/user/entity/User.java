@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.user.entity;
 
 import com.zerobase.plistbackend.module.participant.entity.Participant;
+import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
@@ -60,5 +64,13 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private List<Participant> participants;
+
+  public static User from(OAuth2Response response, UserRole userRole) {
+    return User.builder()
+        .userEmail(response.findEmail())
+        .userName(response.findName())
+        .userImage(response.findImage())
+        .userRole(userRole).build();
+  }
 
 }
