@@ -74,6 +74,11 @@ public class JwtUtil {
         .get("role", String.class);
   }
 
+  public Long findId(String token) {
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+        .get("id", Long.class);
+  }
+
   public Boolean isExpired(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
         .getExpiration().before(new Date());
