@@ -2,7 +2,6 @@ package com.zerobase.plistbackend.module.user.service;
 
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

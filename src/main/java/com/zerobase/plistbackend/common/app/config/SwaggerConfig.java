@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.common.app.config;
 
-import com.zerobase.plistbackend.module.user.oauth2.CustomSuccessHandler;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
