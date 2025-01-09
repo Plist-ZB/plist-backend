@@ -2,7 +2,6 @@ package com.zerobase.plistbackend.common.app.aop;
 
 import com.zerobase.plistbackend.common.app.exception.JsonParseException;
 import com.zerobase.plistbackend.common.app.type.JsonErrorStatus;
-import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -23,7 +22,7 @@ public class IOExceptionAspect {
       log.info("AOP TargetClassName = {}, MethodName = {}", className, methodName);
 
       return joinPoint.proceed();
-    } catch (IOException e) {
+    } catch (Exception e) {
       log.error("Exception in method: {} with message: {}", joinPoint.getSignature(),
           e.getMessage(), e);
 

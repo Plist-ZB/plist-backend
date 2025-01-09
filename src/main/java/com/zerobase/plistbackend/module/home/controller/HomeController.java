@@ -1,13 +1,12 @@
 package com.zerobase.plistbackend.module.home.controller;
 
-import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
 import com.zerobase.plistbackend.module.home.service.HomeService;
-import com.zerobase.plistbackend.module.userplaylist.domain.Video;
-import io.swagger.v3.oas.annotations.Operation;
+import com.zerobase.plistbackend.module.home.model.Video;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +22,11 @@ public class HomeController {
   private final HomeService homeService;
 
   @GetMapping("/search-video")
-  public ResponseEntity<List<VideoResponse>> searchVideo(@RequestParam("keyword") String keyword) {
+  public ResponseEntity<List<Video>> searchVideo(@RequestParam("keyword") String keyword)
+      throws IOException, ParseException {
 
-    List<VideoResponse> videoResponseList = homeService.searchVideo(keyword);
+    List<Video> videoList = homeService.searchVideo(keyword);
 
-    return ResponseEntity.ok(videoResponseList);
+    return ResponseEntity.ok(videoList);
   }
 }

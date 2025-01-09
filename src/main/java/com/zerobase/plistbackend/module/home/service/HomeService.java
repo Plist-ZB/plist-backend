@@ -1,12 +1,12 @@
 package com.zerobase.plistbackend.module.home.service;
 
-import com.zerobase.plistbackend.module.home.dto.response.VideoResponse;
-import com.zerobase.plistbackend.module.userplaylist.domain.Video;
+import com.zerobase.plistbackend.module.home.model.Video;
 import java.io.IOException;
 import java.util.List;
+import org.json.simple.parser.ParseException;
 
 public interface HomeService {
 
-  List<VideoResponse> searchVideo(String keyword);
-  
+  List<Video> searchVideo(String keyword) throws IOException, ParseException;
+
 }
