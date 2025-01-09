@@ -36,6 +36,7 @@ public class SecurityConfig {
       "/oauth2/**",
       "/auth/access",
       "/",
+      "/ws-connect/**"
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error"
   };
 

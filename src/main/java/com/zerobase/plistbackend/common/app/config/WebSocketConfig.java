@@ -12,10 +12,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+  private static final String REACT_PORT = "http://localhost:3000";
+
   private static final String[] SUBSCRIBE_PREFIX = {"/sub"};
   private static final String[] PUBLISH_PREFIX = {"/pub"};
   private static final String[] STOMP_CONNECT_URLS = {"/ws-connect"};
-  private static final String[] ALLOWED_ORIGINS_URLS = {"http://localhost:3000"};
+  private static final String[] ALLOWED_ORIGINS_URLS = {REACT_PORT};
 
 
   @Override
@@ -24,9 +26,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry.setApplicationDestinationPrefixes(PUBLISH_PREFIX);
   }
 
-  /**
-   * setAllowedOrigins: React Port 3000
-   */
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint(STOMP_CONNECT_URLS)
