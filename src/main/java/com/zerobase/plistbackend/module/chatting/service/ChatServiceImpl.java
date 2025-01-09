@@ -22,7 +22,7 @@ public class ChatServiceImpl implements ChatService {
   public ChatMessageResponse sendMessage(ChatMessageRequest request) {
     User findUser = userRepository.findByUserName(request.getSender())
         .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
-    return ChatMessageResponse.from(request, findUser);
+    return ChatMessageResponse.from(request, findUser.getUserImage());
   }
 
   @Override
