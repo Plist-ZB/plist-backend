@@ -1,50 +1,88 @@
 package com.zerobase.plistbackend.module.chatting.controller;
 
+import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
+import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.dto.response.WelcomeMessage;
+import com.zerobase.plistbackend.module.chatting.exception.ChatException;
+import com.zerobase.plistbackend.module.chatting.service.ChatService;
+import com.zerobase.plistbackend.module.chatting.type.ChatErrorStatus;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Chatting API", description = "채팅과 관련된 API Controller")
 public class ChatController {
 
+  private final ChatService chatService;
+  private final VideoSyncManager videoSyncManager;
 
   @Operation(
       summary = "자신과 같은 채널에 속한 인원들 끼리 채팅을 주고받을 수 있습니다.",
       description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
   )
-  @PostMapping("/chat.{chatRoomId}")
-  @MessageMapping("/chat.{chatRoomId}")
-  @SendTo("/sub/chat.{chatRoomId}")
-  public ChatMessageResponse sendMessage(@Payload ChatMessageRequest request,
-      @DestinationVariable Long chatRoomId) {
-    // TODO -> chatRoomId가 channel_id 여야 하니 이게 실제 현재 Live 가능한 상태인지 확인하고, 없다면 접근을 막거나 있다면 성공적으로 보내거나
-    log.info("Chat Room Id : {} Message : {}", chatRoomId, request);
-    return new ChatMessageResponse(request.getUsername(), request.getMessage());
+  @PostMapping("/chat.{channelId}")
+  @MessageMapping("/chat.{channelId}")
+  @SendTo("/sub/chat.{channelId}")
+  // 해당 부분은 channel의 Participant의 정보를 클라가 갖고 있다면 보내면 될듯?? -> 노션 보면됨
+  public ChatMessageResponse sendMessage(@Payload ChatMessageRequest request) {
+    return chatService.sendMessage(request);
   }
-
 
   @Operation(
-      summary = "채널 입장시 환영 메시지를 출력합니다",
+      summary = "클라이언트 측에서는 해당 Mapping 주소로 지속적으로 호스트가 보고있는 비디오의 currentTime을 서버로 보냅니다."
+          + "그럼 구독자들은 비디오의 currntTime을 지속적으로 같이 받고 영상 시점을 공유합니다.",
       description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
   )
-  @PostMapping("/chat.enter/{chatRoomId}")
-  @MessageMapping("/chat.enter/{chatRoomId}")
-  @SendTo("/sub/chat.{chatRoomId}")
-  public WelcomeMessage enterChatRoom(ChatMessageResponse chatMessageResponse,
-      @DestinationVariable Long chatRoomId) {
-    // TODO -> ChatMessageRequest 가 아닌 Principal 객체를 파라미터로 받아서 username 추출
-    log.info("{} has entered the chat room {}", chatMessageResponse.getUsername(), chatRoomId);
-    return new WelcomeMessage(chatMessageResponse.getUsername());
+  @PostMapping("/video.{channelId}")
+  @MessageMapping("/video.{channelId}")
+  @SendTo("/sub/video.{channelId}")
+  public VideoSyncResponse syncVideo(@DestinationVariable Long channelId, @Payload VideoSyncRequest request) {
+    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
+    return new VideoSyncResponse(request);
   }
+
+  @Operation(
+      summary = "클라이언트 측에서 지속적으로 받은 호스트의 비디오 currentTime을 새로운 사용자가 입장시 호스트의 시점으로 같이 비디오가 동기화됩니다.",
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+  )
+  @PostMapping("/join.{channelId}")
+  @MessageMapping("/join.{channelId}")
+  @SendTo("/sub/video.{channelId}")
+  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId, @Payload VideoSyncRequest request) {
+    Long currentTime = videoSyncManager.getCurrentTime(channelId);
+    log.info("New user joined channel {}" , currentTime);
+    return new VideoSyncResponse(request);
+  }
+
+  @Operation(
+      summary = "현재 재생중인 비디오의 재생 및 일시정지를 호스트만 요청할 수 있고 재생 및 일시정지의 시점을 사용자 모두 동기화 합니다.",
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+  )
+  @MessageMapping("/video.control.{channelId}")
+  @SendTo("/sub/video.{channelId}")
+  public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
+
+    if (!chatService.isHost(user)) {
+      throw new ChatException(ChatErrorStatus.NOT_HOST);
+    }
+    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
+    log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
+    return new VideoSyncResponse(request);
+  }
+
 }

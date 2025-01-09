@@ -3,7 +3,6 @@ package com.zerobase.plistbackend.module.home.controller;
 import com.zerobase.plistbackend.module.home.service.HomeService;
 import com.zerobase.plistbackend.module.home.model.Video;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
