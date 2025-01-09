@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.common.app.config;
+package com.zerobase.plistbackend.module.home.util;
 
 import com.zerobase.plistbackend.common.app.aop.IOExceptionHandler;
 import com.zerobase.plistbackend.module.home.model.Video;
