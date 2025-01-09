@@ -74,10 +74,11 @@ public class JwtFilter extends OncePerRequestFilter {
       return;
     }
 
+    Long id = jwtUtil.findId(accessToken);
     String email = jwtUtil.findEmail(accessToken);
     String role = jwtUtil.findRole(accessToken);
 
-    UserDetail userDetail = UserDetail.builder().email(email).role(role).build();
+    UserDetail userDetail = UserDetail.builder().id(id).email(email).role(role).build();
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDetail);
 
     Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null,

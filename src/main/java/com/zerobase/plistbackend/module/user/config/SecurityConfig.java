@@ -37,6 +37,7 @@ public class SecurityConfig {
       "/auth/access",
       "/",
       "/ws-connect/**"
+      "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error"
   };
 
   @Bean
@@ -53,8 +54,6 @@ public class SecurityConfig {
 //          configuration.setMaxAge(3600L);
           return configuration;
           }));
-
-    http.cors(AbstractHttpConfigurer::disable);
 
     http
         .csrf(AbstractHttpConfigurer::disable)
