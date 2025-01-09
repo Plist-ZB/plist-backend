@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.chatting.controller;
 
 import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.chatting.dto.VideoSyncRequest;
+import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;

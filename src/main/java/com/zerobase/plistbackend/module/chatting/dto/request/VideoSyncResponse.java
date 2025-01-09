@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.chatting.dto.request;
 
-import com.zerobase.plistbackend.module.chatting.dto.VideoSyncRequest;
 import lombok.Getter;
 
 @Getter
