@@ -41,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     response.setStatus(302);
     response.addCookie(jwtUtil.createCookie("refresh", refresh));
-    String url = String.format("http://localhost:8080/?access-token=%s&is-member=%s",
+    String url = String.format("http://localhost:3000/auth/redirect?access-token=%s&is-member=%s",
         access, customOAuth2User.findIsMember());
     response.sendRedirect(url);
   }

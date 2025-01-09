@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.user.entity;
 
 import com.zerobase.plistbackend.module.participant.entity.Participant;
+import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,5 +61,13 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private List<Participant> participants;
+
+  public static User from(OAuth2Response response, UserRole userRole) {
+    return User.builder()
+        .userEmail(response.findEmail())
+        .userName(response.findName())
+        .userImage(response.findImage())
+        .userRole(userRole).build();
+  }
 
 }

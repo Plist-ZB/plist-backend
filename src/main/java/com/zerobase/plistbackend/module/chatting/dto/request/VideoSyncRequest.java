@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ChatMessageRequest {
-  private String sender;
-  private String message;
+public class VideoSyncRequest {
+  private String videoId;
+  private Long currentTime;
+  private Long playState;
 }
