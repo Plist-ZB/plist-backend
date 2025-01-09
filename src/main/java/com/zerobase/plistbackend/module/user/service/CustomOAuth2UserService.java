@@ -38,21 +38,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     if (existData == null) {
       isMember = false;
-      existData = User.builder()
-          .userEmail(email)
-          .userName(oAuth2Response.findName())
-          .userImage(oAuth2Response.findImage())
-          .userRole(UserRole.ROLE_USER).build();
-
+      existData = User.from(oAuth2Response, UserRole.ROLE_USER);
       userRepository.save(existData);
     }
 
-    UserDetail userDetail = UserDetail.builder()
-        .name(existData.getUserName())
-        .email(existData.getUserEmail())
-        .role(String.valueOf(existData.getUserRole()))
-        .isMember(isMember).build();
-
-    return new CustomOAuth2User(userDetail);
+    return new CustomOAuth2User(UserDetail.from(existData, isMember));
   }
 }
