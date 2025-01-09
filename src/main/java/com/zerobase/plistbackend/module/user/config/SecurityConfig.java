@@ -1,7 +1,6 @@
 package com.zerobase.plistbackend.module.user.config;
 
 import com.zerobase.plistbackend.module.refresh.repository.RefreshRepository;
-import com.zerobase.plistbackend.module.refresh.service.RefreshService;
 import com.zerobase.plistbackend.module.user.jwt.CustomLogoutFilter;
 import com.zerobase.plistbackend.module.user.jwt.JwtFilter;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
@@ -36,7 +35,8 @@ public class SecurityConfig {
       "/v3/api/",
       "/oauth2/**",
       "/auth/access",
-      "/"
+      "/",
+      "/ws-connect/**"
   };
 
   @Bean
