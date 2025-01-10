@@ -41,7 +41,7 @@ application-secret.properties
 application-secret.yml
 
 ### PROD SETTING ###
-application-prod-properties
+application-prod.properties
 
 ### HAKSUYOON TEST ###
 **/src/main/java/com/zerobase/plistbackend/test/
