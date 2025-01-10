@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import lombok.AccessLevel;
@@ -18,11 +19,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @Table(name = "participant")
@@ -35,7 +38,7 @@ public class Participant {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long participantId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
 
@@ -66,7 +69,8 @@ public class Participant {
         .build();
   }
 
-  public Boolean getHostStatus() {
-    return isHost;
+  public void disconnectChannel() {
+    this.channel = null;
+    this.user.disconnectParticipant();
   }
 }
