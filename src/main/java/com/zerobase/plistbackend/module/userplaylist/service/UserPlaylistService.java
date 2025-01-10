@@ -1,13 +1,14 @@
 package com.zerobase.plistbackend.module.userplaylist.service;
 
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
+import com.zerobase.plistbackend.module.userplaylist.dto.request.UserPlaylistRequest;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
 import java.util.List;
 
 public interface UserPlaylistService {
 
-  UserPlaylistResponse createUserPlayList(String userPlaylistName, CustomOAuth2User customOAuth2User);
+  UserPlaylistResponse createUserPlayList(UserPlaylistRequest userPlaylistRequest, CustomOAuth2User customOAuth2User);
 
   UserPlaylistResponse findOneUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
 
@@ -19,4 +20,5 @@ public interface UserPlaylistService {
 
   void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
 
+  UserPlaylistResponse updateUserPlaylist(Long userPlaylistId, String updateUserPlaylistJson, CustomOAuth2User customOAuth2User);
 }
