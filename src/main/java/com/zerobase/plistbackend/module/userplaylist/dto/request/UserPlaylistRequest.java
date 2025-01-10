@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPlaylistRequest {
-  @Schema(required = true, description = "유저 재생목록의 제목을 입력")
+  @Schema(description = "유저 재생목록의 제목을 입력")
   @Size(max = 50, message = "내 플레이리스트 제목은 최대 50자까지 입력할 수 있습니다.")
   private String userPlaylistName;
 }
