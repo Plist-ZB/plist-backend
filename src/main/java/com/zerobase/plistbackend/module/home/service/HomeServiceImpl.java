@@ -1,6 +1,6 @@
 package com.zerobase.plistbackend.module.home.service;
 
-import com.zerobase.plistbackend.common.app.config.YouTubeApi;
+import com.zerobase.plistbackend.module.home.util.YouTubeApi;
 import com.zerobase.plistbackend.module.home.model.Video;
 import java.io.IOException;
 import java.util.List;
