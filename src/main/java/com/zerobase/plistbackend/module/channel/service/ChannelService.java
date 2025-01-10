@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.channel.service;
 
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
@@ -30,7 +31,7 @@ public interface ChannelService {
 
   UserPlaylistResponse savePlaylistToUserPlaylist(Long channelId, CustomOAuth2User customOAuth2User);
 
-  StreamingChannelResponse findOneChannel(Long channelId);
+  DetailChannelResponse findOneChannel(Long channelId);
 
   StreamingChannelResponse updateChannelPlaylist(Long channelId, String updateChannelPlaylistJson);
 

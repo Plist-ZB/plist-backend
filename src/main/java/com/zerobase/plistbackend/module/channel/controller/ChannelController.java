@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.channel.controller;
 
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.service.ChannelService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
@@ -75,9 +76,9 @@ public class ChannelController {
       description = "채널ID과 일치하는 채널의 정보를 조회합니다."
   )
   @GetMapping("/channel/{channelId}")
-  public ResponseEntity<StreamingChannelResponse> findOneChannel(@PathVariable Long channelId) {
-    StreamingChannelResponse streamingChannelResponse = channelService.findOneChannel(channelId);
-    return ResponseEntity.ok(streamingChannelResponse);
+  public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId) {
+    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId);
+    return ResponseEntity.ok(detailChannelResponse);
   }
 
   @Operation(

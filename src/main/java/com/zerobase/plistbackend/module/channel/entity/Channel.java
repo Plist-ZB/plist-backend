@@ -53,8 +53,6 @@ public class Channel {
   @JoinColumn(name = "category_id")
   private Category category;
 
-  private String channelThumbnail;
-
   @CreatedDate
   @Column(nullable = false)
   private Timestamp channelCreatedAt;

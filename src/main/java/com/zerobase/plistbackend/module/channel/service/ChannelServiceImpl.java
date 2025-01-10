@@ -7,6 +7,7 @@ import com.zerobase.plistbackend.module.category.repository.CategoryRepository;
 import com.zerobase.plistbackend.module.category.type.CategoryErrorStatus;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
@@ -91,10 +92,10 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional(readOnly = true)
-  public StreamingChannelResponse findOneChannel(Long channelId) {
+  public DetailChannelResponse findOneChannel(Long channelId) {
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
-    return StreamingChannelResponse.createStreamingChannelResponse(channel);
+    return DetailChannelResponse.createDetailChannelResponse(channel);
   }
 
   @Override

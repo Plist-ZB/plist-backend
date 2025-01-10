@@ -12,7 +12,7 @@ public class ClosedChannelResponse {
 
   private Long channelId;
   private String channelName;
-  //  private String channelCategoryName;
+  private String channelCategoryName;
   private String channelThumbnail;
   private String channelDurationTime;
   private String channelHost;
@@ -27,8 +27,8 @@ public class ClosedChannelResponse {
     return ClosedChannelResponse.builder()
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
-//        .channelCategoryName(channel.getCategory().getCategoryName())
-        .channelThumbnail(channel.getChannelThumbnail())
+        .channelCategoryName(channel.getCategory().getCategoryName())
+        .channelThumbnail(channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail())
         .channelDurationTime(durationTime(channel))
         .channelHost(channel.getChannelHost())
         .channelPlaylist(playlistResponse)
