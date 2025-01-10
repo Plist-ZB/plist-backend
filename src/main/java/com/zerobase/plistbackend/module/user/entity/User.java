@@ -11,10 +11,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,8 +58,8 @@ public class User {
   @Column(name = "user_image")
   private String userImage;
 
-  @OneToMany(mappedBy = "user")
-  private List<Participant> participants;
+  @OneToOne(mappedBy = "user")
+  private Participant participant;
 
   public static User from(OAuth2Response response, UserRole userRole) {
     return User.builder()
@@ -70,4 +69,7 @@ public class User {
         .userRole(userRole).build();
   }
 
+  public void disconnectParticipant() {
+    this.participant = null;
+  }
 }
