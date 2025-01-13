@@ -6,8 +6,8 @@ spring:
     active: local
     group:
       local: local, secret
-      blue: local, secret
-      green: green, secret
+      blue: blue, prod
+      green: green, prod
 
 server:
   env: local
