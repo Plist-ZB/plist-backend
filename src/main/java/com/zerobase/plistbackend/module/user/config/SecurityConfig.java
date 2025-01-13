@@ -37,7 +37,8 @@ public class SecurityConfig {
       "/auth/access",
       "/",
       "/ws-connect/**",
-      "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error"
+      "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
+      "/hc"
   };
 
   @Bean
