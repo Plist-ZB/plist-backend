@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class PlistProperties {
-  @Value("${server.env}")
-  private String env;
-
   @Value("${server.port}")
   private String port;
 
