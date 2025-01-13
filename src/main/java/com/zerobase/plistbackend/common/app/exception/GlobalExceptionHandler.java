@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.common.app.exception;
 
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
-import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
+import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,8 +26,9 @@ public class GlobalExceptionHandler {
     return ErrorResponse.create(e.getErrorStatus());
   }
 
-  @ExceptionHandler(OAuth2UserException.class)
-  public ErrorResponse handleOAuth2UserException(OAuth2UserException e) {
+  @ExceptionHandler(UserException.class)
+  public ErrorResponse handleUserException(UserException e) {
+    log.error("UserException", e);
     return ErrorResponse.create(e.getErrorStatus());
   }
 }

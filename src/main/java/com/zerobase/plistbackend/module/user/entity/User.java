@@ -3,6 +3,7 @@ package com.zerobase.plistbackend.module.user.entity;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import com.zerobase.plistbackend.module.user.type.UserRole;
+import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -62,12 +63,35 @@ public class User {
   @OneToMany(mappedBy = "user")
   private List<Participant> participants;
 
+  @OneToMany(mappedBy = "user")
+  private List<UserPlaylist> playlists;
+
   public static User from(OAuth2Response response, UserRole userRole) {
     return User.builder()
         .userEmail(response.findEmail())
         .userName(response.findName())
         .userImage(response.findImage())
         .userRole(userRole).build();
+  }
+  public void updateRole(UserRole role) {
+    this.userRole = role;
+  }
+
+  public Boolean existFavoritePlayList(List<UserPlaylist> playlists) {
+    for (UserPlaylist userPlaylist : playlists){
+      if (userPlaylist.getUserPlaylistName().equals("favorite")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void updateUserName(String name) {
+    this.userName = name;
+  }
+
+  public void updateImage(String fileName) {
+    this.userImage = fileName;
   }
 
 }
