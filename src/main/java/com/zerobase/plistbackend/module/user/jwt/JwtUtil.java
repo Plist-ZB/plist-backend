@@ -105,7 +105,7 @@ public class JwtUtil {
     Cookie cookie = new Cookie(key, value);
     cookie.setMaxAge(findExpired(key).intValue() / 1000);
     cookie.setPath("/");
-    cookie.setSecure(true);
+//    cookie.setSecure(true);
     cookie.setHttpOnly(true);
     return cookie;
   }
