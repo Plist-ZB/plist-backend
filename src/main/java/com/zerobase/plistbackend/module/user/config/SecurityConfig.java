@@ -9,9 +9,11 @@ import com.zerobase.plistbackend.module.user.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,9 +38,26 @@ public class SecurityConfig {
       "/oauth2/**",
       "/auth/access",
       "/",
-      "/ws-connect/**"
-      "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error"
+      "/ws-connect/**",
+      "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
+      "/sc"
   };
+
+  private static final List<String> PUBLIC_GET_URLS = List.of(
+      "/categories",
+      "/channels",
+      "/channels/popular",
+      "/channels/search",
+      "/channels/category/**"
+  );
+
+  private static final List<String> CORS_URLS = List.of(new String[]{
+      "https://plist-veta96s-projects.vercel.app",
+      "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com",
+      "http://localhost:3000",
+      "http://localhost:8080"
+  });
+
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,14 +65,14 @@ public class SecurityConfig {
     http
         .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
           CorsConfiguration configuration = new CorsConfiguration();
-          configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+          configuration.setAllowedOrigins(CORS_URLS);
           configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
           configuration.setAllowCredentials(true);  // 쿠키 전송 허용
           configuration.setAllowedHeaders(Collections.singletonList("*"));
           configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
 //          configuration.setMaxAge(3600L);
           return configuration;
-          }));
+        }));
 
     http
         .csrf(AbstractHttpConfigurer::disable)
@@ -66,15 +85,18 @@ public class SecurityConfig {
             oauth2
                 .loginPage("/oauth2/authorization/google")
                 .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
-                .userService(customOAuth2UserService)))
+                    .userService(customOAuth2UserService)))
                 .successHandler(customSuccessHandler)
         );
 
     // 경로별 인가 작업
-    http
-        .authorizeHttpRequests((auth) -> auth
-            .requestMatchers(PUBLIC_URLS).permitAll()
-            .anyRequest().authenticated());
+    http.authorizeHttpRequests(auth -> {
+      for (String url : PUBLIC_GET_URLS) {
+        auth.requestMatchers(HttpMethod.GET, url).permitAll();
+      }
+      auth.requestMatchers(PUBLIC_URLS).permitAll();
+      auth.anyRequest().authenticated();
+    });
 
     // 인증되지 않은 사용자에게 401 Unauthorized 반환
     http
@@ -87,7 +109,8 @@ public class SecurityConfig {
         .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 
     http
-        .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
+        .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository),
+            LogoutFilter.class);
 
     // 세션 설정 : STATELESS
     http
