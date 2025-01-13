@@ -1,16 +1,18 @@
 name: PlistCICD
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    types:
+      - closed
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
