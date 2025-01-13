@@ -19,9 +19,6 @@ public class PlistProperties {
   @Value("${server.serverAddress}")
   private String serverAddress;
 
-  @Value("${spring.datasource.driver-class-name}")
-  private String driverClassName;
-
   @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
   private String loginRedirectUri;
 }
