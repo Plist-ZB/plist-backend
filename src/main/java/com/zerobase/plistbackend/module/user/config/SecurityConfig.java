@@ -47,7 +47,7 @@ public class SecurityConfig {
     http
         .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
           CorsConfiguration configuration = new CorsConfiguration();
-          configuration.setAllowedOrigins(Collections.singletonList("http://13.209.237.110:80"));
+          configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
           configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
           configuration.setAllowCredentials(true);  // 쿠키 전송 허용
           configuration.setAllowedHeaders(Collections.singletonList("*"));
