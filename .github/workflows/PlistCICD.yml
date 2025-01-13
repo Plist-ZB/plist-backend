@@ -25,6 +25,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
+          echo ${{secret.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.properties
           echo ${{secret.APPLICATION_PROD}} | base64 --decode > ./src/main/resources/application-prod.properties
           chmod +x ./gradlew
           ./gradlew clean build -x test
