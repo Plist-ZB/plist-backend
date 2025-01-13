@@ -5,8 +5,8 @@ spring:
     active: local
     group:
       local: local, secret
-      blue: blue, prod, secret
-      green: green, prod, secret
+      blue: blue, prod
+      green: green, prod
 ---
 spring:
   datasource:
