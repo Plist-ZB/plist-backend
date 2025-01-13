@@ -4,12 +4,9 @@ spring:
   profiles:
     active: blue
     group:
-      local: local, secret
       blue: blue, prod
       green: green, prod
-
-server:
-  env: local
+      local: local, secret
 ---
 spring:
   datasource:
