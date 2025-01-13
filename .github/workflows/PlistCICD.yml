@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker
         run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/plist .
-        
+
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/plist:latest
 
@@ -66,7 +66,7 @@ jobs:
             echo "error"
             exit 1
           fi
-          
+
       - name: Docker compose
         uses: appleboy/ssh-action@master
         with:
@@ -76,7 +76,7 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/plist:latest
             sudo docker-compose -f docker-compose-${{ env.TARGET_UPSTREAM }}.yml up -d
-            
+
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
         with:
@@ -99,10 +99,10 @@ jobs:
           host: ${{ secrets.LIVE_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-              if sudo docker ps -a --format '{{.Names}}' | grep -w ${{env.CURRENT_UPSTREAM}}; then
-                 echo "Stopping and removing container ${{env.CURRENT_UPSTREAM}}..."
-                 sudo docker stop ${{env.CURRENT_UPSTREAM}}
-                 sudo docker rm ${{env.CURRENT_UPSTREAM}}
-              else
-                 echo "No container found with the name ${{env.CURRENT_UPSTREAM }}. Skipping stop and remove."
-              fi
+            if sudo docker ps -a --format '{{.Names}}' | grep -w ${{env.CURRENT_UPSTREAM}}; then
+               echo "Stopping and removing container ${{env.CURRENT_UPSTREAM}}..."
+               sudo docker stop ${{env.CURRENT_UPSTREAM}}
+               sudo docker rm ${{env.CURRENT_UPSTREAM}}
+            else
+               echo "No container found with the name ${{env.CURRENT_UPSTREAM }}. Skipping stop and remove."
+            fi
