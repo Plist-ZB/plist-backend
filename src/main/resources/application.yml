@@ -2,7 +2,6 @@ spring:
   application:
     name: PlistBackend
   profiles:
-    include: secret
     active: blue
     group:
       local: local, secret
