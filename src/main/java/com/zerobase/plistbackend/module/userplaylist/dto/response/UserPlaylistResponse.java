@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.userplaylist.dto.response;
 
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,10 +15,15 @@ public class UserPlaylistResponse {
   private int videoCount;
 
   public static UserPlaylistResponse fromEntity(UserPlaylist userPlaylist) {
+    String thumbnail = "";
+    if (!userPlaylist.getVideoList().isEmpty()) {
+      thumbnail = userPlaylist.getVideoList().get(0).getVideoThumbnail();
+    }
+
     return UserPlaylistResponse.builder()
         .userPlaylistId(userPlaylist.getUserPlaylistId())
         .userPlaylistName(userPlaylist.getUserPlaylistName())
-        .userPlaylistThumbnail(userPlaylist.getVideoList().get(0).getVideoThumbnail())
+        .userPlaylistThumbnail(thumbnail)
         .videoCount(userPlaylist.getVideoList().size())
         .build();
   }
