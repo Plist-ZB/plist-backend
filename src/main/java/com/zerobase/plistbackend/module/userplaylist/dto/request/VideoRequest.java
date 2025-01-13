@@ -12,5 +12,4 @@ public class VideoRequest {
   private String videoId;
   private String videoName;
   private String videoThumbnail;
-  private String videoDescription;
 }
