@@ -42,6 +42,7 @@ public class Participant {
   @JoinColumn(name = "user_id")
   private User user;
 
+  @Setter
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "channel_id")
   private Channel channel;
@@ -67,10 +68,5 @@ public class Participant {
         .channel(channel)
         .isHost(false)
         .build();
-  }
-
-  public void disconnectChannel() {
-    this.channel = null;
-    this.user.disconnectParticipant();
   }
 }
