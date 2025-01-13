@@ -1,44 +1,49 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
+import com.zerobase.plistbackend.module.home.model.Video;
 import java.time.Duration;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class StreamingChannelResponse {
+public class DetailClosedChannelResponse {
 
   private Long channelId;
   private String channelName;
   private String channelCategoryName;
   private String channelThumbnail;
-  private String channelStreamingTime;
+  private String channelDurationTime;
   private String channelHost;
-  private int channelParticipantCount;
+  private List<Video> videoList;
+  private int channelLastParticipantCount;
   //  private Long channelCapacity;
 
 
-  public static StreamingChannelResponse createStreamingChannelResponse(Channel channel) {
+  public static DetailClosedChannelResponse createClosedChannelResponse(Channel channel) {
     String thumbnail = "";
     if (!channel.getChannelPlaylist().getVideoList().isEmpty()) {
       thumbnail = channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail();
     }
 
-    return StreamingChannelResponse.builder()
+    return DetailClosedChannelResponse.builder()
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
         .channelCategoryName(channel.getCategory().getCategoryName())
         .channelThumbnail(thumbnail)
-        .channelStreamingTime(streamingTime(channel))
+        .channelDurationTime(durationTime(channel))
         .channelHost(channel.getChannelHost())
-        .channelParticipantCount(channel.getChannelParticipants().size())
+        .videoList(channel.getChannelPlaylist().getVideoList())
+        .channelLastParticipantCount(channel.getChannelLastParticipantCount())
+//        .channelCapacity(channel.getChannelCapacity())
         .build();
   }
 
-  public static String streamingTime(Channel channel) {
+  public static String durationTime(Channel channel) {
     Duration duration = Duration.ofMillis(
-        System.currentTimeMillis() - channel.getChannelCreatedAt().getTime());
+        channel.getChannelFinishedAt().getTime() - channel.getChannelCreatedAt().getTime());
 
     long hours = duration.toHours();
     long minutes = duration.toMinutes() % 60;

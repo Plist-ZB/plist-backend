@@ -3,11 +3,11 @@ package com.zerobase.plistbackend.module.channel.controller;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.service.ChannelService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
-import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -49,7 +49,7 @@ public class ChannelController {
   }
 
   @Operation(
-      summary = "[최신순]현재 스트리밍 중인 모든 채널 조회(최신순)",
+      summary = "[최신순]현재 스트리밍 중인 모든 채널 조회",
       description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 최신순으로 정렬됩니다."
   )
   @GetMapping("/channels")
@@ -70,7 +70,7 @@ public class ChannelController {
     return ResponseEntity.ok(streamingChannelResponseList);
   }
 
-
+  //TODO
   @Operation(
       summary = "채널 상세 조회",
       description = "채널ID과 일치하는 채널의 정보를 조회합니다."
@@ -113,10 +113,13 @@ public class ChannelController {
       description = "채널ID와 일치하는 채널에 사용자가 입장합니다."
   )
   @PatchMapping("/channel/{channelId}")
-  public void enterChannel(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+  public ResponseEntity<Void> enterChannel(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
     channelService.enterChannel(customOAuth2User, channelId);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @Operation(
@@ -124,10 +127,13 @@ public class ChannelController {
       description = "채널ID와 일치하는 채널에서 사용자가 퇴장합니다. 해당 채널에 사용자는 참여하고 있어야합니다."
   )
   @PatchMapping("/channel/exit/{channelId}")
-  public void userExitChannel(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+  public ResponseEntity<Void> userExitChannel(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
     channelService.userExitChannel(customOAuth2User, channelId);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @Operation(
@@ -137,10 +143,13 @@ public class ChannelController {
           + "해당 채널에 참여하고 있던 모든 참가자는 퇴장됩니다."
   )
   @PatchMapping("/channel/destroy/{channelId}")
-  public void hostExitChannel(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+  public ResponseEntity<Void> hostExitChannel(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
     channelService.hostExitChannel(customOAuth2User, channelId);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @Operation(
@@ -148,15 +157,13 @@ public class ChannelController {
       description = "채널ID와 일치하는 채널의 플레이리스트에 영상을 추가합니다. 해당 채널에 참여하고 있어야합니다."
   )
   @PatchMapping("/channel/{channelId}/add-video")
-  public ResponseEntity<StreamingChannelResponse> addVideoToChannel(@PathVariable Long channelId,
+  public ResponseEntity<Void> addVideoToChannel(@PathVariable Long channelId,
       @RequestBody VideoRequest videoRequest,
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-    StreamingChannelResponse streamingChannelResponse = channelService.addVideoToChannel(channelId,
-        videoRequest,
-        customOAuth2User);
+    channelService.addVideoToChannel(channelId, videoRequest, customOAuth2User);
 
-    return ResponseEntity.ok(streamingChannelResponse);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @Operation(
@@ -165,14 +172,12 @@ public class ChannelController {
           + " 해당 채널의 호스트여야 합니다."
   )
   @PatchMapping("/channel/{channelId}/delete-video")
-  public ResponseEntity<StreamingChannelResponse> deleteVideoToChannel(@PathVariable Long channelId,
+  public ResponseEntity<Void> deleteVideoToChannel(@PathVariable Long channelId,
       @RequestParam("id") Long id, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-    StreamingChannelResponse streamingChannelResponse = channelService.deleteVideoToChannel(
-        channelId, id,
-        customOAuth2User);
+    channelService.deleteVideoToChannel(channelId, id, customOAuth2User);
 
-    return ResponseEntity.ok(streamingChannelResponse);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @Operation(
@@ -182,13 +187,12 @@ public class ChannelController {
           + " 이 기능은 채널을 퇴장하고 플레이리스트를 저장할 경우 실행됩니다."
   )
   @PostMapping("/channel/{channelId}/save-playlist")
-  public ResponseEntity<UserPlaylistResponse> savePlaylistToUserPlaylist(
+  public ResponseEntity<Void> savePlaylistToUserPlaylist(
       @PathVariable Long channelId,
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-    UserPlaylistResponse userPlaylistResponse = channelService.savePlaylistToUserPlaylist(channelId,
-        customOAuth2User);
+    channelService.savePlaylistToUserPlaylist(channelId, customOAuth2User);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(userPlaylistResponse);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @Operation(
@@ -197,26 +201,51 @@ public class ChannelController {
           + "이 API는 오직 프론트에서 받아온 변경된 플레이리스트를 현재 채널의 플레이리스트에 덮어씁니다."
   )
   @PatchMapping("/channel/{channelId}/update")
-  public ResponseEntity<StreamingChannelResponse> updateChannelPlaylist(
+  public ResponseEntity<Void> updateChannelPlaylist(
       @PathVariable Long channelId,
       @RequestBody String updateChannelPlaylistJson) {
-    StreamingChannelResponse streamingChannelResponse = channelService.updateChannelPlaylist(
-        channelId,
-        updateChannelPlaylistJson);
+    channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson);
 
-    return ResponseEntity.ok(streamingChannelResponse);
-  }
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }//TODO : 테스트 필요
 
   @Operation(
       summary = "내 과거 호스트 내역",
       description = "내 과거 호스트 내역을 조회합니다."
   )
-  @GetMapping("/channels/user/history")
+  @GetMapping("/user/history")
   public ResponseEntity<List<ClosedChannelResponse>> findUserChannelHistory(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-    List<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(customOAuth2User);
+    List<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(
+        customOAuth2User);
 
     return ResponseEntity.ok(closedChannelResponsesList);
+  }
+
+  @Operation(
+      summary = "내 과거 호스트 내역 상세조회",
+      description = "내 과거 호스트 내역을 상세 조회합니다."
+  )
+  @GetMapping("user/history/{channelId}")
+  public ResponseEntity<DetailClosedChannelResponse> findOneUserChannelHistory(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long channelId) {
+
+    DetailClosedChannelResponse detailClosedChannelResponse = channelService.findOneUserChannelHistory(customOAuth2User, channelId);
+
+    return ResponseEntity.ok(detailClosedChannelResponse);
+  }
+
+  @Operation(
+      summary = "좋아요를 누른 영상 favorite플레이리스트에 저장",
+      description = "좋아요를 누르면 내 플레이리스트의 favorite 폴더로 저장됩니다."
+  )
+  @PostMapping("/user/favorite")
+  public ResponseEntity<Void> likeVideo(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+      @RequestBody VideoRequest videoRequest) {
+
+    channelService.likeVideo(customOAuth2User, videoRequest);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
