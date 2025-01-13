@@ -38,7 +38,7 @@ public class SecurityConfig {
       "/",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc"
+      "/sc", "13.209.237.110:80"
   };
 
   @Bean
