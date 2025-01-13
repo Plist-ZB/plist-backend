@@ -106,6 +106,8 @@ public class Channel {
 
   public void removeParticipant(Participant participant) {
     channelParticipants.remove(participant);
-    participant.disconnectChannel();
+    participant.setChannel(null);
+    participant.setUser(null);
+    participant.getUser().setParticipant(null);
   }
 }
