@@ -6,7 +6,6 @@ spring:
     group:
       blue: blue, prod
       green: green, prod
-      local: local, secret
 ---
 spring:
   datasource:
