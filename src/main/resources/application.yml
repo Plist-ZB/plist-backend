@@ -1,16 +1,24 @@
-
 spring:
   application:
     name: PlistBackend
   profiles:
     include: secret
+    active: local
+    group:
+      local: local, secret
+      blue: local, secret
+      green: green, secret
 
+server:
+  env: local
+
+---
+spring:
   datasource:
     driver-class-name: ${db_class_name}
     url: ${db_url}
     username: ${db_username}
     password: ${db_password}
-
   jpa:
     hibernate:
       ddl-auto: ${ddl_auto}
@@ -20,6 +28,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  config:
+    activate:
+      on-profile: local
   security:
     oauth2:
       client:
@@ -34,21 +46,113 @@ spring:
   jwt:
     secret: ${jwt_secret}
 
-# 시간 설정 (개발중에는 access 1일로 임시 지정)
-# Access Token: 30 min
-# Refresh Token: 7 days
 jwt:
-  access: 68400000
-  refresh: 478800000
+  access: 68400000  # Access Token: 30 min
+  refresh: 478800000  # Refresh Token: 7 days
+
+server:
+  port: 8080
+  serverAddress: localhost
+
+serverName: local_server
+
+
+---
+spring:
+  datasource:
+    driver-class-name: ${db_class_name}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+  jpa:
+    hibernate:
+      ddl-auto: ${ddl_auto}
+    open-in-view: true
+    show-sql: true
+    database: ${database}
+    properties:
+      hibernate:
+        format_sql: true
+
+  config:
+    activate:
+      on-profile: blue
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: google
+            client-id: ${client_id}
+            client-secret: ${client_secret}
+            redirect-uri: http://13.209.237.110:8080/login/oauth2/code/google
+            authorization-grant-type: authorization_code
+            scope: profile, email
+
+  jwt:
+    secret: ${jwt_secret}
+
+jwt:
+    access: 68400000  # Access Token: 30 min
+    refresh: 478800000  # Refresh Token: 7 days
+
+server:
+  port: 8080
+  serverAddress: 13.209.237.110
+
+serverName: BLUE
+
+---
+spring:
+  datasource:
+    driver-class-name: ${db_class_name}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+  jpa:
+    hibernate:
+      ddl-auto: ${ddl_auto}
+    open-in-view: true
+    show-sql: true
+    database: ${database}
+    properties:
+      hibernate:
+        format_sql: true
+
+  config:
+    activate:
+      on-profile: green
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: google
+            client-id: ${client_id}
+            client-secret: ${client_secret}
+            redirect-uri: http://13.209.237.110:8081/login/oauth2/code/google
+            authorization-grant-type: authorization_code
+            scope: profile, email
+  jwt:
+    secret: ${jwt_secret}
+jwt:
+  access: 68400000  # Access Token: 30 min
+  refresh: 478800000  # Refresh Token: 7 days
+
+server:
+  port: 8081
+  serverAddress: 13.209.237.110
+
+serverName: GREEN
+---
 
 youtube-api:
   url: "https://www.googleapis.com/youtube/v3/search?key=%s&q=%s&type=%s&part=%s&order=%s&relevanceLanguage=%s&videoEmbeddable=%s&maxResults=%d&topicId=%s"
-  type: "video" # 검색할 타입
-  part: "snippet" # 응답에 포함될 내용
-  maxResults: 50 # 페이지 당 보여주는 응답 갯수 범위 0~50
-  order: "viewCount" # 조회수가 많은 순서대로 정렬
-  relevanceLanguage: "ko" # 가장 관련있는 언어로 검색
-  videoEmbeddable: "true" # 웹 페이지에서 재생가능한 동영상만 검색
-  topicId: "/m/04rlf" # 검색 결과를 음악으로 제한함
-  apiKey: ${youtube_api_key} # 자신의 API 키
-
+  type: "video"  # 검색할 타입
+  part: "snippet"  # 응답에 포함될 내용
+  maxResults: 50  # 페이지 당 보여주는 응답 갯수 범위 0~50
+  order: "viewCount"  # 조회수가 많은 순서대로 정렬
+  relevanceLanguage: "ko"  # 가장 관련있는 언어로 검색
+  videoEmbeddable: "true"  # 웹 페이지에서 재생가능한 동영상만 검색
+  topicId: "/m/04rlf"  # 검색 결과를 음악으로 제한함
+  apiKey: ${youtube_api_key}  # 자신의 API
