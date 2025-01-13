@@ -1,7 +1,6 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
-import com.zerobase.plistbackend.module.playlist.dto.response.PlaylistResponse;
 import java.time.Duration;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,22 +15,23 @@ public class ClosedChannelResponse {
   private String channelThumbnail;
   private String channelDurationTime;
   private String channelHost;
-  private PlaylistResponse channelPlaylist;
   private int channelLastParticipantCount;
   //  private Long channelCapacity;
 
 
   public static ClosedChannelResponse createClosedChannelResponse(Channel channel) {
-    PlaylistResponse playlistResponse = PlaylistResponse.from(channel.getChannelPlaylist());
+    String thumbnail = "";
+    if (!channel.getChannelPlaylist().getVideoList().isEmpty()) {
+      thumbnail = channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail();
+    }
 
     return ClosedChannelResponse.builder()
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
         .channelCategoryName(channel.getCategory().getCategoryName())
-        .channelThumbnail(channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail())
+        .channelThumbnail(thumbnail)
         .channelDurationTime(durationTime(channel))
         .channelHost(channel.getChannelHost())
-        .channelPlaylist(playlistResponse)
         .channelLastParticipantCount(channel.getChannelLastParticipantCount())
 //        .channelCapacity(channel.getChannelCapacity())
         .build();

@@ -8,6 +8,7 @@ import com.zerobase.plistbackend.module.category.type.CategoryErrorStatus;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
@@ -24,7 +25,6 @@ import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
-import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
 import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
@@ -172,27 +172,30 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional
-  public StreamingChannelResponse addVideoToChannel(Long channelId, VideoRequest videoRequest,
+  public void addVideoToChannel(Long channelId, VideoRequest videoRequest,
       CustomOAuth2User customOAuth2User) {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
-    //3. 유저가 해당 채널의 참여자인지 검증.
+
     if (!user.getParticipant().getChannel().equals(channel)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
-    //4. 해당 채널 플레이리스트 가져오기.
+
+    if (channel.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
+      throw new ChannelException(ChannelErrorStatus.NOT_STREAMING);
+    }
+
     channel.getChannelPlaylist().getVideoList()
         .add(Video.createVideo(videoRequest, channel.getChannelPlaylist().getVideoList()));
-    channelRepository.save(channel);
 
-    return StreamingChannelResponse.createStreamingChannelResponse(channel);
+    channelRepository.save(channel);
   }
 
   @Override
   @Transactional
-  public StreamingChannelResponse deleteVideoToChannel(Long channelId, Long id,
+  public void deleteVideoToChannel(Long channelId, Long id,
       CustomOAuth2User customOAuth2User) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
@@ -212,14 +215,13 @@ public class ChannelServiceImpl implements ChannelService {
         .filter(it -> it.getId().equals(id)).findFirst()
         .orElseThrow(() -> new VideoException(VideoErrorStatus.NOT_EXIST));
     channel.getChannelPlaylist().getVideoList().remove(video);
-    channelRepository.save(channel);
 
-    return StreamingChannelResponse.createStreamingChannelResponse(channel);
+    channelRepository.save(channel);
   }
 
   @Override
   @Transactional
-  public UserPlaylistResponse savePlaylistToUserPlaylist(Long channelId,
+  public void savePlaylistToUserPlaylist(Long channelId,
       CustomOAuth2User customOAuth2User) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
@@ -232,16 +234,14 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     UserPlaylist userPlaylist = UserPlaylist.fromChannelPlaylist(
-        user, channel.getChannelPlaylist(), channel.getChannelName());
+        user, channel);
 
     userPlaylistRepository.save(userPlaylist);
-
-    return UserPlaylistResponse.fromEntity(userPlaylist);
   }
 
   @Override
   @Transactional
-  public StreamingChannelResponse updateChannelPlaylist(Long channelId,
+  public void updateChannelPlaylist(Long channelId,
       String updateChannelPlaylistJson) {
 
     Channel channel = channelRepository.findById(channelId)
@@ -254,8 +254,6 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelPlaylist().setVideoList(videoList);
 
     channelRepository.save(channel);
-
-    return StreamingChannelResponse.createStreamingChannelResponse(channel);
   }
 
   @Override
@@ -268,5 +266,33 @@ public class ChannelServiceImpl implements ChannelService {
         user.getUserName(), ChannelStatus.CHANNEL_STATUS_CLOSED);
 
     return channelList.stream().map(ClosedChannelResponse::createClosedChannelResponse).toList();
+  }
+
+  @Override
+  @Transactional
+  public void likeVideo(CustomOAuth2User customOAuth2User, VideoRequest videoRequest) {
+
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    String favorite = "favorite";
+    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistName(user, favorite)
+        .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
+
+    userPlaylist.getVideoList().add(Video.createVideo(videoRequest, userPlaylist.getVideoList()));
+
+    userPlaylistRepository.save(userPlaylist);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public DetailClosedChannelResponse findOneUserChannelHistory(CustomOAuth2User customOAuth2User,
+      Long channelId) {
+
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    Channel channel = channelRepository.findById(channelId)
+        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+
+    return DetailClosedChannelResponse.createClosedChannelResponse(channel);
   }
 }

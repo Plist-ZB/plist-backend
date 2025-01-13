@@ -17,6 +17,6 @@ public class CategoryServiceImpl implements CategoryService{
   public List<CategoryResponse> findCategories() {
     List<Category> categories = categoryRepository.findAll();
 
-    return CategoryResponse.fromEntityList(categories);
+    return categories.stream().map(CategoryResponse::fromEntity).toList();
   }
 }

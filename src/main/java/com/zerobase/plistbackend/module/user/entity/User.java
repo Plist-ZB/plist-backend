@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -58,6 +59,7 @@ public class User {
   @Column(name = "user_image")
   private String userImage;
 
+  @Setter
   @OneToOne(mappedBy = "user")
   private Participant participant;
 
@@ -67,9 +69,5 @@ public class User {
         .userName(response.findName())
         .userImage(response.findImage())
         .userRole(userRole).build();
-  }
-
-  public void disconnectParticipant() {
-    this.participant = null;
   }
 }

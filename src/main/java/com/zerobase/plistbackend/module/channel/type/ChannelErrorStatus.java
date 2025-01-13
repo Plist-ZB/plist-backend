@@ -22,11 +22,12 @@ public enum ChannelErrorStatus implements ErrorStatus {
       "현재 채널에 참가 중이지 않습니다."
   ),
   NOT_HOST(
-      HttpStatus.BAD_REQUEST.value(),
-      HttpStatus.BAD_REQUEST.getReasonPhrase(),
+      HttpStatus.UNAUTHORIZED.value(),
+      HttpStatus.UNAUTHORIZED.getReasonPhrase(),
       "호스트가 아닌 사용자는 채널을 닫을 수 없습니다."
   ),
-  NOT_STREAMING(HttpStatus.BAD_REQUEST.value(),
+  NOT_STREAMING(
+      HttpStatus.BAD_REQUEST.value(),
       HttpStatus.BAD_REQUEST.getReasonPhrase(),
       "해당 채널은 종료되었습니다."
   );

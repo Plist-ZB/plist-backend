@@ -35,9 +35,13 @@ public class Video {
     if (videoList.isEmpty()) {
       return id;
     } else {
-      Video video = videoList.get(videoList.size() - 1);
-      id = video.getId() + 1;
-      return id;
+      long maxId = Long.MIN_VALUE;
+      for (Video video : videoList) {
+        if (video.getId() > maxId) {
+          maxId = video.getId();
+        }
+      }
+      return maxId + 1;
     }
   }
 }
