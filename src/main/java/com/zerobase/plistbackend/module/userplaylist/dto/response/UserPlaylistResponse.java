@@ -1,7 +1,6 @@
 package com.zerobase.plistbackend.module.userplaylist.dto.response;
 
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 
