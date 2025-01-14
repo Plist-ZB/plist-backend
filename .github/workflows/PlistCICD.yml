@@ -45,13 +45,13 @@ jobs:
       - name: Set target IP
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/sc")
-          echo "STATUS: $STATUS" # STATUS 값 출력
+          echo "STATUS: $STATUS"
             if [ $STATUS = 200 ]; then
             CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/sc")
-          echo "CURRENT_UPSTREAM (if STATUS=200): $CURRENT_UPSTREAM" # CURRENT_UPSTREAM 값 출력
+          echo "CURRENT_UPSTREAM (if STATUS=200): $CURRENT_UPSTREAM"
             else
             CURRENT_UPSTREAM=green
-          echo "CURRENT_UPSTREAM (else): $CURRENT_UPSTREAM" # CURRENT_UPSTREAM 값 출력
+          echo "CURRENT_UPSTREAM (else): $CURRENT_UPSTREAM"
             fi
             
             echo "Setting CURRENT_UPSTREAM=$CURRENT_UPSTREAM to GITHUB_ENV"
