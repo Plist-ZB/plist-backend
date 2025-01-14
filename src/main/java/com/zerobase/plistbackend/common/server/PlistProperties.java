@@ -19,9 +19,7 @@ public class PlistProperties {
   @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
   private String loginRedirectUri;
 
-  @Value("${spring.jpa.hibernate.ddl-auto}")
-  private String hibernateDdlAuto;
-
   @Value("${db_class_name}")
   private String dbClassName;
+
 }
