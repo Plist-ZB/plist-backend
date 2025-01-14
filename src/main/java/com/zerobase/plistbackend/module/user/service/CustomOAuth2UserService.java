@@ -51,7 +51,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     if (!existData.existFavoritePlayList(existData.getPlaylists())) {
-      UserPlaylist userPlaylist = UserPlaylist.createUserPlaylist(existData, "favorite");
+      UserPlaylist userPlaylist = UserPlaylist.createUserPlaylist(existData,
+          new UserPlaylistRequest("favorite"));
       userPlaylistRepository.save(userPlaylist);
     }
 
