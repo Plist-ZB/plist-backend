@@ -29,7 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v3/api")
 @Tag(name = "UserPlaylist API", description = "내 플레이리스트와 관련된 API Controller")
 public class UserPlaylistController {
-/*asd*/
+
+  /*asd*/
   private final UserPlaylistService userPlaylistService;
 
   @Operation(
@@ -80,10 +81,9 @@ public class UserPlaylistController {
       description = "userPlaylistId값과 일치한 내 플레이리스트를 삭제합니다."
   )
   @DeleteMapping("/user/playlist/{userPlaylistId}")
-  public ResponseEntity<Void> deleteUserPlaylist(@PathVariable Long userPlaylistId,
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+  public ResponseEntity<Void> deleteUserPlaylist(@PathVariable Long userPlaylistId) {
 
-    userPlaylistService.deleteUserPlaylist(userPlaylistId, customOAuth2User);
+    userPlaylistService.deleteUserPlaylist(userPlaylistId);
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }
@@ -144,7 +144,8 @@ public class UserPlaylistController {
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @RequestBody UserPlaylistRequest userPlaylistRequest, @PathVariable Long userPlaylistId) {
 
-    userPlaylistService.changeUserPlaylistName(customOAuth2User, userPlaylistRequest, userPlaylistId);
+    userPlaylistService.changeUserPlaylistName(customOAuth2User, userPlaylistRequest,
+        userPlaylistId);
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }

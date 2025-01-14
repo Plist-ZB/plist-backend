@@ -73,15 +73,16 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
   @Override
   @Transactional
-  public void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User) {
-    //1. 현재 로그인 중인 유저의 정보 받아오기
-    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
-    //2. 유저 플레이리스트ID와 유저 정보를 통해 userPlaylist 삭제하기.
-    if (userPlaylistRepository.existsByUserAndUserPlaylistId(user, userPlaylistId)) {
-      userPlaylistRepository.deleteByUserAndUserPlaylistId(user, userPlaylistId);
-    } else {
-      throw new RuntimeException("해당 유저플레이리스트가 존재하지 않습니다.");
+  public void deleteUserPlaylist(Long userPlaylistId) {
+
+    UserPlaylist userPlaylist = userPlaylistRepository.findById(userPlaylistId)
+        .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
+
+    if (userPlaylist.getUserPlaylistName().equals("favorite")) {
+      throw new UserPlaylistException(UserPlaylistErrorStatus.CANT_DELETE_FAVORITE);
     }
+
+    userPlaylistRepository.deleteById(userPlaylistId);
   }
 
   @Override
@@ -150,9 +151,12 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistId(user,
-            userPlaylistId)
+    UserPlaylist userPlaylist = userPlaylistRepository.findById(userPlaylistId)
         .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
+
+    if (userPlaylist.getUserPlaylistName().equals("favorite")) {
+      throw new UserPlaylistException(UserPlaylistErrorStatus.CANT_UPDATE_FAVORITE);
+    }
 
     if (userPlaylistRepository.existsByUserAndUserPlaylistName(user,
         userPlaylistRequest.getUserPlaylistName())) {
