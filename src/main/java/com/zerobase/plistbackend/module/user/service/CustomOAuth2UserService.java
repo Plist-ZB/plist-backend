@@ -7,6 +7,7 @@ import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.RegistrationId;
 import com.zerobase.plistbackend.module.user.type.UserRole;
+import com.zerobase.plistbackend.module.userplaylist.dto.request.UserPlaylistRequest;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
 import lombok.RequiredArgsConstructor;
