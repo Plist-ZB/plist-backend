@@ -81,7 +81,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "Checking TARGET_UPSTREAM=${{ env.TARGET_UPSTREAM }}"
+            echo "Using docker-compose-${{ env.TARGET_UPSTREAM }}.yml"
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/plist:latest
+            sudo docker-compose -f docker-compose-${{ env.TARGET_UPSTREAM }}.yml config
             sudo docker-compose -f docker-compose-${{ env.TARGET_UPSTREAM }}.yml up -d
 
       - name: Check deploy server URL
