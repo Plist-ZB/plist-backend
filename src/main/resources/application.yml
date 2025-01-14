@@ -101,6 +101,51 @@ jwt:
 
 server:
   port: 8080
+  serverAddress: localhost
+
+serverName: local_server
+
+---
+spring:
+  datasource:
+    driver-class-name: ${db_class_name}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+  jpa:
+    hibernate:
+      ddl-auto: ${ddl_auto}
+    open-in-view: true
+    show-sql: true
+    database: ${database}
+    properties:
+      hibernate:
+        format_sql: true
+
+  config:
+    activate:
+      on-profile: blue
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: google
+            client-id: ${client_id}
+            client-secret: ${client_secret}
+            redirect-uri: http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
+            authorization-grant-type: authorization_code
+            scope: profile, email
+
+  jwt:
+    secret: ${jwt_secret}
+
+jwt:
+    access: 68400000  # Access Token: 30 min
+    refresh: 478800000  # Refresh Token: 7 days
+
+server:
+  port: 8080
   serverAddress: 13.209.237.110
 
 serverName: BLUE
@@ -138,10 +183,7 @@ spring:
             scope: profile, email
   jwt:
     secret: ${jwt_secret}
-  servlet:
-    multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+
 jwt:
   access: 68400000  # Access Token: 30 min
   refresh: 478800000  # Refresh Token: 7 days
@@ -176,3 +218,9 @@ cloud:
       bucket: plist-bucket   # 버킷 이름
     stack:
       auto: false
+      
+spring:      
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB    

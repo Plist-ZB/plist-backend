@@ -101,7 +101,6 @@ public class JwtUtil {
     return null;
   }
 
-
   public ResponseCookie createCookie(String key, String value) {
     return ResponseCookie.from(key, value)
         .maxAge(findExpired(key).intValue() / 1000)

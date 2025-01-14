@@ -1,9 +1,8 @@
 package com.zerobase.plistbackend.module.playlist.entity;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
+import com.zerobase.plistbackend.module.home.model.Video;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
-import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
-import com.zerobase.plistbackend.module.userplaylist.model.Video;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -14,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @Table(name = "playlist")
@@ -39,14 +38,14 @@ public class Playlist {
   @JoinColumn(name = "channel_id")
   private Channel channel;
 
+  @Setter
   @Lob
+  @Builder.Default
   @Column(name = "video", columnDefinition = "LONGTEXT")
   @Convert(converter = PlaylistVideoConverter.class)
-  private List<Video> videoList;
+  private List<Video> videoList = new ArrayList<>();
 
-  public static Playlist from(UserPlaylist userPlaylist) {
-    return Playlist.builder()
-        .videoList(userPlaylist.getVideoList())
-        .build();
+  public void connectChannel(Channel channel) {
+    this.channel = channel;
   }
 }

@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-  void deleteByUser(User user);
+  boolean existsByUser(User user);
 
-  void deleteByChannel(Channel channel);
+  List<Participant> findByChannel(Channel channel);
 
-  List<Participant> findByUser(User user);
+  Participant findByUser(User user);
 }

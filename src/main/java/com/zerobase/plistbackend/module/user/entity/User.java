@@ -12,15 +12,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -60,8 +60,9 @@ public class User {
   @Column(name = "user_image")
   private String userImage;
 
-  @OneToMany(mappedBy = "user")
-  private List<Participant> participants;
+  @Setter
+  @OneToOne(mappedBy = "user")
+  private Participant participant;
 
   @OneToMany(mappedBy = "user")
   private List<UserPlaylist> playlists;
@@ -73,6 +74,7 @@ public class User {
         .userImage(response.findImage())
         .userRole(userRole).build();
   }
+
   public void updateRole(UserRole role) {
     this.userRole = role;
   }
@@ -93,5 +95,4 @@ public class User {
   public void updateImage(String fileName) {
     this.userImage = fileName;
   }
-
 }

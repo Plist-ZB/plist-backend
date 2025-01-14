@@ -1,30 +1,29 @@
 package com.zerobase.plistbackend.module.userplaylist.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zerobase.plistbackend.module.user.dto.UserDto;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
-import com.zerobase.plistbackend.module.userplaylist.model.Video;
-import java.util.List;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class UserPlaylistResponse {
 
-  @JsonProperty("userPlaylistId")
   private Long userPlaylistId;
-  @JsonProperty("userDto")
-  private UserDto userDto;
-  @JsonProperty("userPlaylistName")
   private String userPlaylistName;
-  @JsonProperty("videoList")
-  private List<Video> videoList;
+  private String userPlaylistThumbnail;
+  private int videoCount;
 
-  public static UserPlaylistResponse from(UserPlaylist userPlaylist) {
+  public static UserPlaylistResponse fromEntity(UserPlaylist userPlaylist) {
+    String thumbnail = "";
+    if (!userPlaylist.getVideoList().isEmpty()) {
+      thumbnail = userPlaylist.getVideoList().get(0).getVideoThumbnail();
+    }
+
     return UserPlaylistResponse.builder()
         .userPlaylistId(userPlaylist.getUserPlaylistId())
-        .userDto(UserDto.from(userPlaylist.getUser()))
         .userPlaylistName(userPlaylist.getUserPlaylistName())
-        .videoList(userPlaylist.getVideoList())
+        .userPlaylistThumbnail(thumbnail)
+        .videoCount(userPlaylist.getVideoList().size())
         .build();
   }
 }

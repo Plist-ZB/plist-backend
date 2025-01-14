@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.userplaylist.model;
+package com.zerobase.plistbackend.module.home.model;
 
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import java.util.List;
@@ -17,7 +17,6 @@ public class Video {
   private String videoName;
   private String videoThumbnail;
   private String videoId;
-  private String videoDescription;
 
   public static Video createVideo (VideoRequest videoRequest, List<Video> videoList) {
 
@@ -28,7 +27,6 @@ public class Video {
         .videoName(videoRequest.getVideoName())
         .videoThumbnail(videoRequest.getVideoThumbnail())
         .videoId(videoRequest.getVideoId())
-        .videoDescription(videoRequest.getVideoDescription())
         .build();
   }
 
@@ -37,9 +35,13 @@ public class Video {
     if (videoList.isEmpty()) {
       return id;
     } else {
-      Video video = videoList.get(videoList.size() - 1);
-      id = video.getId() + 1;
-      return id;
+      long maxId = Long.MIN_VALUE;
+      for (Video video : videoList) {
+        if (video.getId() > maxId) {
+          maxId = video.getId();
+        }
+      }
+      return maxId + 1;
     }
   }
 }
