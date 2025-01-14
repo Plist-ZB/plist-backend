@@ -53,7 +53,7 @@ server:
   port: 8080
   serverAddress: localhost
 
-serverName: local_server
+serverName: local
 
 
 ---
@@ -103,7 +103,7 @@ server:
   port: 8080
   serverAddress: 13.209.237.110
 
-serverName: BLUE_SERVER
+serverName: blue
 
 ---
 spring:
@@ -148,7 +148,7 @@ server:
   port: 8081
   serverAddress: 13.209.237.110
 
-serverName: GREEN_SERVER
+serverName: green
 ---
 
 youtube-api:

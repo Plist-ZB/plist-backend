@@ -15,7 +15,12 @@ public class ServerCheckController {
 
 
   @GetMapping("/sc")
-  public ResponseEntity<?> deleteSomething() {
+  public ResponseEntity<?> checkCurrentServer() {
     return ResponseEntity.ok(plistProperties);
+  }
+
+  @GetMapping("/env")
+  public ResponseEntity<?> checkCurrentEnv() {
+    return ResponseEntity.ok(plistProperties.getServerName());
   }
 }

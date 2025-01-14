@@ -40,7 +40,7 @@ public class SecurityConfig {
       "/",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc"
+      "/sc","env"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
