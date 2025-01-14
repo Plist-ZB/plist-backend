@@ -1,5 +1,5 @@
 name: PlistCICD
-# CICD 배포 성공....
+# 스크립트 배포 성공....
 on:
   push:
     branches:
