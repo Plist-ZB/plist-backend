@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface UserPlaylistService {
 
-  void createUserPlayList(UserPlaylistRequest userPlaylistRequest, CustomOAuth2User customOAuth2User);
+  void createUserPlayList(UserPlaylistRequest userPlaylistRequest,
+      CustomOAuth2User customOAuth2User);
 
-  DetailUserPlaylistResponse findOneUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
+  DetailUserPlaylistResponse findOneUserPlaylist(Long userPlaylistId,
+      CustomOAuth2User customOAuth2User);
 
   List<UserPlaylistResponse> findAllUserPlaylist(CustomOAuth2User customOAuth2User);
 
@@ -19,9 +21,11 @@ public interface UserPlaylistService {
 
   void removeVideo(CustomOAuth2User customOAuth2User, Long userPlaylistId, Long id);
 
-  void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
+  void deleteUserPlaylist(Long userPlaylistId);
 
-  void updateUserPlaylist(Long userPlaylistId, String updateUserPlaylistJson, CustomOAuth2User customOAuth2User);
+  void updateUserPlaylist(Long userPlaylistId, String updateUserPlaylistJson,
+      CustomOAuth2User customOAuth2User);
 
-  void changeUserPlaylistName(CustomOAuth2User customOAuth2User, UserPlaylistRequest userPlaylistRequest, Long userPlaylistId);
+  void changeUserPlaylistName(CustomOAuth2User customOAuth2User,
+      UserPlaylistRequest userPlaylistRequest, Long userPlaylistId);
 }

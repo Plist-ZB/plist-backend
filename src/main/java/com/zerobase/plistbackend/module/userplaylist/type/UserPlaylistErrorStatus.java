@@ -12,8 +12,16 @@ public enum UserPlaylistErrorStatus implements ErrorStatus {
   ALREADY_EXIST(
       HttpStatus.BAD_REQUEST.value(),
       HttpStatus.BAD_REQUEST.getReasonPhrase(),
-      "해당 제목의 재생목록이 이미 존재합니다."
-  );
+      "해당 제목의 재생목록이 이미 존재합니다."),
+  CANT_DELETE_FAVORITE(
+      HttpStatus.BAD_REQUEST.value(),
+      HttpStatus.BAD_REQUEST.getReasonPhrase(),
+      "favorite 재생목록은 삭제할 수 없습니다."),
+  CANT_UPDATE_FAVORITE(
+      HttpStatus.BAD_REQUEST.value(),
+      HttpStatus.BAD_REQUEST.getReasonPhrase(),
+      "favorite 재생목록은 수정할 수 없습니다.")
+  ;
 
   private final int errorCode;
   private final String errorType;
