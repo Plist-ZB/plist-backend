@@ -40,7 +40,7 @@ public class SecurityConfig {
       "/",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc"
+      "/sc", "env"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
@@ -55,7 +55,6 @@ public class SecurityConfig {
       "https://plist-veta96s-projects.vercel.app",
       "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com",
       "http://localhost:3000",
-      "http://localhost:8080"
   });
 
 
