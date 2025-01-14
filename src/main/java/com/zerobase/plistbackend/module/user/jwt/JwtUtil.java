@@ -11,6 +11,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,13 +101,14 @@ public class JwtUtil {
     return null;
   }
 
-
-  public Cookie createCookie(String key, String value) {
-    Cookie cookie = new Cookie(key, value);
-    cookie.setMaxAge(findExpired(key).intValue() / 1000);
-    cookie.setPath("/");
-//    cookie.setSecure(true);
-    cookie.setHttpOnly(true);
-    return cookie;
+  public ResponseCookie createCookie(String key, String value) {
+    return ResponseCookie.from(key, value)
+        .maxAge(findExpired(key).intValue() / 1000)
+        .path("/")
+        .secure(true)
+        .httpOnly(true)
+//        .sameSite("None")
+        .domain(".vercel.app")
+        .build();
   }
 }

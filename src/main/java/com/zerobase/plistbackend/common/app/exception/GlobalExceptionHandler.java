@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.common.app.exception;
 
 import com.zerobase.plistbackend.module.category.exception.CategoryException;
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
+import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.home.exception.VideoException;
 import com.zerobase.plistbackend.module.playlist.exception.PlaylistException;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
@@ -29,8 +30,9 @@ public class GlobalExceptionHandler {
     return ErrorResponse.create(e.getErrorStatus());
   }
 
-  @ExceptionHandler(OAuth2UserException.class)
-  public ErrorResponse handleOAuth2UserException(OAuth2UserException e) {
+  @ExceptionHandler(UserException.class)
+  public ErrorResponse handleUserException(UserException e) {
+    log.error("UserException", e);
     return ErrorResponse.create(e.getErrorStatus());
   }
 

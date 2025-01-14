@@ -7,6 +7,8 @@ import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.RegistrationId;
 import com.zerobase.plistbackend.module.user.type.UserRole;
+import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
+import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
   private final UserRepository userRepository;
+  private final UserPlaylistRepository userPlaylistRepository;
 
   @Override
   @Transactional
@@ -40,6 +43,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       isMember = false;
       existData = User.from(oAuth2Response, UserRole.ROLE_USER);
       userRepository.save(existData);
+    }
+
+    if (existData.getUserRole().equals(UserRole.ROLE_NONE)) {
+      isMember = false;
+      existData.updateRole(UserRole.ROLE_USER);
+    }
+
+    if (!existData.existFavoritePlayList(existData.getPlaylists())) {
+      UserPlaylist userPlaylist = UserPlaylist.createUserPlaylist(existData, "favorite");
+      userPlaylistRepository.save(userPlaylist);
     }
 
     return new CustomOAuth2User(UserDetail.from(existData, isMember));

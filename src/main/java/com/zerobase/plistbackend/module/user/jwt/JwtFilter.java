@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.user.jwt;
 
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
+import com.zerobase.plistbackend.module.user.type.UserRole;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
   private static final Set<String> ALLOWED_PATHS = Set.of("/v3/api/", "/favicon.ico",
       "/v3/api/auth/access", "/");
 
+  private static final Set<String> GET_ALLOWED_PATH = Set.of(
+      "/v3/api/categories", "/v3/api/channels", "/channels/popular", "/channels/search");
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
@@ -40,21 +44,30 @@ public class JwtFilter extends OncePerRequestFilter {
       return;
     }
 
+    if(GET_ALLOWED_PATH.stream().anyMatch(path::equals) && request.getMethod().equals("GET")
+    || path.startsWith("/channels/category/") && request.getMethod().equals("GET")) {
+      SecurityContextHolder.getContext().setAuthentication(
+          new UsernamePasswordAuthenticationToken(null, null, new ArrayList<>()));
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     String accessToken = request.getHeader("Authorization");
     if (accessToken == null || !accessToken.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
     accessToken = accessToken.substring("Bearer ".length());
-    String refreshToken = jwtUtil.findToken(request, "refresh");
-    log.info("access token: {}, refresh token : {}", accessToken, refreshToken);
-
-    if(refreshToken == null) {
-      log.error("refresh token is null");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      filterChain.doFilter(request, response);
-      return;
-    }
+//    String refreshToken = jwtUtil.findToken(request, "refresh");
+//    log.info("access token: {}, refresh token : {}", accessToken, refreshToken);
+//
+//    if(refreshToken == null) {
+//      log.error("refresh token is null");
+//      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//      response.addHeader("message", "error");
+//      filterChain.doFilter(request, response);
+//      return;
+//    }
 
     try {
       jwtUtil.isExpired(accessToken);
@@ -71,7 +84,15 @@ public class JwtFilter extends OncePerRequestFilter {
       PrintWriter writer = response.getWriter();
       writer.print("invalid token");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
       return;
+    }
+
+    UserRole userRole = UserRole.valueOf(jwtUtil.findRole(accessToken));
+    if (userRole == UserRole.ROLE_NONE) {
+      PrintWriter writer = response.getWriter();
+      writer.print("invalid role");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     Long id = jwtUtil.findId(accessToken);

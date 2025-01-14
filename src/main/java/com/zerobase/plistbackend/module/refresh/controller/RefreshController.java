@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +18,7 @@ public class RefreshController {
 
   private final RefreshService refreshService;
 
-  @PostMapping("/auth/access")
+  @GetMapping("/auth/access")
   public ResponseEntity<NewAccessResponse> newAccess(HttpServletRequest request) {
     return ResponseEntity.status(201).body(refreshService.newAccessToken(request));
   }
