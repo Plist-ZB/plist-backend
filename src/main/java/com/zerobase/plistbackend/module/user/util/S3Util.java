@@ -37,14 +37,9 @@ public class S3Util {
 
     s3Upload(multipartFile, putObjectRequest);
 
-    GetUrlRequest getUrlRequest = GetUrlRequest.builder()
-        .bucket(bucketName)
-        .key(multipartFile.getOriginalFilename())
-        .build();
-
-    String fileRoute = s3Client.utilities().getUrl(getUrlRequest).toString();
-    log.info("S3 File Route : {}", fileRoute);
-    return fileRoute;
+    String fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(fileName)).toExternalForm();
+    log.info("S3 File Route : {}", fileUrl);
+    return fileUrl;
   }
 
   private void s3Upload(MultipartFile multipartFile, PutObjectRequest putObjectRequest) {
