@@ -7,14 +7,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,10 +117,10 @@ class WebSocketControllerTest {
     WebSocketException exception = assertThrows(WebSocketException.class, () ->
         webSocketController.controlVideo(channelId, request, user));
 
-    assertThat(exception.getMessage())
-        .isEqualTo("해당 권한은 호스트만 가능합니다.");
     assertThat(exception.getErrorCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(exception.getErrorType()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    assertThat(exception.getMessage()).isEqualTo("해당 권한은 호스트만 가능합니다.");
+
   }
 
   @Test
