@@ -9,6 +9,9 @@ spring:
       green: green, prod
 ---
 spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
     driver-class-name: ${db_class_name}
     url: ${db_url}
@@ -24,9 +27,6 @@ spring:
       hibernate:
         format_sql: true
 
-  config:
-    activate:
-      on-profile: local
   security:
     oauth2:
       client:
@@ -46,7 +46,7 @@ spring:
       max-request-size: 20MB
 
 jwt:
-  access: 68400000  # Access Token: 30 min
+  access: 604800000  # Access Token: 로컬에서는 1주일
   refresh: 478800000  # Refresh Token: 7 days
 
 server:
@@ -58,6 +58,9 @@ serverName: local
 
 ---
 spring:
+  config:
+    activate:
+      on-profile: blue
   datasource:
     driver-class-name: ${db_class_name}
     url: ${db_url}
@@ -73,9 +76,6 @@ spring:
       hibernate:
         format_sql: true
 
-  config:
-    activate:
-      on-profile: blue
   security:
     oauth2:
       client:
@@ -107,6 +107,9 @@ serverName: blue
 
 ---
 spring:
+  config:
+    activate:
+      on-profile: green
   datasource:
     driver-class-name: ${db_class_name}
     url: ${db_url}
@@ -121,10 +124,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-  config:
-    activate:
-      on-profile: green
   security:
     oauth2:
       client:
@@ -141,8 +140,8 @@ spring:
     secret: ${jwt_secret}
 
 jwt:
-    access: 68400000  # Access Token: 30 min
-    refresh: 478800000  # Refresh Token: 7 days
+  access: 68400000  # Access Token: 30 min
+  refresh: 478800000  # Refresh Token: 7 days
 
 server:
   port: 8081
@@ -174,8 +173,8 @@ cloud:
       bucket: plist-bucket   # 버킷 이름
     stack:
       auto: false
-      
-spring:      
+
+spring:
   servlet:
     multipart:
       max-file-size: 20MB
