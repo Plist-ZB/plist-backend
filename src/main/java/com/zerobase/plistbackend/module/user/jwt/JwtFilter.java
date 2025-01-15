@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
       "/v3/api/auth/access", "/");
 
   private static final Set<String> GET_ALLOWED_PATH = Set.of(
-      "/v3/api/categories", "/v3/api/channels", "/channels/popular", "/channels/search");
+      "/v3/api/categories", "/v3/api/channels", "/v3/api/channels/popular", "/v3/api/channels/search");
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     if(GET_ALLOWED_PATH.stream().anyMatch(path::equals) && request.getMethod().equals("GET")
-    || path.startsWith("/channels/category/") && request.getMethod().equals("GET")) {
+    || path.startsWith("/v3/api/channels/category/") && request.getMethod().equals("GET")) {
       SecurityContextHolder.getContext().setAuthentication(
           new UsernamePasswordAuthenticationToken(null, null, new ArrayList<>()));
       filterChain.doFilter(request, response);
