@@ -14,6 +14,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+// 현재까지 사용되지 않는 클래스
 public class PlaylistResponse {
 
   private Long playlistId;
