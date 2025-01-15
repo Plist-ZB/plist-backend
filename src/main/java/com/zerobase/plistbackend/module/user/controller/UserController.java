@@ -44,9 +44,10 @@ public class UserController {
   @Operation(summary = "회원 정보 수정", description = "해당 회원의 프로필 업데이트를 진행합니다.")
   @PatchMapping(value = "/user/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ProfileResponse> editProfile(
-      @RequestPart("image") MultipartFile file,
-      @RequestPart("nickname") String nickName,
+      @RequestPart(value = "image", required = false) MultipartFile file,
+      @RequestPart(value = "nickname", required = false) String nickName,
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
     UserProfileRequest userProfileRequest = new UserProfileRequest(file, nickName);
     userProfileRequest.validate();
     return ResponseEntity.ok(userService.editProfile(userProfileRequest, customOAuth2User.findId()));
