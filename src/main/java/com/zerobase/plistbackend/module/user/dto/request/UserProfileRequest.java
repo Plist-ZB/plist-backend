@@ -1,5 +1,7 @@
 package com.zerobase.plistbackend.module.user.dto.request;
 
+import com.zerobase.plistbackend.module.user.exception.UserException;
+import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +21,7 @@ public record UserProfileRequest(MultipartFile image, String nickname) {
   private void validateFileSize() {
     if (image.getSize() > MAX_FILE_SIZE) {
       log.error("File size exceeds the maximum limit of 20MB.");
-      throw new IllegalArgumentException("File size exceeds the maximum limit of 20MB.");
+      throw new UserException(UserErrorStatus.FILE_SIZE_EXCEEDED);
     }
   }
 
@@ -27,8 +29,7 @@ public record UserProfileRequest(MultipartFile image, String nickname) {
     String fileName = image.getOriginalFilename();
     if (!isExtensionValid(fileName)) {
       log.error("Invalid file type. Only jpg, png, and webp files are allowed.");
-      throw new IllegalArgumentException(
-          "Invalid file type. Only jpg, png, and webp files are allowed.");
+      throw new UserException(UserErrorStatus.INVALID_FILE_TYPE);
     }
   }
 
