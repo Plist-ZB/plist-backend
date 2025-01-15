@@ -82,6 +82,9 @@ public class User {
   }
 
   public Boolean existFavoritePlayList(List<UserPlaylist> playlists) {
+    if(playlists == null) {
+      return false;
+    }
     for (UserPlaylist userPlaylist : playlists){
       if (userPlaylist.getUserPlaylistName().equals("favorite")) {
         return true;
