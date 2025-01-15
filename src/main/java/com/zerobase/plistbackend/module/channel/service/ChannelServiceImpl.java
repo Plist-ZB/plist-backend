@@ -111,11 +111,9 @@ public class ChannelServiceImpl implements ChannelService {
   @Override
   @Transactional(readOnly = true)
   public List<StreamingChannelResponse> findChannelFromChannelCategory(Long categoryId) {
-    Category category = categoryRepository.findById(categoryId)
-        .orElseThrow(() -> new CategoryException(CategoryErrorStatus.NOT_FOUND));
     List<Channel> channelList = channelRepository.findByChannelStatusAndCategorySortedParticipantCountDesc(
         ChannelStatus.CHANNEL_STATUS_ACTIVE,
-        category.getCategoryId());
+        categoryId);
 
     return channelList.stream().map(StreamingChannelResponse::createStreamingChannelResponse)
         .toList();
