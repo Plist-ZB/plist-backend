@@ -8,7 +8,7 @@ import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.websocket.exception.WebSocketException;
+import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -78,7 +78,7 @@ public class WebSocketController {
       @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
 
     if (!webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)) {
-      throw new WebSocketException(ChannelErrorStatus.NOT_HOST);
+      throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());

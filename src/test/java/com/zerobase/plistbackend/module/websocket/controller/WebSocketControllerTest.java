@@ -13,7 +13,7 @@ import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.websocket.exception.WebSocketException;
+import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -114,7 +114,7 @@ class WebSocketControllerTest {
     when(webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)).thenReturn(false);
 
     //then
-    WebSocketException exception = assertThrows(WebSocketException.class, () ->
+    WebSocketControllerException exception = assertThrows(WebSocketControllerException.class, () ->
         webSocketController.controlVideo(channelId, request, user));
 
     assertThat(exception.getErrorCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
