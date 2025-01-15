@@ -1,11 +1,16 @@
 package com.zerobase.plistbackend.module.websocket.service;
 
+import static com.zerobase.plistbackend.module.channel.type.ChannelStatus.CHANNEL_STATUS_ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.module.channel.entity.Channel;
+import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
@@ -22,6 +27,10 @@ class WebSocketServiceImplTest {
 
   @Mock
   private UserRepository userRepository;
+
+  @Mock
+  private ChannelRepository channelRepository;
+
 
   @InjectMocks
   private WebSocketServiceImpl chatService;
@@ -71,10 +80,61 @@ class WebSocketServiceImplTest {
   }
 
   @Test
-  void isHost_ShouldReturnFalse_WhenCalled() {
-    // TODO -> HOST를 식별할 무언가가 필요
-    // Act
+  @DisplayName("비디오 컨트롤을 요청한 유저가 호스트일 경우 true를 반환한다")
+  void success_isHost() {
+    // given
+    Long channelId = 1L;
 
-    // Assert
+    User mockUser = User.builder()
+        .userName("testUser")
+        .build();
+
+    CustomOAuth2User user = mock(CustomOAuth2User.class);
+
+    Channel mockChannel = Channel.builder()
+        .channelId(1L)
+        .channelHost(mockUser.getUserName())
+        .build();
+
+    when(user.getName()).thenReturn("testUser");
+    when(channelRepository.findByChannelIdAndChannelStatus(channelId,
+        CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
+    when(userRepository.findByUserName(mockUser.getUserName()))
+        .thenReturn(Optional.of(mockUser));
+
+    // when
+    boolean result = chatService.isHost(channelId, user, CHANNEL_STATUS_ACTIVE);
+
+    //then
+    assertThat(result).isTrue();
+  }
+  @Test
+  @DisplayName("비디오 컨트롤을 요청한 유저가 호스트가 아닐 경우 false를 반환한다")
+  void fail_isHost() {
+    // given
+    Long channelId = 1L;
+
+    User mockUser = User.builder()
+        .userName("testUser")
+        .build();
+
+    CustomOAuth2User user = mock(CustomOAuth2User.class);
+
+    Channel mockChannel = Channel.builder()
+        .channelId(1L)
+        .channelHost("")
+        .build();
+
+    when(user.getName()).thenReturn("testUser");
+    when(channelRepository.findByChannelIdAndChannelStatus(channelId,
+        CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
+    when(userRepository.findByUserName(mockUser.getUserName()))
+        .thenReturn(Optional.of(mockUser));
+
+    // when
+    boolean result = chatService.isHost(channelId, user, CHANNEL_STATUS_ACTIVE);
+
+    //then
+    assertThat(result).isFalse();
   }
 }
