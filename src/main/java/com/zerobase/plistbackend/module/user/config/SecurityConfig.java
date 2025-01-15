@@ -65,7 +65,7 @@ public class SecurityConfig {
         .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
           CorsConfiguration configuration = new CorsConfiguration();
           configuration.setAllowedOrigins(CORS_URLS);
-          configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+          configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
           configuration.setAllowCredentials(true);  // 쿠키 전송 허용
           configuration.setAllowedHeaders(Collections.singletonList("*"));
           configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
