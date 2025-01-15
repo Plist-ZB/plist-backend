@@ -44,8 +44,12 @@ public class UserServiceImpl implements UserService {
     log.info("updateProfile Request userId: {}", userId);
     User user = findUser(userId);
 
-    user.updateUserName(request.nickname());
-    user.updateImage(s3Util.putImage(request.image(), user.getUserEmail()));
+    if(request.nickname() != null) {
+      user.updateUserName(request.nickname());
+    }
+    if(request.image() != null) {
+      user.updateImage(s3Util.putImage(request.image(), user.getUserEmail()));
+    }
     return new ProfileResponse(user.getUserEmail(), user.getUserName(), user.getUserImage());
   }
 
