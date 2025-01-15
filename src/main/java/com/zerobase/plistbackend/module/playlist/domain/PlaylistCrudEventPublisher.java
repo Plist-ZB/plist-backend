@@ -18,7 +18,7 @@ public class PlaylistCrudEventPublisher {
 
   @EventListener
   public void handlePlaylistUpdateEvent(PlaylistCrudEvent event) {
-    log.info("Received playlist update event: {}", event.getChannelId());
+    log.info("Call Playlist Update Event : {}", event.getChannelId());
     Long destinationVariable = event.getChannelId();
     DetailChannelResponse result = channelService.findOneChannel(destinationVariable);
     messagingTemplate.convertAndSend("/sub/playlist." + destinationVariable, result.getVideoList());
