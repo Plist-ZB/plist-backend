@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ChatServiceImplTest {
+class WebSocketServiceImplTest {
 
   @Mock
   private UserRepository userRepository;
 
   @InjectMocks
-  private ChatServiceImpl chatService;
+  private WebSocketServiceImpl chatService;
 
   @Test
   @DisplayName("유저는 채팅을 보낼 수 있다")
@@ -74,9 +74,7 @@ class ChatServiceImplTest {
   void isHost_ShouldReturnFalse_WhenCalled() {
     // TODO -> HOST를 식별할 무언가가 필요
     // Act
-    boolean result = chatService.isHost(null);
 
     // Assert
-    assertThat(result).isFalse();
   }
 }

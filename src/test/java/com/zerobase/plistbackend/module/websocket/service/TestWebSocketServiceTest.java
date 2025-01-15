@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.websocket.service.mock.TestChatService;
+import com.zerobase.plistbackend.module.websocket.service.mock.TestWebSocketService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TestChatServiceTest {
+class TestWebSocketServiceTest {
 
-  private final ChatService chatService = new TestChatService();
+  private final WebSocketService webSocketService = new TestWebSocketService();
 
   @Test
   @DisplayName("채팅 메시지를 보낼 수 있다")
@@ -25,7 +25,7 @@ class TestChatServiceTest {
         .from(request, "testImg.testImg");
 
     //when
-    ChatMessageResponse result = chatService.sendMessage(request);
+    ChatMessageResponse result = webSocketService.sendMessage(request);
 
     //then
     assertThat(result).isNotNull();
