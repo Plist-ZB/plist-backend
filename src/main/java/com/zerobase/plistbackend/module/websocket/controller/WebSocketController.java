@@ -6,7 +6,7 @@ import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
@@ -36,8 +36,8 @@ public class WebSocketController {
       description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
   )
   @PostMapping("/chat.{channelId}")
-  @MessageMapping("/chat.{channelId}")
-  @SendTo("/sub/chat.{channelId}")
+  @MessageMapping("/chat.{channelId}") // 클라이언트가 메세지를 서버로 전송할 주소
+  @SendTo("/sub/chat.{channelId}") // 서버를 거치고 처리한 결과를 전송할 주소
   public ChatMessageResponse sendMessage(@Payload ChatMessageRequest request) {
     return webSocketService.sendMessage(request);
   }
