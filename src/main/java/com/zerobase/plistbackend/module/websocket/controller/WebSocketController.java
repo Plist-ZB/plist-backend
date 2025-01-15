@@ -1,14 +1,15 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
+import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
+import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.websocket.exception.ChatException;
-import com.zerobase.plistbackend.module.websocket.service.ChatService;
-import com.zerobase.plistbackend.module.websocket.type.ChatErrorStatus;
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
+import com.zerobase.plistbackend.module.websocket.exception.WebSocketException;
+import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Chatting API", description = "채팅과 관련된 API Controller")
-public class ChatController {
+public class WebSocketController {
 
-  private final ChatService chatService;
+  private final WebSocketService webSocketService;
   private final VideoSyncManager videoSyncManager;
 
   @Operation(
@@ -37,9 +38,8 @@ public class ChatController {
   @PostMapping("/chat.{channelId}")
   @MessageMapping("/chat.{channelId}")
   @SendTo("/sub/chat.{channelId}")
-  // 해당 부분은 channel의 Participant의 정보를 클라가 갖고 있다면 보내면 될듯?? -> 노션 보면됨
   public ChatMessageResponse sendMessage(@Payload ChatMessageRequest request) {
-    return chatService.sendMessage(request);
+    return webSocketService.sendMessage(request);
   }
 
   @Operation(
@@ -77,8 +77,8 @@ public class ChatController {
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
 
-    if (!chatService.isHost(user)) {
-      throw new ChatException(ChatErrorStatus.NOT_HOST);
+    if (!webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)) {
+      throw new WebSocketException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
