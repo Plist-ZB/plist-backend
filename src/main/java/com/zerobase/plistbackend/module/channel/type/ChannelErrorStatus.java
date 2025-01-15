@@ -33,12 +33,12 @@ public enum ChannelErrorStatus implements ErrorStatus {
   );
 
   private final int errorCode;
-  private final String message;
   private final String errorType;
+  private final String message;
 
-  ChannelErrorStatus(int errorCode, String message, String errorType) {
+  ChannelErrorStatus(int errorCode, String errorType, String message) {
     this.errorCode = errorCode;
-    this.message = message;
     this.errorType = errorType;
+    this.message = message;
   }
 }
