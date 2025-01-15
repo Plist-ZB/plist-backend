@@ -17,6 +17,18 @@ public enum UserErrorStatus implements ErrorStatus {
       HttpStatus.INTERNAL_SERVER_ERROR.value(),
       HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
       "파일 업로드가 실패했습니다."
+  ),
+
+  FILE_SIZE_EXCEEDED(
+      HttpStatus.BAD_REQUEST.value(),
+      HttpStatus.BAD_REQUEST.getReasonPhrase(),
+      "파일의 사이즈가 20MB를 초과했습니다."
+  ),
+
+  INVALID_FILE_TYPE(
+      HttpStatus.BAD_REQUEST.value(),
+      HttpStatus.BAD_REQUEST.getReasonPhrase(),
+   "파일 확장자는 jpg, png, webp만 가능합니다."
   );
 
   private final int errorCode;
