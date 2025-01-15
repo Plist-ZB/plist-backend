@@ -1,13 +1,13 @@
-package com.zerobase.plistbackend.module.chatting.controller;
+package com.zerobase.plistbackend.module.websocket.controller;
 
-import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.exception.ChatException;
-import com.zerobase.plistbackend.module.chatting.service.ChatService;
-import com.zerobase.plistbackend.module.chatting.type.ChatErrorStatus;
+import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.exception.ChatException;
+import com.zerobase.plistbackend.module.websocket.service.ChatService;
+import com.zerobase.plistbackend.module.websocket.type.ChatErrorStatus;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

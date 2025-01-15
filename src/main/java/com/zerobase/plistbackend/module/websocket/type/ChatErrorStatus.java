@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.type;
+package com.zerobase.plistbackend.module.websocket.type;
 
 import com.zerobase.plistbackend.common.app.exception.ErrorStatus;
 import lombok.Getter;

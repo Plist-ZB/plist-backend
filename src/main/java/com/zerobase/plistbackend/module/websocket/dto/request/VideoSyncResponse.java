@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.dto.request;
+package com.zerobase.plistbackend.module.websocket.dto.request;
 
 import lombok.Getter;
 

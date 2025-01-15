@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.controller;
+package com.zerobase.plistbackend.module.websocket.controller;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.exception.ChatException;
-import com.zerobase.plistbackend.module.chatting.service.ChatService;
+import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.exception.ChatException;
+import com.zerobase.plistbackend.module.websocket.service.ChatService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

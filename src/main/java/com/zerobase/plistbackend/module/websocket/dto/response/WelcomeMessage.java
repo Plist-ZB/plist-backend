@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.dto.response;
+package com.zerobase.plistbackend.module.websocket.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

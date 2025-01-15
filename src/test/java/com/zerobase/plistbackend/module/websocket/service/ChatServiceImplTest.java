@@ -1,11 +1,11 @@
-package com.zerobase.plistbackend.module.chatting.service;
+package com.zerobase.plistbackend.module.websocket.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;

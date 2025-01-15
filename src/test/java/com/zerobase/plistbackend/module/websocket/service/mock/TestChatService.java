@@ -1,8 +1,8 @@
-package com.zerobase.plistbackend.module.chatting.service.mock;
+package com.zerobase.plistbackend.module.websocket.service.mock;
 
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.service.ChatService;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.service.ChatService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 
 public class TestChatService implements ChatService {

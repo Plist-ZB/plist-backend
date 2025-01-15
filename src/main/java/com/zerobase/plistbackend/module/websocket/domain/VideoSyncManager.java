@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.domain;
+package com.zerobase.plistbackend.module.websocket.domain;
 
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;

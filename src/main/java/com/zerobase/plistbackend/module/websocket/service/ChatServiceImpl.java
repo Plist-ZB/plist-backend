@@ -1,7 +1,7 @@
-package com.zerobase.plistbackend.module.chatting.service;
+package com.zerobase.plistbackend.module.websocket.service;
 
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;

@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.domain;
+package com.zerobase.plistbackend.module.websocket.domain;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
