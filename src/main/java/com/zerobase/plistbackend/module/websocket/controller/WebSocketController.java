@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Chatting API", description = "채팅과 관련된 API Controller")
+@Tag(name = "WebSocket API", description = "WebSocket 관련된 API Controller")
 public class WebSocketController {
 
   private final WebSocketService webSocketService;
