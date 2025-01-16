@@ -67,11 +67,11 @@ public class Channel {
   private ChannelStatus channelStatus;
 
   @Column(nullable = false)
-  private String channelHost;
+  private Long channelHostId;
 
   private int channelLastParticipantCount;
 
-  @OneToOne(mappedBy = "channel", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "channel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private Playlist channelPlaylist = new Playlist();
 
@@ -84,7 +84,7 @@ public class Channel {
         .channelName(request.getChannelName())
         .category(category)
         .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
-        .channelHost(user.getUserName())
+        .channelHostId(user.getUserId())
         .build();
 
     Participant participant = Participant.host(user, channel);
@@ -94,12 +94,12 @@ public class Channel {
     return channel;
   }
 
-  public static void closeChannel(Channel channel) {
+  public static void closeChannel(Channel channel, List<Participant> participantList) {
     Date date = new Date();
     channel.channelFinishedAt = new Timestamp(date.getTime());
     channel.channelStatus = ChannelStatus.CHANNEL_STATUS_CLOSED;
     channel.channelLastParticipantCount = channel.getChannelParticipants().size();
-    for (Participant participant : channel.getChannelParticipants()) {
+    for (Participant participant : participantList) {
       channel.removeParticipant(participant);
     }
   }
