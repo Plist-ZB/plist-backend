@@ -94,12 +94,12 @@ public class Channel {
     return channel;
   }
 
-  public static void closeChannel(Channel channel, List<Participant> participantList) {
+  public static void closeChannel(Channel channel) {
     Date date = new Date();
     channel.channelFinishedAt = new Timestamp(date.getTime());
     channel.channelStatus = ChannelStatus.CHANNEL_STATUS_CLOSED;
     channel.channelLastParticipantCount = channel.getChannelParticipants().size();
-    for (Participant participant : participantList) {
+    for (Participant participant : channel.getChannelParticipants()) {
       channel.removeParticipant(participant);
     }
   }
