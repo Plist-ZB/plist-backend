@@ -66,7 +66,7 @@ public class YouTubeApi {
     } else if (keyword.length() != 11) {
       keyword = keyword + "%20Official%20Audio";
     }
-    return keyword;
+    return keyword.replace(" ", "%20");
   }
 
   private BufferedReader search(String keyword) throws IOException {
