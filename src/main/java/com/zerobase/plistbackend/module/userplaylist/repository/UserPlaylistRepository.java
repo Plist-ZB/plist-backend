@@ -15,4 +15,6 @@ public interface UserPlaylistRepository extends JpaRepository<UserPlaylist, Long
   boolean existsByUserAndUserPlaylistName(User user, String userPlaylistName);
 
   Optional<UserPlaylist> findByUserAndUserPlaylistName(User user, String userPlaylistName);
+
+  List<UserPlaylist> findByUserAndUserPlaylistNameContaining(User user, String userPlaylistName);
 }
