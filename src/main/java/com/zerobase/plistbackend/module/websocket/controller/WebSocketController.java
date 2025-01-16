@@ -77,7 +77,7 @@ public class WebSocketController {
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
 
-    if (!webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)) {
+    if (!webSocketService.isHost(channelId, user)) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());

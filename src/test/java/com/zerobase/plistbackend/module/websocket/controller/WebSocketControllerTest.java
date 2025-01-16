@@ -90,7 +90,7 @@ class WebSocketControllerTest {
     CustomOAuth2User user = mock(CustomOAuth2User.class);
 
     //when
-    when(webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)).thenReturn(true);
+    when(webSocketService.isHost(channelId, user)).thenReturn(true);
     VideoSyncResponse response = webSocketController.controlVideo(channelId, request, user);
 
     //then
@@ -111,7 +111,7 @@ class WebSocketControllerTest {
     CustomOAuth2User user = mock(CustomOAuth2User.class);
 
     //when
-    when(webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)).thenReturn(false);
+    when(webSocketService.isHost(channelId, user)).thenReturn(false);
 
     //then
     WebSocketControllerException exception = assertThrows(WebSocketControllerException.class, () ->

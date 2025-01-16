@@ -9,5 +9,5 @@ public interface WebSocketService {
 
   ChatMessageResponse sendMessage(ChatMessageRequest request);
 
-  boolean isHost(Long channelId, CustomOAuth2User user, ChannelStatus channelStatusActive);
+  boolean isHost(Long channelId, CustomOAuth2User user);
 }
