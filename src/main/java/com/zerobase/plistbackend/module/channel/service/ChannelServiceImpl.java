@@ -163,8 +163,7 @@ public class ChannelServiceImpl implements ChannelService {
     if (!channel.getChannelHost().equals(user.getUserName())) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
-    List<Participant> participantList = participantRepository.findByChannel(channel);
-    Channel.closeChannel(channel, participantList);
+    Channel.closeChannel(channel);
     channelRepository.save(channel);
   }
 
@@ -179,10 +178,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     if (!user.getParticipant().getChannel().equals(channel)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
-    }
-
-    if (channel.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
-      throw new ChannelException(ChannelErrorStatus.NOT_STREAMING);
     }
 
     channel.getChannelPlaylist().getVideoList()
