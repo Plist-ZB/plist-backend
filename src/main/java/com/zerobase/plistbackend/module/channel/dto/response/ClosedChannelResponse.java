@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
+import com.zerobase.plistbackend.module.user.entity.User;
 import java.time.Duration;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class ClosedChannelResponse {
   //  private Long channelCapacity;
 
 
-  public static ClosedChannelResponse createClosedChannelResponse(Channel channel) {
+  public static ClosedChannelResponse createClosedChannelResponse(Channel channel, User user) {
     String thumbnail = "";
     if (!channel.getChannelPlaylist().getVideoList().isEmpty()) {
       thumbnail = channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail();
@@ -31,7 +32,7 @@ public class ClosedChannelResponse {
         .channelCategoryName(channel.getCategory().getCategoryName())
         .channelThumbnail(thumbnail)
         .channelDurationTime(durationTime(channel))
-        .channelHost(channel.getChannelHost())
+        .channelHost(user.getUserName())
         .channelLastParticipantCount(channel.getChannelLastParticipantCount())
 //        .channelCapacity(channel.getChannelCapacity())
         .build();

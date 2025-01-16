@@ -19,7 +19,7 @@ public interface ChannelService {
 
   List<StreamingChannelResponse> findChannelFromChannelCategory(Long categoryId);
 
-  void enterChannel(CustomOAuth2User customOAuth2User, Long channelId);
+  void userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId);
 
   void userExitChannel(CustomOAuth2User customOAuth2User, Long channelId);
 
@@ -34,7 +34,7 @@ public interface ChannelService {
 
   DetailChannelResponse findOneChannel(Long channelId);
 
-  void updateChannelPlaylist(Long channelId, String updateChannelPlaylistJson);
+  void updateChannelPlaylist(Long channelId, String updateChannelPlaylistJson, CustomOAuth2User customOAuth2User);
 
   List<StreamingChannelResponse> findChannelListPopular();
 

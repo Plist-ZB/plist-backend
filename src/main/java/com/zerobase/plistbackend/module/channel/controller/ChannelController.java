@@ -49,75 +49,15 @@ public class ChannelController {
   }
 
   @Operation(
-      summary = "[최신순]현재 스트리밍 중인 모든 채널 조회",
-      description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 최신순으로 정렬됩니다."
-  )
-  @GetMapping("/channels")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelList() {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList();
-
-    return ResponseEntity.ok(streamingChannelResponseList);
-  }
-
-  @Operation(
-      summary = "[인기순]현재 스트리밍 중인 모든 채널 조회",
-      description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
-  )
-  @GetMapping("/channels/popular")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelListPopular() {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelListPopular();
-
-    return ResponseEntity.ok(streamingChannelResponseList);
-  }
-
-  //TODO
-  @Operation(
-      summary = "채널 상세 조회",
-      description = "채널ID과 일치하는 채널의 정보를 조회합니다."
-  )
-  @GetMapping("/channel/{channelId}")
-  public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId) {
-    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId);
-    return ResponseEntity.ok(detailChannelResponse);
-  }
-
-  @Operation(
-      summary = "현재 스트리밍 중인 채널 검색 기능",
-      description = "'채널 이름 & 채널 카테고리이름 & 채널 호스트닉네임' 이랑 검색어가 유사한 모든 채널을"
-          + " 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
-  )
-  @GetMapping("/channels/search")
-  public ResponseEntity<List<StreamingChannelResponse>> searchChannel(
-      @RequestParam("searchValue") String searchValue) {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.searchChannel(
-        searchValue);
-
-    return ResponseEntity.ok(streamingChannelResponseList);
-  }
-
-  @Operation(
-      summary = "카테고리ID로 채널 조회",
-      description = "카테고리ID와 일치하는 현재 스트리밍 중인 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
-  )
-  @GetMapping("/channels/category/{categoryId}")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelFromChannelCategory(
-      @PathVariable Long categoryId) {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelFromChannelCategory(
-        categoryId);
-
-    return ResponseEntity.ok(streamingChannelResponseList);
-  }
-
-  @Operation(
       summary = "사용자 채널 입장",
       description = "채널ID와 일치하는 채널에 사용자가 입장합니다."
   )
   @PatchMapping("/channel/{channelId}")
-  public ResponseEntity<Void> enterChannel(
+  public ResponseEntity<Void> userEnterChannel(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
-    channelService.enterChannel(customOAuth2User, channelId);
+    channelService.userEnterChannel(customOAuth2User, channelId);
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }
@@ -181,6 +121,21 @@ public class ChannelController {
   }
 
   @Operation(
+      summary = "채널 플레이리스트 순서 변경",
+      description = "채널ID와 일치하는 채널의 플레이리스트의 순서를 변경합니다."
+          + "이 API는 오직 프론트에서 받아온 변경된 플레이리스트를 현재 채널의 플레이리스트에 덮어씁니다."
+  )
+  @PatchMapping("/channel/{channelId}/update")
+  public ResponseEntity<Void> updateChannelPlaylist(
+      @PathVariable Long channelId,
+      @RequestBody String updateChannelPlaylistJson,
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson, customOAuth2User);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }//TODO : 테스트 필요
+
+  @Operation(
       summary = "채널 플레이리스트를 내 플레이리스트에 저장",
       description = "채널ID와 일치하는 채널의 플레이리스트를 내 플레이리스트로 저장합니다."
           + " 내 플레이리스트로 저장될 때 내 플레이리스트의 이름은 채널의 이름으로 저장됩니다."
@@ -196,18 +151,79 @@ public class ChannelController {
   }
 
   @Operation(
-      summary = "채널 플레이리스트 순서 변경",
-      description = "채널ID와 일치하는 채널의 플레이리스트의 순서를 변경합니다."
-          + "이 API는 오직 프론트에서 받아온 변경된 플레이리스트를 현재 채널의 플레이리스트에 덮어씁니다."
+      summary = "좋아요를 누른 영상 favorite플레이리스트에 저장",
+      description = "좋아요를 누르면 내 플레이리스트의 favorite 폴더로 저장됩니다."
   )
-  @PatchMapping("/channel/{channelId}/update")
-  public ResponseEntity<Void> updateChannelPlaylist(
-      @PathVariable Long channelId,
-      @RequestBody String updateChannelPlaylistJson) {
-    channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson);
+  @PostMapping("/user/favorite")
+  public ResponseEntity<Void> likeVideo(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+      @RequestBody VideoRequest videoRequest) {
+
+    channelService.likeVideo(customOAuth2User, videoRequest);
 
     return ResponseEntity.status(HttpStatus.OK).build();
-  }//TODO : 테스트 필요
+  }
+
+  // 검색 관련 컨트롤러
+
+  @Operation(
+      summary = "[최신순]현재 스트리밍 중인 모든 채널 조회",
+      description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 최신순으로 정렬됩니다."
+  )
+  @GetMapping("/channels")
+  public ResponseEntity<List<StreamingChannelResponse>> findChannelList() {
+    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList();
+
+    return ResponseEntity.ok(streamingChannelResponseList);
+  }
+
+  @Operation(
+      summary = "[인기순]현재 스트리밍 중인 모든 채널 조회",
+      description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
+  )
+  @GetMapping("/channels/popular")
+  public ResponseEntity<List<StreamingChannelResponse>> findChannelListPopular() {
+    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelListPopular();
+
+    return ResponseEntity.ok(streamingChannelResponseList);
+  }
+
+  @Operation(
+      summary = "현재 스트리밍 중인 채널 검색 기능",
+      description = "'채널 이름 & 채널 카테고리이름 & 채널 호스트닉네임' 이랑 검색어가 유사한 모든 채널을"
+          + " 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
+  )
+  @GetMapping("/channels/search")
+  public ResponseEntity<List<StreamingChannelResponse>> searchChannel(
+      @RequestParam("searchValue") String searchValue) {
+    List<StreamingChannelResponse> streamingChannelResponseList = channelService.searchChannel(
+        searchValue);
+
+    return ResponseEntity.ok(streamingChannelResponseList);
+  }
+
+  @Operation(
+      summary = "카테고리ID로 채널 조회",
+      description = "카테고리ID와 일치하는 현재 스트리밍 중인 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
+  )
+  @GetMapping("/channels/category/{categoryId}")
+  public ResponseEntity<List<StreamingChannelResponse>> findChannelFromChannelCategory(
+      @PathVariable Long categoryId) {
+    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelFromChannelCategory(
+        categoryId);
+
+    return ResponseEntity.ok(streamingChannelResponseList);
+  }
+
+  //TODO
+  @Operation(
+      summary = "채널 상세 조회",
+      description = "채널ID과 일치하는 채널의 정보를 조회합니다."
+  )
+  @GetMapping("/channel/{channelId}")
+  public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId) {
+    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId);
+    return ResponseEntity.ok(detailChannelResponse);
+  }
 
   @Operation(
       summary = "내 과거 호스트 내역",
@@ -231,21 +247,9 @@ public class ChannelController {
   public ResponseEntity<DetailClosedChannelResponse> findOneUserChannelHistory(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @PathVariable Long channelId) {
 
-    DetailClosedChannelResponse detailClosedChannelResponse = channelService.findOneUserChannelHistory(customOAuth2User, channelId);
+    DetailClosedChannelResponse detailClosedChannelResponse = channelService.findOneUserChannelHistory(
+        customOAuth2User, channelId);
 
     return ResponseEntity.ok(detailClosedChannelResponse);
-  }
-
-  @Operation(
-      summary = "좋아요를 누른 영상 favorite플레이리스트에 저장",
-      description = "좋아요를 누르면 내 플레이리스트의 favorite 폴더로 저장됩니다."
-  )
-  @PostMapping("/user/favorite")
-  public ResponseEntity<Void> likeVideo(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-      @RequestBody VideoRequest videoRequest) {
-
-    channelService.likeVideo(customOAuth2User, videoRequest);
-
-    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
