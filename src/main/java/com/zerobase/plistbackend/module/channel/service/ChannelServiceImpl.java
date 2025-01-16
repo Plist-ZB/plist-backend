@@ -20,6 +20,7 @@ import com.zerobase.plistbackend.module.home.model.Video;
 import com.zerobase.plistbackend.module.home.type.VideoErrorStatus;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
+import com.zerobase.plistbackend.module.playlist.domain.PlaylistCrudEvent;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
@@ -31,6 +32,7 @@ import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepo
 import com.zerobase.plistbackend.module.userplaylist.type.UserPlaylistErrorStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,7 @@ public class ChannelServiceImpl implements ChannelService {
   private final CategoryRepository categoryRepository;
   private final ParticipantRepository participantRepository;
   private final UserPlaylistRepository userPlaylistRepository;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
   @Transactional
@@ -172,6 +175,7 @@ public class ChannelServiceImpl implements ChannelService {
   public void addVideoToChannel(Long channelId, VideoRequest videoRequest,
       CustomOAuth2User customOAuth2User) {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+    System.out.println("user = " + user);
 
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
@@ -184,6 +188,8 @@ public class ChannelServiceImpl implements ChannelService {
         .add(Video.createVideo(videoRequest, channel.getChannelPlaylist().getVideoList()));
 
     channelRepository.save(channel);
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
+
   }
 
   @Override
@@ -210,6 +216,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelPlaylist().getVideoList().remove(video);
 
     channelRepository.save(channel);
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
   }
 
   @Override
@@ -247,6 +254,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelPlaylist().setVideoList(videoList);
 
     channelRepository.save(channel);
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
   }
 
   @Override

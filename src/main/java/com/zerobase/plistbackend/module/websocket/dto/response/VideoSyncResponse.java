@@ -1,5 +1,6 @@
-package com.zerobase.plistbackend.module.chatting.dto.request;
+package com.zerobase.plistbackend.module.websocket.dto.response;
 
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import lombok.Getter;
 
 @Getter

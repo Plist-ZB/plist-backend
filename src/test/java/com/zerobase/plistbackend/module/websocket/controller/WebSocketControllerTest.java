@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.chatting.controller;
+package com.zerobase.plistbackend.module.websocket.controller;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,33 +6,34 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.exception.ChatException;
-import com.zerobase.plistbackend.module.chatting.service.ChatService;
+import com.zerobase.plistbackend.common.app.exception.ErrorResponse;
+import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
+import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
+import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 @ExtendWith(MockitoExtension.class)
-class ChatControllerTest {
+class WebSocketControllerTest {
 
   @Mock
-  private ChatService chatService;
+  private WebSocketService webSocketService;
 
   @Mock
   private VideoSyncManager manager;
 
   @InjectMocks
-  private ChatController chatController;
+  private WebSocketController webSocketController;
 
   @Test
   @DisplayName("채팅 메시지를 보낼 수 있다")
@@ -47,8 +48,8 @@ class ChatControllerTest {
         .from(request, "testImg.testImg");
 
     //when
-    when(chatService.sendMessage(request)).thenReturn(response);
-    ChatMessageResponse messageResponse = chatController.sendMessage(request);
+    when(webSocketService.sendMessage(request)).thenReturn(response);
+    ChatMessageResponse messageResponse = webSocketController.sendMessage(request);
 
     //then
     assertThat(response).isEqualTo(messageResponse);
@@ -69,7 +70,7 @@ class ChatControllerTest {
     Long channelId = 1L;
 
     //when
-    VideoSyncResponse response = chatController.syncVideo(channelId, request);
+    VideoSyncResponse response = webSocketController.syncVideo(channelId, request);
 
     //then
     assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
@@ -89,8 +90,8 @@ class ChatControllerTest {
     CustomOAuth2User user = mock(CustomOAuth2User.class);
 
     //when
-    when(chatService.isHost(user)).thenReturn(true);
-    VideoSyncResponse response = chatController.controlVideo(channelId, request, user);
+    when(webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)).thenReturn(true);
+    VideoSyncResponse response = webSocketController.controlVideo(channelId, request, user);
 
     //then
     assertThat(response.getCurrentTime()).isEqualTo(response.getCurrentTime());
@@ -110,16 +111,16 @@ class ChatControllerTest {
     CustomOAuth2User user = mock(CustomOAuth2User.class);
 
     //when
-    when(chatService.isHost(user)).thenReturn(false);
+    when(webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)).thenReturn(false);
 
     //then
-    ChatException exception = assertThrows(ChatException.class, () ->
-        chatController.controlVideo(channelId, request, user));
+    WebSocketControllerException exception = assertThrows(WebSocketControllerException.class, () ->
+        webSocketController.controlVideo(channelId, request, user));
 
-    assertThat(exception.getMessage())
-        .isEqualTo("해당 권한은 호스트만 가능합니다.");
-    assertThat(exception.getErrorCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(exception.getErrorType()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    ErrorResponse errorResponse = ErrorResponse.create(exception.getErrorStatus());
+    assertThat(errorResponse.getErrorCode()).isEqualTo(exception.getErrorCode());
+    assertThat(errorResponse.getErrorType()).isEqualTo(exception.getErrorType());
+    assertThat(errorResponse.getMessage()).isEqualTo(exception.getMessage());
   }
 
   @Test
@@ -134,7 +135,7 @@ class ChatControllerTest {
     Long channelId = 1L;
 
     //when
-    VideoSyncResponse response = chatController.syncVideoForNewUser(channelId, request);
+    VideoSyncResponse response = webSocketController.syncVideoForNewUser(channelId, request);
     //the
     assertThat(response.getCurrentTime()).isEqualTo(response.getCurrentTime());
   }

@@ -33,6 +33,7 @@ public class SecurityConfig {
   private final JwtUtil jwtUtil;
   private final RefreshRepository refreshRepository;
 
+
   private static final String[] PUBLIC_URLS = {
       "/v3/api/",
       "/oauth2/**",
@@ -40,7 +41,7 @@ public class SecurityConfig {
       "/",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc","env"
+      "/sc","/env"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
@@ -104,6 +105,7 @@ public class SecurityConfig {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")));
 
     // JwtFilter 추가
+
     http
         .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 

@@ -1,14 +1,15 @@
-package com.zerobase.plistbackend.module.chatting.controller;
+package com.zerobase.plistbackend.module.websocket.controller;
 
-import com.zerobase.plistbackend.module.chatting.domain.VideoSyncManager;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
-import com.zerobase.plistbackend.module.chatting.dto.request.VideoSyncResponse;
-import com.zerobase.plistbackend.module.chatting.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.chatting.exception.ChatException;
-import com.zerobase.plistbackend.module.chatting.service.ChatService;
-import com.zerobase.plistbackend.module.chatting.type.ChatErrorStatus;
+import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
+import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
+import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
+import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Chatting API", description = "채팅과 관련된 API Controller")
-public class ChatController {
+@Tag(name = "WebSocket API", description = "WebSocket 관련된 API Controller")
+public class WebSocketController {
 
-  private final ChatService chatService;
+  private final WebSocketService webSocketService;
   private final VideoSyncManager videoSyncManager;
 
   @Operation(
@@ -35,11 +36,10 @@ public class ChatController {
       description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
   )
   @PostMapping("/chat.{channelId}")
-  @MessageMapping("/chat.{channelId}")
-  @SendTo("/sub/chat.{channelId}")
-  // 해당 부분은 channel의 Participant의 정보를 클라가 갖고 있다면 보내면 될듯?? -> 노션 보면됨
+  @MessageMapping("/chat.{channelId}") // 클라이언트가 메세지를 서버로 전송할 주소
+  @SendTo("/sub/chat.{channelId}") // 서버를 거치고 처리한 결과를 전송할 주소
   public ChatMessageResponse sendMessage(@Payload ChatMessageRequest request) {
-    return chatService.sendMessage(request);
+    return webSocketService.sendMessage(request);
   }
 
   @Operation(
@@ -77,8 +77,8 @@ public class ChatController {
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
 
-    if (!chatService.isHost(user)) {
-      throw new ChatException(ChatErrorStatus.NOT_HOST);
+    if (!webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)) {
+      throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());

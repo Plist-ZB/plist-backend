@@ -63,9 +63,6 @@ dependencies {
     //JSON
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
-    //Thymeleaf
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.4.1'
-
     //Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 

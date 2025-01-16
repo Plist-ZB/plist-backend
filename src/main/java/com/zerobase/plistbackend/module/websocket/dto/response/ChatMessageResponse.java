@@ -1,6 +1,6 @@
-package com.zerobase.plistbackend.module.chatting.dto.response;
+package com.zerobase.plistbackend.module.websocket.dto.response;
 
-import com.zerobase.plistbackend.module.chatting.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
