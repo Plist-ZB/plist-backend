@@ -57,7 +57,8 @@ public class ChannelController {
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
-    DetailChannelResponse detailChannelResponse = channelService.userEnterChannel(customOAuth2User, channelId);
+    DetailChannelResponse detailChannelResponse = channelService.userEnterChannel(customOAuth2User,
+        channelId);
 
     return ResponseEntity.status(HttpStatus.OK).body(detailChannelResponse);
   }
@@ -221,7 +222,8 @@ public class ChannelController {
   @GetMapping("/channel/{channelId}")
   public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId,
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId, customOAuth2User);
+    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId,
+        customOAuth2User);
     return ResponseEntity.ok(detailChannelResponse);
   }
 
