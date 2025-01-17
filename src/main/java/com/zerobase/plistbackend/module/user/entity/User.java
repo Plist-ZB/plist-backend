@@ -67,7 +67,7 @@ public class User {
   @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
   private Participant participant;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
   private List<UserPlaylist> playlists;
 
   public static User from(OAuth2Response response, UserRole userRole) {
