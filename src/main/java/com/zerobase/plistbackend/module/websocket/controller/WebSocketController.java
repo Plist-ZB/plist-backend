@@ -32,7 +32,8 @@ public class WebSocketController {
 
   @Operation(
       summary = "자신과 같은 채널에 속한 인원들 끼리 채팅을 주고받을 수 있습니다.",
-      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+      description = "WebSocket 연결을 통해 메시지를 전송합니다.REST 호출은 지원하지 않습니다."
+          + "-> 클라이언트가 데이터를 서버로 전송할 주소 /chat.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/chat.{channelId}"
   )
   @PostMapping("/chat.{channelId}")
   @MessageMapping("/chat.{channelId}") // 클라이언트가 메세지를 서버로 전송할 주소
@@ -44,7 +45,8 @@ public class WebSocketController {
   @Operation(
       summary = "클라이언트 측에서는 해당 Mapping 주소로 지속적으로 호스트가 보고있는 비디오의 currentTime을 서버로 보냅니다."
           + "그럼 구독자들은 비디오의 currntTime을 지속적으로 같이 받고 영상 시점을 공유합니다.",
-      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
+          + "-> 클라이언트가 데이터를 서버로 전송할 주소 /video.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
   @PostMapping("/video.{channelId}")
   @MessageMapping("/video.{channelId}")
@@ -57,7 +59,8 @@ public class WebSocketController {
 
   @Operation(
       summary = "클라이언트 측에서 지속적으로 받은 호스트의 비디오 currentTime을 새로운 사용자가 입장시 호스트의 시점으로 같이 비디오가 동기화됩니다.",
-      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
+          + "-> 클라이언트가 데이터를 서버로 전송할 주소 /join.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
   @PostMapping("/join.{channelId}")
   @MessageMapping("/join.{channelId}")
@@ -71,7 +74,8 @@ public class WebSocketController {
 
   @Operation(
       summary = "현재 재생중인 비디오의 재생 및 일시정지를 호스트만 요청할 수 있고 재생 및 일시정지의 시점을 사용자 모두 동기화 합니다.",
-      description = "WebSocket 연결을 통해 메시지를 전송합니다. **주의:** 이 API는 반드시 WebSocket을 통해 호출해야 하며, REST 호출은 지원하지 않습니다."
+      description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
+          + "-> 클라이언트가 데이터를 서버로 전송할 주소 /video.control.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
   @MessageMapping("/video.control.{channelId}")
   @SendTo("/sub/video.{channelId}")
@@ -85,5 +89,12 @@ public class WebSocketController {
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
     return new VideoSyncResponse(request);
   }
-
+  @Operation(
+      summary = "채널의 플레이리스트에서 변경 감지 시 작동, 채널에 속하는 플레이리스트의 최신 DB정보를 가져와 참여자들에게 전달",
+      description = "해당 엔드포인트는 /channel/{channelId}/add-video, /channel/{channelId}/update-video, /channel/{channelId}/delete-video 호출 시 작동"
+          + "결과를 전송할 엔드포인트 /sub/video.{channelId}"
+  )
+  @PostMapping("/trigger")
+  public void emptyVoid () {
+  }
 }
