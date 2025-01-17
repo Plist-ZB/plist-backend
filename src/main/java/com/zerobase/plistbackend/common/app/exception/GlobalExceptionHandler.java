@@ -14,39 +14,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(JsonParseException.class)
-  public ErrorResponse handleJsonParseException(JsonParseException e) {
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(UserPlaylistException.class)
-  public ErrorResponse handleJsonParseException(UserPlaylistException e) {
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(ChannelException.class)
-  public ErrorResponse handleChannelException(ChannelException e) {
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(UserException.class)
-  public ErrorResponse handleUserException(UserException e) {
-    log.error("UserException", e);
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(CategoryException.class)
-  public ErrorResponse handleCategoryException(CategoryException e) {
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(VideoException.class)
-  public ErrorResponse handleVideoException(VideoException e) {
-    return ErrorResponse.create(e.getErrorStatus());
-  }
-
-  @ExceptionHandler(WebSocketControllerException.class)
-  public ErrorResponse handleWebSocketControllerException(WebSocketControllerException e) {
+  @ExceptionHandler(BaseException.class)
+  public ErrorResponse handleBaseException(BaseException e) {
+    log.error("Error occurred: {} - {} - {}", e.getErrorStatus().getErrorCode(),
+        e.getErrorStatus().getErrorType(), e.getErrorStatus().getMessage());
     return ErrorResponse.create(e.getErrorStatus());
   }
 }

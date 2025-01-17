@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.common.app.exception.BaseException;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
+import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;

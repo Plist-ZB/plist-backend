@@ -29,6 +29,12 @@ public enum UserErrorStatus implements ErrorStatus {
       HttpStatus.BAD_REQUEST.value(),
       HttpStatus.BAD_REQUEST.getReasonPhrase(),
    "파일 확장자는 jpg, png, webp만 가능합니다."
+  ),
+
+  SEND_ERROR_RESPONSE_IOEXCEPTION(
+      HttpStatus.INTERNAL_SERVER_ERROR.value(),
+      HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+      "Json 에러 메시지 변환 중 에러가 발생했습니다."
   );
 
   private final int errorCode;

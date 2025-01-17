@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v3/api")
-@Tag(name = "User Service API", description = "회원 정보 관리")
+@Tag(name = "User Service API", description = "회원과 관련된 API Controller")
 public class UserController {
 
   private final UserServiceImpl userService;
