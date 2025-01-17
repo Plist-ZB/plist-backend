@@ -6,7 +6,7 @@ import com.zerobase.plistbackend.module.user.jwt.JwtFilter;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
 import com.zerobase.plistbackend.module.user.oauth2.CustomSuccessHandler;
 import com.zerobase.plistbackend.module.user.service.CustomOAuth2UserService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.zerobase.plistbackend.module.user.util.JsonResponseUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,7 +33,6 @@ public class SecurityConfig {
   private final CustomSuccessHandler customSuccessHandler;
   private final JwtUtil jwtUtil;
   private final RefreshRepository refreshRepository;
-
 
   private static final String[] PUBLIC_URLS = {
       "/v3/api/",
@@ -66,7 +66,8 @@ public class SecurityConfig {
         .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
           CorsConfiguration configuration = new CorsConfiguration();
           configuration.setAllowedOrigins(CORS_URLS);
-          configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+          configuration.setAllowedMethods(
+              Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
           configuration.setAllowCredentials(true);  // 쿠키 전송 허용
           configuration.setAllowedHeaders(Collections.singletonList("*"));
           configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
@@ -102,10 +103,10 @@ public class SecurityConfig {
     http
         .exceptionHandling((exception) ->
             exception.authenticationEntryPoint((request, response, authException) ->
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")));
+                JsonResponseUtil.sendErrorResponse(response, HttpStatus.UNAUTHORIZED,
+                    "Unauthorized")));
 
     // JwtFilter 추가
-
     http
         .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 
