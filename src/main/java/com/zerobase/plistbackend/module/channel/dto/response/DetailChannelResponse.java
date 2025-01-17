@@ -43,8 +43,12 @@ public class DetailChannelResponse {
   }
 
   private static Boolean isChannelHost(Channel channel) {
-    return channel.getChannelParticipants().get(channel.getChannelParticipants().size() - 1)
+    return channel.getChannelParticipants().get(getLastParticipant(channel))
         .getIsHost();
+  }
+
+  private static int getLastParticipant(Channel channel) {
+    return channel.getChannelParticipants().size() - 1;
   }
 
   public static String convertStringFormat(Timestamp channelCreatedAt) {
