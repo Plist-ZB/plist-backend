@@ -86,6 +86,7 @@ class WebSocketServiceImplTest {
     Long channelId = 1L;
 
     User mockUser = User.builder()
+        .userId(1L)
         .userName("testUser")
         .build();
 
@@ -93,7 +94,7 @@ class WebSocketServiceImplTest {
 
     Channel mockChannel = Channel.builder()
         .channelId(1L)
-        .channelHost(mockUser.getUserName())
+        .channelHostId(mockUser.getUserId())
         .build();
 
     when(user.getName()).thenReturn("testUser");
@@ -103,7 +104,7 @@ class WebSocketServiceImplTest {
         .thenReturn(Optional.of(mockUser));
 
     // when
-    boolean result = chatService.isHost(channelId, user, CHANNEL_STATUS_ACTIVE);
+    boolean result = chatService.isHost(channelId, user);
 
     //then
     assertThat(result).isTrue();
@@ -122,7 +123,7 @@ class WebSocketServiceImplTest {
 
     Channel mockChannel = Channel.builder()
         .channelId(1L)
-        .channelHost("")
+        .channelHostId(0L)
         .build();
 
     when(user.getName()).thenReturn("testUser");
@@ -132,7 +133,7 @@ class WebSocketServiceImplTest {
         .thenReturn(Optional.of(mockUser));
 
     // when
-    boolean result = chatService.isHost(channelId, user, CHANNEL_STATUS_ACTIVE);
+    boolean result = chatService.isHost(channelId, user);
 
     //then
     assertThat(result).isFalse();

@@ -1,13 +1,12 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
-import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
-import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +49,8 @@ public class WebSocketController {
   @PostMapping("/video.{channelId}")
   @MessageMapping("/video.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse syncVideo(@DestinationVariable Long channelId, @Payload VideoSyncRequest request) {
+  public VideoSyncResponse syncVideo(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) {
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     return new VideoSyncResponse(request);
   }
@@ -62,9 +62,10 @@ public class WebSocketController {
   @PostMapping("/join.{channelId}")
   @MessageMapping("/join.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId, @Payload VideoSyncRequest request) {
+  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) {
     Long currentTime = videoSyncManager.getCurrentTime(channelId);
-    log.info("New user joined channel {}" , currentTime);
+    log.info("New user joined channel {}", currentTime);
     return new VideoSyncResponse(request);
   }
 
@@ -77,7 +78,7 @@ public class WebSocketController {
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
 
-    if (!webSocketService.isHost(channelId, user, ChannelStatus.CHANNEL_STATUS_ACTIVE)) {
+    if (!webSocketService.isHost(channelId, user)) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());

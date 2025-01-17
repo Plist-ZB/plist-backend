@@ -15,6 +15,7 @@ import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
 import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
 import com.zerobase.plistbackend.module.userplaylist.type.UserPlaylistErrorStatus;
+import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistUtil;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistVideoConverter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,11 +37,14 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
+    UserPlaylist userPlaylist = UserPlaylist.createUserPlaylist(user, userPlaylistRequest);
+
     if (userPlaylistRepository.existsByUserAndUserPlaylistName(user,
         userPlaylistRequest.getUserPlaylistName())) {
-      throw new UserPlaylistException(UserPlaylistErrorStatus.ALREADY_EXIST);
+      userPlaylist.setUserPlaylistName(
+          new UserPlaylistUtil(userPlaylistRepository).generateNextName(user,
+              userPlaylistRequest.getUserPlaylistName()));
     }
-    UserPlaylist userPlaylist = UserPlaylist.createUserPlaylist(user, userPlaylistRequest);
 
     userPlaylistRepository.save(userPlaylist);
   }
@@ -51,9 +55,7 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    List<UserPlaylist> userPlaylists = userPlaylistRepository.findByUser(user);
-
-    return userPlaylists.stream().map(UserPlaylistResponse::fromEntity)
+    return user.getPlaylists().stream().map(UserPlaylistResponse::fromEntity)
         .collect(Collectors.toList());
   }
 
@@ -107,7 +109,7 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
   @Transactional
   public void removeVideo(CustomOAuth2User customOAuth2User, Long userPlaylistId,
       Long id) {
-    //1. 현재 로그인 중인 유저의 정보 받아오기
+
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistId(user,

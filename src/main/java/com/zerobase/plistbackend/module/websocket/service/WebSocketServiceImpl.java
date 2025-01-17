@@ -32,7 +32,7 @@ public class WebSocketServiceImpl implements WebSocketService {
   }
 
   @Override
-  public boolean isHost(Long channelId, CustomOAuth2User user, ChannelStatus channelStatusActive) {
+  public boolean isHost(Long channelId, CustomOAuth2User user) {
     // TODO -> 전용 DTO + 네이티브 쿼리로 쿼리 최적화
     Channel findChannel = channelRepository.findByChannelIdAndChannelStatus(channelId,
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
@@ -41,6 +41,6 @@ public class WebSocketServiceImpl implements WebSocketService {
     User findUser = userRepository.findByUserName(user.getName())
         .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
 
-    return findChannel.getChannelHost().equals(findUser.getUserName());
+    return findChannel.getChannelHostId().equals(findUser.getUserId());
   }
 }

@@ -14,17 +14,18 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
   List<Channel> findAllByChannelStatusSortedChannelIdDesc(
       @Param("channelStatus") ChannelStatus channelStatus);
 
-  @Query("SELECT c FROM Channel c LEFT JOIN c.channelParticipants p " +
+  @Query("SELECT c FROM Channel c " +
+      "LEFT JOIN c.channelParticipants p " +
+      "LEFT JOIN User u ON u.userId = c.channelHostId " +
       "WHERE c.channelStatus = :channelStatus " +
-      "AND (c.channelName LIKE %:channelName% OR c.category.categoryName LIKE %:categoryName% OR c.channelHost LIKE %:channelHost%) "
-      +
+      "AND (c.channelName LIKE %:channelName% OR c.category.categoryName LIKE %:categoryName% OR u.userName LIKE %:channelHostUserName%) " +
       "GROUP BY c.channelId " +
-      "ORDER BY COUNT(p) DESC")
+      "ORDER BY SIZE(p) DESC")
   List<Channel> search(
       @Param("channelStatus") ChannelStatus channelStatus,
       @Param("channelName") String channelName,
       @Param("categoryName") String categoryName,
-      @Param("channelHost") String channelHost);
+      @Param("channelHostUserName") String channelHostUserName);
 
   @Query("SELECT c FROM Channel c LEFT JOIN c.channelParticipants p " +
       "WHERE c.channelStatus = :channelStatus " +
@@ -43,8 +44,10 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
       @Param("channelStatus") ChannelStatus channelStatus
   );
 
-  List<Channel> findByChannelHostAndChannelStatus(String userName, ChannelStatus channelStatus);
+  List<Channel> findByChannelHostIdAndChannelStatus(Long userId, ChannelStatus channelStatus);
 
   Optional<Channel> findByChannelIdAndChannelStatus(Long channelId,
       ChannelStatus channelStatusActive);
+
+  Optional<Channel> findByChannelIdAndChannelHostId(Long channelId, Long userId);
 }

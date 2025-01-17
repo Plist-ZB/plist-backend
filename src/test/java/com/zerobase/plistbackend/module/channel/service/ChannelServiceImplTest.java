@@ -89,9 +89,27 @@ class ChannelServiceImplTest {
         .channelId(channelId)
         .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .channelPlaylist(new Playlist())
+        .channelHostId(1L)
         .build();
 
     when(channelRepository.findById(channelId)).thenReturn(Optional.of(channel));
+
+    Participant participant = Participant.builder()
+        .participantId(1L)
+        .channel(channel)
+        .build();
+
+    User user = User.builder()
+        .userId(1L)
+        .userEmail("TestUser@test.com")
+        .userName("TestUser")
+        .participant(participant)
+        .build();
+    when(userRepository.findByUserEmail(anyString())).thenReturn(user);
+
+
+    CustomOAuth2User oAuth2User = mock(CustomOAuth2User.class);
+    when(oAuth2User.findEmail()).thenReturn("TestUser@test.com");
 
     String updateChannelPlaylistJson =
         """
@@ -105,7 +123,7 @@ class ChannelServiceImplTest {
             ]
         """;
     // when
-    channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson);
+    channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson, oAuth2User);
 
     // then
     verify(eventPublisher, times(1)).publishEvent(any(PlaylistCrudEvent.class));
@@ -136,7 +154,7 @@ class ChannelServiceImplTest {
         .channelId(1L)
         .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .channelPlaylist(playlist)
-        .channelHost(user.getUserName())
+        .channelHostId(user.getUserId())
         .build();
     when(channelRepository.findById(channel.getChannelId())).thenReturn(Optional.of(channel));
 
