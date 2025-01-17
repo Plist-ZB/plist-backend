@@ -54,7 +54,7 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional
-  public void addChannel(CustomOAuth2User customOAuth2User,
+  public DetailChannelResponse addChannel(CustomOAuth2User customOAuth2User,
       ChannelRequest channelRequest) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
@@ -76,15 +76,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     channelRepository.save(channel);
-    log.info(channel.getChannelParticipants().toString());
-    log.info(channel.getChannelParticipants().get(0).getChannel().toString());
-    log.info(channel.getChannelParticipants().get(0).getUser().getUserId().toString());
-    log.info(channel.getChannelParticipants().get(0).getIsHost().toString());
+
+    return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
 
   @Override
   @Transactional
-  public void userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId) {
+  public DetailChannelResponse userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId) {
     Channel channel = channelRepository.findByChannelIdAndChannelStatus(channelId,
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
@@ -98,6 +96,8 @@ public class ChannelServiceImpl implements ChannelService {
     Participant participant = Participant.viewer(user, channel);
     channel.getChannelParticipants().add(participant);
     channelRepository.save(channel);
+
+    return DetailChannelResponse.createDetailChannelResponse(channel, user);
   } // TODO: 테스트코드를 활용해 테스트 필요.
 
   @Override
@@ -152,7 +152,7 @@ public class ChannelServiceImpl implements ChannelService {
         .add(Video.createVideo(videoRequest, channel.getChannelPlaylist().getVideoList()));
 
     channelRepository.save(channel);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
 
   }
 
@@ -180,7 +180,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelPlaylist().getVideoList().remove(video);
 
     channelRepository.save(channel);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 
   @Override
@@ -204,7 +204,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelPlaylist().setVideoList(videoList);
 
     channelRepository.save(channel);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 
   @Override
@@ -305,11 +305,14 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional(readOnly = true)
-  public DetailChannelResponse findOneChannel(Long channelId) {
+  public DetailChannelResponse findOneChannel(Long channelId, CustomOAuth2User customOAuth2User) {
     Channel channel = channelRepository.findByChannelIdAndChannelStatus(channelId,
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
-    return DetailChannelResponse.createDetailChannelResponse(channel);
+
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
 
   @Override

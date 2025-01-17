@@ -38,14 +38,14 @@ public class ChannelController {
       description = "채널을 생성합니다."
   )
   @PostMapping("/channel")
-  public ResponseEntity<Void> addChannel(
+  public ResponseEntity<DetailChannelResponse> addChannel(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @Valid @RequestBody ChannelRequest channelRequest) {
 
-    channelService.addChannel(customOAuth2User,
+    DetailChannelResponse detailChannelResponse = channelService.addChannel(customOAuth2User,
         channelRequest);
 
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(detailChannelResponse);
   }
 
   @Operation(
@@ -53,13 +53,13 @@ public class ChannelController {
       description = "채널ID와 일치하는 채널에 사용자가 입장합니다."
   )
   @PatchMapping("/channel/{channelId}")
-  public ResponseEntity<Void> userEnterChannel(
+  public ResponseEntity<DetailChannelResponse> userEnterChannel(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @PathVariable Long channelId) {
 
-    channelService.userEnterChannel(customOAuth2User, channelId);
+    DetailChannelResponse detailChannelResponse = channelService.userEnterChannel(customOAuth2User, channelId);
 
-    return ResponseEntity.status(HttpStatus.OK).build();
+    return ResponseEntity.status(HttpStatus.OK).body(detailChannelResponse);
   }
 
   @Operation(
@@ -214,14 +214,14 @@ public class ChannelController {
     return ResponseEntity.ok(streamingChannelResponseList);
   }
 
-  //TODO
   @Operation(
       summary = "채널 상세 조회",
       description = "채널ID과 일치하는 채널의 정보를 조회합니다."
   )
   @GetMapping("/channel/{channelId}")
-  public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId) {
-    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId);
+  public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId,
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    DetailChannelResponse detailChannelResponse = channelService.findOneChannel(channelId, customOAuth2User);
     return ResponseEntity.ok(detailChannelResponse);
   }
 

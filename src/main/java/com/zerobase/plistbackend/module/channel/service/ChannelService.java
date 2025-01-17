@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ChannelService {
 
-  void addChannel(CustomOAuth2User customOAuth2User, ChannelRequest channelRequest);
+  DetailChannelResponse addChannel(CustomOAuth2User customOAuth2User, ChannelRequest channelRequest);
 
   List<StreamingChannelResponse> findChannelList();
 
@@ -19,7 +19,7 @@ public interface ChannelService {
 
   List<StreamingChannelResponse> findChannelFromChannelCategory(Long categoryId);
 
-  void userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId);
+  DetailChannelResponse userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId);
 
   void userExitChannel(CustomOAuth2User customOAuth2User, Long channelId);
 
@@ -32,7 +32,7 @@ public interface ChannelService {
 
   void savePlaylistToUserPlaylist(Long channelId, CustomOAuth2User customOAuth2User);
 
-  DetailChannelResponse findOneChannel(Long channelId);
+  DetailChannelResponse findOneChannel(Long channelId, CustomOAuth2User customOAuth2User);
 
   void updateChannelPlaylist(Long channelId, String updateChannelPlaylistJson, CustomOAuth2User customOAuth2User);
 
