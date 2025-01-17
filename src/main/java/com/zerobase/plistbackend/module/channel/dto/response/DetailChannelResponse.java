@@ -20,6 +20,17 @@ public class DetailChannelResponse {
   private List<Video> videoList;
   private boolean isHost;
 
+  public static DetailChannelResponse createDetailChannelResponse(Channel channel) {
+
+    return DetailChannelResponse.builder()
+        .channelId(channel.getChannelId())
+        .channelName(channel.getChannelName())
+        .channelCreatedAt(convertStringFormat(channel.getChannelCreatedAt()))
+        .videoList(channel.getChannelPlaylist().getVideoList())
+        .isHost(isChannelHost(channel))
+        .build();
+  }
+
   public static DetailChannelResponse createDetailChannelResponse(Channel channel, User user) {
 
     return DetailChannelResponse.builder()
@@ -29,6 +40,11 @@ public class DetailChannelResponse {
         .videoList(channel.getChannelPlaylist().getVideoList())
         .isHost(user.getParticipant().getIsHost())
         .build();
+  }
+
+  private static Boolean isChannelHost(Channel channel) {
+    return channel.getChannelParticipants().get(channel.getChannelParticipants().size() - 1)
+        .getIsHost();
   }
 
   public static String convertStringFormat(Timestamp channelCreatedAt) {
