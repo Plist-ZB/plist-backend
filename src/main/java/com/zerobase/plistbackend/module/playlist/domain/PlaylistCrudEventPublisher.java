@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.playlist.domain;
 
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.service.ChannelService;
+import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,8 @@ public class PlaylistCrudEventPublisher {
   public void handlePlaylistUpdateEvent(PlaylistCrudEvent event) {
     log.info("Call Playlist Update Event : {}", event.getChannelId());
     Long destinationVariable = event.getChannelId();
-    DetailChannelResponse result = channelService.findOneChannel(destinationVariable);
+    CustomOAuth2User customOAuth2User = event.getCustomOAuth2User();
+    DetailChannelResponse result = channelService.findOneChannel(destinationVariable, customOAuth2User);
     messagingTemplate.convertAndSend("/sub/playlist." + destinationVariable, result.getVideoList());
   }
 }
