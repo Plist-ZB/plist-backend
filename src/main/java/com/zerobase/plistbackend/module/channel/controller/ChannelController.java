@@ -216,8 +216,8 @@ public class ChannelController {
   }
 
   @Operation(
-      summary = "채널 상세 조회",
-      description = "채널ID과 일치하는 채널의 정보를 조회합니다."
+      summary = "[백엔드 테스트용]채널 상세 조회",
+      description = "[백엔드 테스트용]채널ID과 일치하는 채널의 정보를 조회합니다."
   )
   @GetMapping("/channel/{channelId}")
   public ResponseEntity<DetailChannelResponse> findOneChannel(@PathVariable Long channelId,
