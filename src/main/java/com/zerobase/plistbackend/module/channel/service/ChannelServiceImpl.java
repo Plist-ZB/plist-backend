@@ -77,7 +77,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     channelRepository.save(channel);
 
-    return DetailChannelResponse.createDetailChannelResponse(channel, user);
+    return DetailChannelResponse.createDetailChannelResponse(channel);
   }
 
   @Override
@@ -97,7 +97,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelParticipants().add(participant);
     channelRepository.save(channel);
 
-    return DetailChannelResponse.createDetailChannelResponse(channel, user);
+    return DetailChannelResponse.createDetailChannelResponse(channel);
   } // TODO: 테스트코드를 활용해 테스트 필요.
 
   @Override
