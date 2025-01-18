@@ -7,7 +7,6 @@ import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.OAuth2UserErrorStatus;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
@@ -32,15 +31,12 @@ public class WebSocketServiceImpl implements WebSocketService {
   }
 
   @Override
-  public boolean isHost(Long channelId, CustomOAuth2User user) {
+  public boolean isHost(Long channelId) {
     // TODO -> 전용 DTO + 네이티브 쿼리로 쿼리 최적화
     Channel findChannel = channelRepository.findByChannelIdAndChannelStatus(channelId,
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    User findUser = userRepository.findByUserName(user.getName())
-        .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
-
-    return findChannel.getChannelHostId().equals(findUser.getUserId());
+    return findChannel.getHost();
   }
 }
