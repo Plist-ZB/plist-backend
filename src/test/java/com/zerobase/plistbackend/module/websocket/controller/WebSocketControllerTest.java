@@ -41,11 +41,12 @@ class WebSocketControllerTest {
     //given
     User user = User.builder()
         .userName("user")
-        .userEmail("test@test.com")
-        .userImage("userimg.img")
+        .userEmail("test@email.com")
+        .userImage("testimg.img")
         .build();
+
     ChatMessageRequest request = ChatMessageRequest.builder()
-        .email(user.getUserEmail())
+        .email("test@email.com")
         .message("안녕하세요")
         .build();
 
@@ -58,7 +59,7 @@ class WebSocketControllerTest {
 
     //then
     assertThat(response).isEqualTo(messageResponse);
-    assertThat(response.getSender()).isEqualTo("user");
+    assertThat(response.getSender()).isEqualTo(user.getUserName());
     assertThat(response.getMessage()).isEqualTo("안녕하세요");
   }
 

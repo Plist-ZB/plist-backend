@@ -16,7 +16,7 @@ public class ChatMessageResponse {
   private String message;
   private String userProfileImg;
 
-  public static ChatMessageResponse from(ChatMessageRequest request,User findUser) {
+  public static ChatMessageResponse from(ChatMessageRequest request, User findUser) {
     return ChatMessageResponse.builder()
         .sender(findUser.getUserName())
         .message(request.getMessage())
