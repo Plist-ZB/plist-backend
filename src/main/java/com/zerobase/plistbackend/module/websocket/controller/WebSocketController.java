@@ -1,7 +1,6 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
@@ -17,7 +16,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -77,12 +75,13 @@ public class WebSocketController {
       description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
           + "-> 클라이언트가 데이터를 서버로 전송할 주소 /video.control.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
+  @PostMapping("/video.control.{channelId}")
   @MessageMapping("/video.control.{channelId}")
   @SendTo("/sub/video.{channelId}")
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request, @AuthenticationPrincipal CustomOAuth2User user) {
+      @Payload VideoSyncRequest request) {
 
-    if (!webSocketService.isHost(channelId, user)) {
+    if (!webSocketService.isHost(channelId)) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());

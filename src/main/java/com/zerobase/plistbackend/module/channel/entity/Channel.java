@@ -110,4 +110,9 @@ public class Channel {
     participant.getUser().setParticipant(null);
     participant.setUser(null);
   }
+
+  public boolean getHost() {
+    return getChannelParticipants().stream()
+        .anyMatch(Participant::getIsHost);
+  }
 }
