@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.module.websocket.dto.response;
 
+import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +16,11 @@ public class ChatMessageResponse {
   private String message;
   private String userProfileImg;
 
-  public static ChatMessageResponse from(ChatMessageRequest request, String userProfileImg) {
+  public static ChatMessageResponse from(ChatMessageRequest request, User findUser) {
     return ChatMessageResponse.builder()
-        .sender(request.getSender())
+        .sender(findUser.getUserName())
         .message(request.getMessage())
-        .userProfileImg(userProfileImg)
+        .userProfileImg(findUser.getUserImage())
         .build();
   }
 }

@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
   }
 
   private User findUser(Long id) {
+    System.out.println(" findUser =  " + "유저 조회 호출 됨");
     return userRepository.findById(id)
         .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND));
   }

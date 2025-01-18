@@ -42,24 +42,24 @@ class WebSocketServiceImplTest {
   @DisplayName("유저는 채팅을 보낼 수 있다")
   void success_sendMessage() {
     // given
-    String sender = "testSender";
+    String emial = "testSender";
     String userImage = "TestImg.img";
 
     ChatMessageRequest request = ChatMessageRequest.builder()
-        .sender(sender)
+        .email(emial)
         .message("test message")
         .build();
 
     User mockUser = User.builder()
-        .userName(sender)
+        .userName(emial)
         .userImage(userImage)
         .build();
     // when
-    when(userRepository.findByUserName(sender)).thenReturn(Optional.of(mockUser));
+    when(userRepository.findByUserEmail(emial)).thenReturn(mockUser);
     ChatMessageResponse response = webSocketService.sendMessage(request);
 
     assertThat(response).isNotNull();
-    assertThat(response.getSender()).isEqualTo(sender);
+    assertThat(response.getSender()).isEqualTo(emial);
     assertThat(response.getUserProfileImg()).isEqualTo(userImage);
   }
 
@@ -67,19 +67,21 @@ class WebSocketServiceImplTest {
   @DisplayName("유저가 아닌 회원이 메세지를 보내면 Exception이 발생한다")
   void fail_sendMessage() {
     // given
-    String sender = "NotUser";
+    String email = "NotUser";
+
+
     ChatMessageRequest request = ChatMessageRequest.builder()
-        .sender(sender)
+        .email(email)
         .message("test message")
         .build();
 
     // when
-    when(userRepository.findByUserName(sender)).thenReturn(Optional.empty());
+    when(userRepository.findByUserEmail(email)).thenReturn(null);
 
     // then
     assertThatThrownBy(() -> webSocketService.sendMessage(request))
         .isInstanceOf(OAuth2UserException.class)
-        .hasMessageContaining(  "해당 유저는 존재하지 않는 유저입니다.");
+        .hasMessageContaining("해당 유저는 존재하지 않는 유저입니다.");
   }
 
   @Test
