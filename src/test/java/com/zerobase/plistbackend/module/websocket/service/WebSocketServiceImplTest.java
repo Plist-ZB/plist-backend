@@ -40,11 +40,9 @@ class WebSocketServiceImplTest {
   @DisplayName("유저는 채팅을 보낼 수 있다")
   void success_sendMessage() {
     // given
-    String emial = "testSender";
+    String email = "testSender";
     String userImage = "TestImg.img";
 
-    ChatMessageRequest request = ChatMessageRequest.builder()
-        .email(emial)
 
     ChatMessageRequest request = ChatMessageRequest.builder()
         .email(email)
@@ -52,17 +50,17 @@ class WebSocketServiceImplTest {
         .build();
 
     User mockUser = User.builder()
-        .userName(emial)
+        .userName(email)
         .userImage(userImage)
         .build();
 
     // when
-    when(userRepository.findByUserEmail(emial)).thenReturn(mockUser);
+    when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
     ChatMessageResponse response = webSocketService.sendMessage(request);
 
     // then
     assertThat(response).isNotNull();
-    assertThat(response.getSender()).isEqualTo(emial);
+    assertThat(response.getSender()).isEqualTo(email);
     assertThat(response.getUserProfileImg()).isEqualTo(userImage);
   }
 
