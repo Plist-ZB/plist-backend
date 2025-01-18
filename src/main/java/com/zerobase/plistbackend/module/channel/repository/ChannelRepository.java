@@ -46,8 +46,12 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
   List<Channel> findByChannelHostIdAndChannelStatus(Long userId, ChannelStatus channelStatus);
 
-  Optional<Channel> findByChannelIdAndChannelStatus(Long channelId,
-      ChannelStatus channelStatusActive);
+  @Query("SELECT c FROM Channel c " +
+      "LEFT JOIN FETCH c.channelPlaylist p " +
+      "LEFT JOIN FETCH c.channelParticipants cp " +
+      "WHERE c.channelId = :channelId AND c.channelStatus = :channelStatus")
+  Optional<Channel> findByChannelIdAndChannelStatus(@Param("channelId") Long channelId,
+      @Param("channelStatus") ChannelStatus channelStatus);
 
   Optional<Channel> findByChannelIdAndChannelHostId(Long channelId, Long userId);
 }
