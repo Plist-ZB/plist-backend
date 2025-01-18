@@ -77,6 +77,7 @@ public class WebSocketController {
       description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
           + "-> 클라이언트가 데이터를 서버로 전송할 주소 /video.control.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
+  @PostMapping("/video.control.{channelId}")
   @MessageMapping("/video.control.{channelId}")
   @SendTo("/sub/video.{channelId}")
   public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
