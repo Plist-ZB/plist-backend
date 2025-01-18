@@ -3,19 +3,17 @@ package com.zerobase.plistbackend.module.websocket.service;
 import static com.zerobase.plistbackend.module.channel.type.ChannelStatus.CHANNEL_STATUS_ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.common.app.exception.BaseException;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
+import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
-import com.zerobase.plistbackend.module.user.exception.UserException;
-import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +21,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class WebSocketServiceImplTest {
 
   @Mock
@@ -35,7 +36,7 @@ class WebSocketServiceImplTest {
 
 
   @InjectMocks
-  private WebSocketServiceImpl chatService;
+  private WebSocketServiceImpl webSocketService;
 
   @Test
   @DisplayName("유저는 채팅을 보낼 수 있다")
@@ -55,7 +56,7 @@ class WebSocketServiceImplTest {
         .build();
     // when
     when(userRepository.findByUserName(sender)).thenReturn(Optional.of(mockUser));
-    ChatMessageResponse response = chatService.sendMessage(request);
+    ChatMessageResponse response = webSocketService.sendMessage(request);
 
     assertThat(response).isNotNull();
     assertThat(response.getSender()).isEqualTo(sender);
@@ -76,7 +77,7 @@ class WebSocketServiceImplTest {
     when(userRepository.findByUserName(sender)).thenReturn(Optional.empty());
 
     // then
-    assertThatThrownBy(() -> chatService.sendMessage(request))
+    assertThatThrownBy(() -> webSocketService.sendMessage(request))
         .isInstanceOf(OAuth2UserException.class)
         .hasMessageContaining(  "해당 유저는 존재하지 않는 유저입니다.");
   }
@@ -89,27 +90,36 @@ class WebSocketServiceImplTest {
 
     User mockUser = User.builder()
         .userId(1L)
-        .userName("testUser")
         .build();
 
-    CustomOAuth2User user = mock(CustomOAuth2User.class);
-
+    userRepository.save(mockUser);
     Channel mockChannel = Channel.builder()
         .channelId(1L)
+        .channelParticipants(List.of(Participant.builder()
+            .participantId(mockUser.getUserId())
+            .isHost(true)
+            .user(mockUser)
+            .build()))
         .channelHostId(mockUser.getUserId())
         .build();
 
-    when(user.getName()).thenReturn("testUser");
+
+    channelRepository.save(mockChannel);
+
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-    when(userRepository.findByUserName(mockUser.getUserName()))
-        .thenReturn(Optional.of(mockUser));
+
+    boolean isHost = mockChannel.getChannelParticipants().stream()
+        .anyMatch(Participant::getIsHost);
+    System.out.println("isHost = " + isHost);
 
     // when
-    boolean result = chatService.isHost(channelId, user);
+    boolean result = webSocketService.isHost(channelId);
+    System.out.println("result = " + result);
 
     //then
     assertThat(result).isTrue();
+    assertThat(isHost).isTrue();
   }
   @Test
   @DisplayName("비디오 컨트롤을 요청한 유저가 호스트가 아닐 경우 false를 반환한다")
@@ -117,27 +127,24 @@ class WebSocketServiceImplTest {
     // given
     Long channelId = 1L;
 
-    User mockUser = User.builder()
-        .userName("testUser")
-        .build();
-
-    CustomOAuth2User user = mock(CustomOAuth2User.class);
-
     Channel mockChannel = Channel.builder()
         .channelId(1L)
         .channelHostId(0L)
         .build();
 
-    when(user.getName()).thenReturn("testUser");
+    channelRepository.save(mockChannel);
+
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-    when(userRepository.findByUserName(mockUser.getUserName()))
-        .thenReturn(Optional.of(mockUser));
+
+    boolean isHost = mockChannel.getChannelParticipants().stream()
+        .anyMatch(Participant::getIsHost);
 
     // when
-    boolean result = chatService.isHost(channelId, user);
+    boolean result = webSocketService.isHost(channelId);
 
     //then
     assertThat(result).isFalse();
+    assertThat(isHost).isFalse();
   }
 }
