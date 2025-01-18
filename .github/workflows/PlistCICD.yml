@@ -1,6 +1,10 @@
 name: PlistCICD
 
 on:
+  workflow_dispatch: # 수동 트리거 추가
+  push:
+    branches:
+      - main # main 브랜치에 변경사항이 있을 때도 실행
   pull_request:
     branches:
       - main
