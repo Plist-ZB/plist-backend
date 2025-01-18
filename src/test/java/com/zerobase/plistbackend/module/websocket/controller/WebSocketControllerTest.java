@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.zerobase.plistbackend.common.app.exception.ErrorResponse;
+import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
@@ -38,13 +39,18 @@ class WebSocketControllerTest {
   @DisplayName("채팅 메시지를 보낼 수 있다")
   void testSendMessage() {
     //given
+    User user = User.builder()
+        .userName("user")
+        .userEmail("test@test.com")
+        .userImage("userimg.img")
+        .build();
     ChatMessageRequest request = ChatMessageRequest.builder()
-        .sender("TestMember1")
+        .email(user.getUserEmail())
         .message("안녕하세요")
         .build();
 
     ChatMessageResponse response = ChatMessageResponse
-        .from(request, "testImg.testImg");
+        .from(request, user);
 
     //when
     when(webSocketService.sendMessage(request)).thenReturn(response);
@@ -52,7 +58,7 @@ class WebSocketControllerTest {
 
     //then
     assertThat(response).isEqualTo(messageResponse);
-    assertThat(response.getSender()).isEqualTo("TestMember1");
+    assertThat(response.getSender()).isEqualTo("user");
     assertThat(response.getMessage()).isEqualTo("안녕하세요");
   }
 
