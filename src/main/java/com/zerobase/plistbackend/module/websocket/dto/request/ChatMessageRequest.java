@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class ChatMessageRequest {
   private String email;
   private String message;
-
 }

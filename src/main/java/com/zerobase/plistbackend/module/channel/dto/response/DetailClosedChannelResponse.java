@@ -16,6 +16,7 @@ public class DetailClosedChannelResponse {
   private String channelName;
   private String channelCategoryName;
   private String channelThumbnail;
+  private String channelCreatedAt;
   private String channelDurationTime;
   private String channelHost;
   private List<Video> videoList;
@@ -34,6 +35,7 @@ public class DetailClosedChannelResponse {
         .channelName(channel.getChannelName())
         .channelCategoryName(channel.getCategory().getCategoryName())
         .channelThumbnail(thumbnail)
+        .channelCreatedAt(DetailChannelResponse.convertStringFormat(channel.getChannelCreatedAt()))
         .channelDurationTime(durationTime(channel))
         .channelHost(user.getUserName())
         .videoList(channel.getChannelPlaylist().getVideoList())

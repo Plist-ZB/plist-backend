@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @ExtendWith(MockitoExtension.class)
 @Transactional
 class WebSocketServiceImplTest {
@@ -33,7 +32,6 @@ class WebSocketServiceImplTest {
 
   @Mock
   private ChannelRepository channelRepository;
-
 
   @InjectMocks
   private WebSocketServiceImpl webSocketService;
@@ -47,6 +45,9 @@ class WebSocketServiceImplTest {
 
     ChatMessageRequest request = ChatMessageRequest.builder()
         .email(emial)
+
+    ChatMessageRequest request = ChatMessageRequest.builder()
+        .email(email)
         .message("test message")
         .build();
 
@@ -54,10 +55,12 @@ class WebSocketServiceImplTest {
         .userName(emial)
         .userImage(userImage)
         .build();
+
     // when
     when(userRepository.findByUserEmail(emial)).thenReturn(mockUser);
     ChatMessageResponse response = webSocketService.sendMessage(request);
 
+    // then
     assertThat(response).isNotNull();
     assertThat(response.getSender()).isEqualTo(emial);
     assertThat(response.getUserProfileImg()).isEqualTo(userImage);
@@ -105,24 +108,16 @@ class WebSocketServiceImplTest {
         .channelHostId(mockUser.getUserId())
         .build();
 
-
-    channelRepository.save(mockChannel);
-
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
 
-    boolean isHost = mockChannel.getChannelParticipants().stream()
-        .anyMatch(Participant::getIsHost);
-    System.out.println("isHost = " + isHost);
-
     // when
     boolean result = webSocketService.isHost(channelId);
-    System.out.println("result = " + result);
 
-    //then
+    // then
     assertThat(result).isTrue();
-    assertThat(isHost).isTrue();
   }
+
   @Test
   @DisplayName("비디오 컨트롤을 요청한 유저가 호스트가 아닐 경우 false를 반환한다")
   void fail_isHost() {
@@ -134,19 +129,13 @@ class WebSocketServiceImplTest {
         .channelHostId(0L)
         .build();
 
-    channelRepository.save(mockChannel);
-
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-
-    boolean isHost = mockChannel.getChannelParticipants().stream()
-        .anyMatch(Participant::getIsHost);
 
     // when
     boolean result = webSocketService.isHost(channelId);
 
-    //then
+    // then
     assertThat(result).isFalse();
-    assertThat(isHost).isFalse();
   }
 }
