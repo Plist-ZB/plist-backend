@@ -6,10 +6,8 @@ import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
-import com.zerobase.plistbackend.module.user.type.OAuth2UserErrorStatus;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +24,8 @@ public class WebSocketServiceImpl implements WebSocketService {
 
   @Override
   public ChatMessageResponse sendMessage(ChatMessageRequest request) {
-    User findUser = userRepository.findByUserName(request.getSender())
-        .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
-    return ChatMessageResponse.from(request, findUser.getUserImage());
+    User findUser = userRepository.findByUserEmail(request.getEmail());
+    return ChatMessageResponse.from(request,findUser);
   }
 
   @Override
@@ -38,8 +35,7 @@ public class WebSocketServiceImpl implements WebSocketService {
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    User findUser = userRepository.findByUserName(user.getName())
-        .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
+    User findUser = userRepository.findByUserEmail(user.findEmail());
 
     return findChannel.getChannelHostId().equals(findUser.getUserId());
   }

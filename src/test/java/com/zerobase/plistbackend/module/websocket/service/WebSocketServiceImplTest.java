@@ -2,16 +2,12 @@ package com.zerobase.plistbackend.module.websocket.service;
 
 import static com.zerobase.plistbackend.module.channel.type.ChannelStatus.CHANNEL_STATUS_ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.common.app.exception.BaseException;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
-import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
@@ -42,10 +38,11 @@ class WebSocketServiceImplTest {
   void success_sendMessage() {
     // given
     String sender = "testSender";
+    String email = "testEmail";
     String userImage = "TestImg.img";
 
     ChatMessageRequest request = ChatMessageRequest.builder()
-        .sender(sender)
+        .email(email)
         .message("test message")
         .build();
 
@@ -54,7 +51,8 @@ class WebSocketServiceImplTest {
         .userImage(userImage)
         .build();
     // when
-    when(userRepository.findByUserName(sender)).thenReturn(Optional.of(mockUser));
+
+    when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
     ChatMessageResponse response = chatService.sendMessage(request);
 
     assertThat(response).isNotNull();
@@ -62,24 +60,6 @@ class WebSocketServiceImplTest {
     assertThat(response.getUserProfileImg()).isEqualTo(userImage);
   }
 
-  @Test
-  @DisplayName("유저가 아닌 회원이 메세지를 보내면 Exception이 발생한다")
-  void fail_sendMessage() {
-    // given
-    String sender = "NotUser";
-    ChatMessageRequest request = ChatMessageRequest.builder()
-        .sender(sender)
-        .message("test message")
-        .build();
-
-    // when
-    when(userRepository.findByUserName(sender)).thenReturn(Optional.empty());
-
-    // then
-    assertThatThrownBy(() -> chatService.sendMessage(request))
-        .isInstanceOf(OAuth2UserException.class)
-        .hasMessageContaining(  "해당 유저는 존재하지 않는 유저입니다.");
-  }
 
   @Test
   @DisplayName("비디오 컨트롤을 요청한 유저가 호스트일 경우 true를 반환한다")
@@ -90,6 +70,7 @@ class WebSocketServiceImplTest {
     User mockUser = User.builder()
         .userId(1L)
         .userName("testUser")
+        .userEmail("testEmail")
         .build();
 
     CustomOAuth2User user = mock(CustomOAuth2User.class);
@@ -99,11 +80,11 @@ class WebSocketServiceImplTest {
         .channelHostId(mockUser.getUserId())
         .build();
 
-    when(user.getName()).thenReturn("testUser");
+    when(user.findEmail()).thenReturn(mockUser.getUserEmail());
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-    when(userRepository.findByUserName(mockUser.getUserName()))
-        .thenReturn(Optional.of(mockUser));
+    when(userRepository.findByUserEmail(mockUser.getUserEmail()))
+        .thenReturn(mockUser);
 
     // when
     boolean result = chatService.isHost(channelId, user);
@@ -128,11 +109,10 @@ class WebSocketServiceImplTest {
         .channelHostId(0L)
         .build();
 
-    when(user.getName()).thenReturn("testUser");
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-    when(userRepository.findByUserName(mockUser.getUserName()))
-        .thenReturn(Optional.of(mockUser));
+    when(userRepository.findByUserEmail(mockUser.getUserEmail()))
+        .thenReturn(mockUser);
 
     // when
     boolean result = chatService.isHost(channelId, user);
