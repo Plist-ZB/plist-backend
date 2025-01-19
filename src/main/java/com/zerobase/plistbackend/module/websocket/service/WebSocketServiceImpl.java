@@ -25,19 +25,24 @@ public class WebSocketServiceImpl implements WebSocketService {
 
   @Override
   public ChatMessageResponse sendMessage(ChatMessageRequest request) {
-    User findUser = userRepository.findByUserEmail(request.getEmail());
-    if (findUser == null) {
+    User findedUser = userRepository.findByUserEmail(request.getEmail());
+    if (findedUser == null) {
       throw new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND);
     }
-    return ChatMessageResponse.from(request, findUser);
+    return ChatMessageResponse.from(request, findedUser);
   }
 
   @Override
-  public boolean isHost(Long channelId) {
-    Channel findChannel = channelRepository.findByChannelIdAndChannelStatus(channelId,
+  public boolean isHost(Long channelId, String email) {
+    Channel findedChannel = channelRepository.findByChannelIdAndChannelStatus(channelId,
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    return findChannel.getHost();
+    User findedUser = userRepository.findByUserEmail(email);
+    if (findedUser == null) {
+      throw new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND);
+    }
+
+    return findedChannel.validateIfHostRequest(findedUser.getUserId());
   }
 }

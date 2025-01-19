@@ -7,5 +7,5 @@ public interface WebSocketService {
 
   ChatMessageResponse sendMessage(ChatMessageRequest request);
 
-  boolean isHost(Long channelId);
+  boolean isHost(Long channelId, String email);
 }

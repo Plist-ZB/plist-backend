@@ -50,6 +50,7 @@ class WebSocketServiceImplTest {
         .build();
 
     User mockUser = User.builder()
+        .userId(1L)
         .userName(email)
         .userImage(userImage)
         .build();
@@ -70,7 +71,6 @@ class WebSocketServiceImplTest {
     // given
     String email = "NotUser";
 
-
     ChatMessageRequest request = ChatMessageRequest.builder()
         .email(email)
         .message("test message")
@@ -79,7 +79,8 @@ class WebSocketServiceImplTest {
     // when
     when(userRepository.findByUserEmail(email)).thenReturn(null);
 
-    // then
+
+    // then: OAuth2UserException 예외 발생 검증
     assertThatThrownBy(() -> webSocketService.sendMessage(request))
         .isInstanceOf(OAuth2UserException.class)
         .hasMessageContaining("해당 유저는 존재하지 않는 유저입니다.");
@@ -92,10 +93,12 @@ class WebSocketServiceImplTest {
     Long channelId = 1L;
 
     User mockUser = User.builder()
+        .userEmail("testUser@email.com")
         .userId(1L)
         .build();
 
     userRepository.save(mockUser);
+
     Channel mockChannel = Channel.builder()
         .channelId(1L)
         .channelParticipants(List.of(Participant.builder()
@@ -109,8 +112,10 @@ class WebSocketServiceImplTest {
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
 
+    when(userRepository.findByUserEmail("testUser@email.com")).thenReturn(mockUser);
+
     // when
-    boolean result = webSocketService.isHost(channelId);
+    boolean result = webSocketService.isHost(channelId, mockUser.getUserEmail());
 
     // then
     assertThat(result).isTrue();
@@ -129,9 +134,12 @@ class WebSocketServiceImplTest {
 
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
+    when(userRepository.findByUserEmail("testUser@email.com")).thenReturn(User.builder()
+        .userEmail("testfailUser")
+        .build());
 
     // when
-    boolean result = webSocketService.isHost(channelId);
+    boolean result = webSocketService.isHost(channelId, "testUser@email.com");
 
     // then
     assertThat(result).isFalse();
