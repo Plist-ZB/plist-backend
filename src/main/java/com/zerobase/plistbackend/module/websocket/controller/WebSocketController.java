@@ -18,7 +18,9 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -82,8 +84,7 @@ public class WebSocketController {
   @SendTo("/sub/video.{channelId}")
   public VideoControlResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoControlRequest request) {
-
-    if (!webSocketService.isHost(channelId)) {
+    if (!webSocketService.isHost(channelId, request.getEmail())) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
