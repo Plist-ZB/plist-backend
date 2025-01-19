@@ -3,8 +3,10 @@ package com.zerobase.plistbackend.module.websocket.controller;
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
@@ -78,15 +80,15 @@ public class WebSocketController {
   @PostMapping("/video.control.{channelId}")
   @MessageMapping("/video.control.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse controlVideo(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) {
+  public VideoControlResponse controlVideo(@DestinationVariable Long channelId,
+      @Payload VideoControlRequest request) {
 
     if (!webSocketService.isHost(channelId)) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
-    return new VideoSyncResponse(request);
+    return new VideoControlResponse(request);
   }
   @Operation(
       summary = "채널의 플레이리스트에서 변경 감지 시 작동, 채널에 속하는 플레이리스트의 최신 DB정보를 가져와 참여자들에게 전달",
