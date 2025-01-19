@@ -111,8 +111,7 @@ public class Channel {
     participant.setUser(null);
   }
 
-  public boolean getHost() {
-    return getChannelParticipants().stream()
-        .anyMatch(Participant::getIsHost);
+  public boolean validateIfHostRequest(Long userId) {
+    return channelHostId.equals(userId);
   }
 }
