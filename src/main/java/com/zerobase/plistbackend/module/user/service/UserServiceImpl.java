@@ -25,8 +25,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public ProfileResponse findProfile(String email) {
     log.info("Find Profile Request email: {}", email);
-    User user = userRepository.findByUserEmail(email);
-    return new ProfileResponse(email, user.getUserName(), user.getUserImage());
+    return userRepository.findProfileByEmail(email);
   }
 
   @Override
@@ -54,7 +53,6 @@ public class UserServiceImpl implements UserService {
   }
 
   private User findUser(Long id) {
-    System.out.println(" findUser =  " + "유저 조회 호출 됨");
     return userRepository.findById(id)
         .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND));
   }
