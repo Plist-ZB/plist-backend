@@ -11,8 +11,10 @@ import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
+import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
@@ -86,7 +88,8 @@ class WebSocketControllerTest {
   @DisplayName("채널의 호스트는 비디오의 재생 및 일시정지를 누를 수 있다")
   void testControlVideo() {
     //given
-    VideoSyncRequest request = VideoSyncRequest.builder()
+    VideoControlRequest request = VideoControlRequest.builder()
+        .email("TestUser@email.com")
         .videoId("TestVideoId")
         .playState(1L)
         .currentTime(200L)
@@ -95,8 +98,8 @@ class WebSocketControllerTest {
 
 
     //when
-    when(webSocketService.isHost(channelId)).thenReturn(true);
-    VideoSyncResponse response = webSocketController.controlVideo(channelId, request);
+    when(webSocketService.isHost(channelId, request.getEmail())).thenReturn(true);
+    VideoControlResponse response = webSocketController.controlVideo(channelId, request);
 
     //then
     assertThat(response.getCurrentTime()).isEqualTo(response.getCurrentTime());
@@ -106,7 +109,7 @@ class WebSocketControllerTest {
   @DisplayName("채널의 호스트가 아닐 경우 재생 및 일시정지를 누르면 에러가 발생한다")
   void testControlVideoNotHost() {
     //given
-    VideoSyncRequest request = VideoSyncRequest.builder()
+    VideoControlRequest request = VideoControlRequest.builder()
         .videoId("TestVideoId")
         .playState(1L)
         .currentTime(200L)
@@ -116,7 +119,7 @@ class WebSocketControllerTest {
     CustomOAuth2User user = mock(CustomOAuth2User.class);
 
     //when
-    when(webSocketService.isHost(channelId)).thenReturn(false);
+    when(webSocketService.isHost(channelId, request.getEmail())).thenReturn(false);
 
     //then
     WebSocketControllerException exception = assertThrows(WebSocketControllerException.class, () ->
