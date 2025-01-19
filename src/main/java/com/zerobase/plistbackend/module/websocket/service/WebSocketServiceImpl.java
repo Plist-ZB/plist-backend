@@ -38,7 +38,9 @@ public class WebSocketServiceImpl implements WebSocketService {
             ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    User findedUser = findedChannel.getUserFromParticipantsByEmail(email, findedChannel);
+    User findedUser = findedChannel.findUserFromParticipantsByEmail(email, findedChannel)
+        .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
+
     return findedChannel.validateIfHostRequest(findedUser.getUserId());
   }
 
