@@ -6,6 +6,8 @@ import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.playlist.entity.Playlist;
 import com.zerobase.plistbackend.module.user.entity.User;
+import com.zerobase.plistbackend.module.user.exception.OAuth2UserException;
+import com.zerobase.plistbackend.module.user.type.OAuth2UserErrorStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,5 +115,13 @@ public class Channel {
 
   public boolean validateIfHostRequest(Long userId) {
     return channelHostId.equals(userId);
+  }
+
+  public User getUserFromParticipantsByEmail(String email, Channel findedChannel) {
+    return findedChannel.getChannelParticipants().stream()
+        .map(Participant::getUser)
+        .filter(user -> user.getUserEmail().equals(email))
+        .findAny()
+        .orElseThrow(() -> new OAuth2UserException(OAuth2UserErrorStatus.NOT_FOUND));
   }
 }

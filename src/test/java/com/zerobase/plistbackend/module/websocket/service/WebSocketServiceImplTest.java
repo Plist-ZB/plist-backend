@@ -112,8 +112,6 @@ class WebSocketServiceImplTest {
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
 
-    when(userRepository.findByUserEmail("testUser@email.com")).thenReturn(mockUser);
-
     // when
     boolean result = webSocketService.isHost(channelId, mockUser.getUserEmail());
 
@@ -129,14 +127,27 @@ class WebSocketServiceImplTest {
 
     Channel mockChannel = Channel.builder()
         .channelId(1L)
-        .channelHostId(0L)
+        .channelHostId(1L)
         .build();
+    channelRepository.save(mockChannel);
+
+
+    User user = User.builder()
+        .userId(2L)
+        .userEmail("testUser@email.com")
+        .build();
+    userRepository.save(user);
+
+    Participant participant = Participant.builder()
+        .channel(mockChannel)
+        .user(user)
+        .isHost(false)
+        .build();
+
+    mockChannel.getChannelParticipants().add(participant);
 
     when(channelRepository.findByChannelIdAndChannelStatus(channelId,
         CHANNEL_STATUS_ACTIVE)).thenReturn(Optional.of(mockChannel));
-    when(userRepository.findByUserEmail("testUser@email.com")).thenReturn(User.builder()
-        .userEmail("testfailUser")
-        .build());
 
     // when
     boolean result = webSocketService.isHost(channelId, "testUser@email.com");
