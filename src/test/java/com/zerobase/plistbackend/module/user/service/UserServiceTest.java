@@ -55,15 +55,16 @@ public class UserServiceTest {
   @DisplayName("유저 정보 찾기 성공")
   void testFindProfileSuccess() {
     String email = "test@example.com";
-    when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
+    ProfileResponse response = new ProfileResponse("test@example.com", "Test User", "test-image-url");
+    when(userRepository.findProfileByEmail(email)).thenReturn(response);
 
-    ProfileResponse response = userService.findProfile(email);
+    ProfileResponse actualResponse = userService.findProfile(email);
 
-    assertEquals(email, response.email());
-    assertEquals("Test User", response.nickname());
-    assertEquals("test-image-url", response.image());
+    assertEquals(email, actualResponse.email());
+    assertEquals("Test User", actualResponse.nickname());
+    assertEquals("test-image-url", actualResponse.image());
 
-    verify(userRepository).findByUserEmail(email);
+    verify(userRepository).findProfileByEmail(email);
   }
 
   @Test
