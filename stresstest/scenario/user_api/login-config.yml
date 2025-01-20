@@ -1,0 +1,11 @@
+config:
+  target: 'http://13.209.237.110:8081' # Green
+  phases:
+    - duration : 50
+      arrivalRate: 5
+      name: login-test
+scenarios:
+  - name: login
+    flow:
+      - get:
+          url: "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8081/login/oauth2/code/google"
