@@ -113,15 +113,15 @@ class ChannelServiceImplTest {
 
     String updateChannelPlaylistJson =
         """
-            [
-              {
-                "id": 1,
-                "videoName": "Test Video Name",
-                "videoThumbnail": "https://example.com/thumbnail.jpg",
-                "videoId": "abc123xyz"
-              }
-            ]
-        """;
+                [
+                  {
+                    "id": 1,
+                    "videoName": "Test Video Name",
+                    "videoThumbnail": "https://example.com/thumbnail.jpg",
+                    "videoId": "abc123xyz"
+                  }
+                ]
+            """;
     // when
     channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson, oAuth2User);
 
