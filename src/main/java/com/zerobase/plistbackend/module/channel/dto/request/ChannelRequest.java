@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ChannelRequest {
 
   @Schema(description = "채널 이름", maxLength = 50)
-  @Size(max = 50, message = "채널이름은 최대 50자까지 작성할 수 있습니다.")
+  @Size(min = 1, max = 50, message = "채널이름은 최대 50자까지 작성할 수 있습니다.")
   private String channelName;
 
   @Schema(description = "채널에 추가할 내 플레이리스트 Id", nullable = true)
