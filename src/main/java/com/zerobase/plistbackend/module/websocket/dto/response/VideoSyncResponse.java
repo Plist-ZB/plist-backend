@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.websocket.dto.response;
 
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.videointerface.VideoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoSyncResponse {
+public class VideoSyncResponse implements VideoResponse {
   private String videoId;
   private Long playStates;
   private Long currentTime;
