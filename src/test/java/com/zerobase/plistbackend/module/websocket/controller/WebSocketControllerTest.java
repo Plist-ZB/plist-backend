@@ -16,6 +16,7 @@ import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlReques
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
+import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import org.junit.jupiter.api.DisplayName;
@@ -79,14 +80,13 @@ class WebSocketControllerTest {
 
     final String TYPE = "videoState";
     //when
-    String jsonResult = webSocketController.syncVideo(channelId,
+    VideoSyncResponse response = webSocketController.syncVideo(channelId,
         request);
-
 
 //    Long currentTime = responseMap.get(TYPE).getCurrentTime();
 
     //then
-//    assertThat(request.getCurrentTime()).isEqualTo(responseMap.get(TYPE).getCurrentTime());
+    assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
   }
 
   @Test
@@ -138,7 +138,7 @@ class WebSocketControllerTest {
 
   @Test
   @DisplayName("채널에 새롭게 들어온 유저는 현재 영상의 currentTime을 받아 영상 시점이 호스트와 같게 동기화 된다")
-  void testSyncVideoForNewUser() throws JsonProcessingException {
+  void testSyncVideoForNewUser() {
       //given
     VideoSyncRequest request = VideoSyncRequest.builder()
         .videoId("TestVideoId")
@@ -148,11 +148,10 @@ class WebSocketControllerTest {
     Long channelId = 1L;
 
     //when
-    String jsonResult = webSocketController.syncVideoForNewUser(
+    VideoSyncResponse response = webSocketController.syncVideoForNewUser(
         channelId, request);
     //the
 
-    System.out.println("jsonResult = " + jsonResult);
-//    assertThat(request.getCurrentTime()).isEqualTo(jsonResult.getCurrentTime());
+    assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
   }
 }

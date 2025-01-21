@@ -1,9 +1,6 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
-import com.zerobase.plistbackend.module.websocket.domain.VideoResponseJsonMap;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
@@ -32,8 +29,6 @@ public class WebSocketController {
 
   private final WebSocketService webSocketService;
   private final VideoSyncManager videoSyncManager;
-  private final VideoResponseJsonMap jsonMap = new VideoResponseJsonMap(); // 제 로컬쪽에 인텔리제이 캐쉬버그있어서 Component 애노테이션이 안먹어요 ㅠㅠ
-  private final ObjectMapper mapper = new ObjectMapper();
 
 
   @Operation(
@@ -57,13 +52,10 @@ public class WebSocketController {
   @PostMapping("/video.{channelId}")
   @MessageMapping("/video.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public String syncVideo(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) throws JsonProcessingException {
+  public VideoSyncResponse syncVideo(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) {
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
-
-    final String TYPE = "videoState";
-    jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
-    return mapper.writeValueAsString(jsonMap);
+    return new VideoSyncResponse(request);
   }
 
   @Operation(
@@ -74,14 +66,11 @@ public class WebSocketController {
   @PostMapping("/join.{channelId}")
   @MessageMapping("/join.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public String  syncVideoForNewUser(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) throws JsonProcessingException {
+  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) {
     Long currentTime = videoSyncManager.getCurrentTime(channelId);
     log.info("New user joined channel {}", currentTime);
-
-    final String TYPE = "videoState";
-    jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
-    return mapper.writeValueAsString(jsonMap);
+    return new VideoSyncResponse(request);
   }
 
   @Operation(
