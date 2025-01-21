@@ -62,6 +62,7 @@ public class WebSocketController {
 
     final String TYPE = "videoState";
     jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
+    log.info("jsonMap.getVideoDataResponseMap() = {}", jsonMap.getVideoDataResponseMap());
     return jsonMap.getVideoDataResponseMap();
   }
 
@@ -80,6 +81,7 @@ public class WebSocketController {
 
     final String TYPE = "videoState";
     jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
+    log.info("jsonMap.getVideoDataResponseMap() = {}", jsonMap.getVideoDataResponseMap());
     return jsonMap.getVideoDataResponseMap();
   }
 

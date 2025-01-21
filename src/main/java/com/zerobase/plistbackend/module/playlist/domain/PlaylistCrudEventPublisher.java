@@ -30,7 +30,7 @@ public class PlaylistCrudEventPublisher {
     CustomOAuth2User customOAuth2User = event.getCustomOAuth2User();
     DetailChannelResponse result = channelService.findOneChannel(destinationVariable, customOAuth2User);
     videoMap.put(PLAYLIST,result.getVideoList());
-
+    log.info("videoMap = {}", videoMap);
     messagingTemplate.convertAndSend("/sub/video." + destinationVariable, videoMap);
   }
 }
