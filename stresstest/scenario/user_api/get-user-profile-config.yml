@@ -1,6 +1,6 @@
 # 40 ~ 50 초대에 병목현상 발생 평균 요청 시간이 184ms -> 461ms
 config:
-  target: 'http://13.209.237.110:8081' # Green
+  target: 'http://13.209.237.110' # Green
   phases:
     - duration : 50
       arrivalRate: 5
@@ -9,6 +9,6 @@ scenarios:
   - name: getUserProfile
     flow:
       - get:
-          url: "http://13.209.237.110:8081/v3/api/user/profile"
+          url: "http://13.209.237.110/v3/api/user/profile"
           headers:
             Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsImVtYWlsIjoicGFyazgyNjAyQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJpZCI6MSwiZXhwaXJlZCI6MTczNzQyODMxMzY3MiwiaWF0IjoxNzM3MzU5OTEzLCJleHAiOjE3Mzc0MjgzMTN9.EzRU7NCsU4TYZWEvD41q6IIjRwlBD6KZp37i05hLiK0"
