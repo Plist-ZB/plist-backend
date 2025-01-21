@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VideoSyncResponse implements VideoResponse {
+  private String type;
   private String videoId;
   private Long playStates;
   private Long currentTime;
 
   public VideoSyncResponse(VideoSyncRequest request) {
+    this.type = "VIDEO_STATE";
     this.videoId = request.getVideoId();
     this.playStates = request.getPlayState();
     this.currentTime = request.getCurrentTime();
