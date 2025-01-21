@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
+import com.zerobase.plistbackend.module.websocket.domain.VideoResponseJsonMap;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
@@ -8,10 +9,12 @@ import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.videointerface.VideoResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -29,6 +32,8 @@ public class WebSocketController {
 
   private final WebSocketService webSocketService;
   private final VideoSyncManager videoSyncManager;
+  private final VideoResponseJsonMap jsonMap = new VideoResponseJsonMap(); // 제 로컬쪽에 인텔리제이 캐쉬버그있어서 Component 애노테이션이 안먹어요 ㅠㅠ
+
 
   @Operation(
       summary = "자신과 같은 채널에 속한 인원들 끼리 채팅을 주고받을 수 있습니다.",
@@ -51,10 +56,13 @@ public class WebSocketController {
   @PostMapping("/video.{channelId}")
   @MessageMapping("/video.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse syncVideo(@DestinationVariable Long channelId,
+  public Map<String, VideoResponse> syncVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request) {
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
-    return new VideoSyncResponse(request);
+
+    final String TYPE = "videoState";
+    jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
+    return jsonMap.getVideoDataResponseMap();
   }
 
   @Operation(
@@ -65,11 +73,14 @@ public class WebSocketController {
   @PostMapping("/join.{channelId}")
   @MessageMapping("/join.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId,
+  public Map<String, VideoResponse>  syncVideoForNewUser(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request) {
     Long currentTime = videoSyncManager.getCurrentTime(channelId);
     log.info("New user joined channel {}", currentTime);
-    return new VideoSyncResponse(request);
+
+    final String TYPE = "videoState";
+    jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
+    return jsonMap.getVideoDataResponseMap();
   }
 
   @Operation(

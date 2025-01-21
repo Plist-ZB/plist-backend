@@ -15,9 +15,10 @@ import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlReques
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
-import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
+import com.zerobase.plistbackend.module.websocket.dto.videointerface.VideoResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,11 +78,16 @@ class WebSocketControllerTest {
 
     Long channelId = 1L;
 
+    final String TYPE = "videoState";
     //when
-    VideoSyncResponse response = webSocketController.syncVideo(channelId, request);
+    Map<String, VideoResponse> responseMap = webSocketController.syncVideo(channelId,
+        request);
+
+    Long currentTime = responseMap.get(TYPE).getCurrentTime();
+    System.out.println("currentTime = " + currentTime);
 
     //then
-    assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
+    assertThat(request.getCurrentTime()).isEqualTo(responseMap.get(TYPE).getCurrentTime());
   }
 
   @Test
@@ -143,8 +149,11 @@ class WebSocketControllerTest {
     Long channelId = 1L;
 
     //when
-    VideoSyncResponse response = webSocketController.syncVideoForNewUser(channelId, request);
+    Map<String, VideoResponse> resultMap = webSocketController.syncVideoForNewUser(
+        channelId, request);
     //the
-    assertThat(response.getCurrentTime()).isEqualTo(response.getCurrentTime());
+
+    VideoResponse videoState = resultMap.get("videoState");
+    assertThat(request.getCurrentTime()).isEqualTo(videoState.getCurrentTime());
   }
 }
