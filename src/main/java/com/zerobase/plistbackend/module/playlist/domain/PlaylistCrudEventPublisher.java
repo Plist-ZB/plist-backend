@@ -21,7 +21,7 @@ public class PlaylistCrudEventPublisher {
   private final ChannelService channelService;
   private final SimpMessagingTemplate messagingTemplate;
   private static final String PLAYLIST = "playlist";
-  private final Map<String, List<Video>> videoList = new ConcurrentHashMap<>();
+  private final Map<String, List<Video>> videoMap = new ConcurrentHashMap<>();
 
   @EventListener
   public void handlePlaylistUpdateEvent(PlaylistCrudEvent event) {
@@ -29,8 +29,8 @@ public class PlaylistCrudEventPublisher {
     Long destinationVariable = event.getChannelId();
     CustomOAuth2User customOAuth2User = event.getCustomOAuth2User();
     DetailChannelResponse result = channelService.findOneChannel(destinationVariable, customOAuth2User);
-    videoList.put(PLAYLIST,result.getVideoList());
+    videoMap.put(PLAYLIST,result.getVideoList());
 
-    messagingTemplate.convertAndSend("/sub/video." + destinationVariable, videoList);
+    messagingTemplate.convertAndSend("/sub/video." + destinationVariable, videoMap);
   }
 }
