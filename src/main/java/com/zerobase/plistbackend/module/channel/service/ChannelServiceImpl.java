@@ -321,7 +321,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    List<Channel> channelList = channelRepository.findByChannelHostIdAndChannelStatus(
+    List<Channel> channelList = channelRepository.findByChannelHostIdAndChannelStatusOrderByChannelIdDesc(
         user.getUserId(), ChannelStatus.CHANNEL_STATUS_CLOSED);
 
     return channelList.stream()
