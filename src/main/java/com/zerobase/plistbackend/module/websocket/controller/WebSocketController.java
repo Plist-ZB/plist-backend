@@ -1,5 +1,7 @@
 package com.zerobase.plistbackend.module.websocket.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
 import com.zerobase.plistbackend.module.websocket.domain.VideoResponseJsonMap;
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
@@ -9,12 +11,10 @@ import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
-import com.zerobase.plistbackend.module.websocket.dto.videointerface.VideoResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -33,6 +33,7 @@ public class WebSocketController {
   private final WebSocketService webSocketService;
   private final VideoSyncManager videoSyncManager;
   private final VideoResponseJsonMap jsonMap = new VideoResponseJsonMap(); // 제 로컬쪽에 인텔리제이 캐쉬버그있어서 Component 애노테이션이 안먹어요 ㅠㅠ
+  private final ObjectMapper mapper = new ObjectMapper();
 
 
   @Operation(
@@ -56,14 +57,13 @@ public class WebSocketController {
   @PostMapping("/video.{channelId}")
   @MessageMapping("/video.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public Map<String, VideoResponse> syncVideo(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) {
+  public String syncVideo(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) throws JsonProcessingException {
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
 
     final String TYPE = "videoState";
     jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
-    log.info("jsonMap.getVideoDataResponseMap() = {}", jsonMap.getVideoDataResponseMap());
-    return jsonMap.getVideoDataResponseMap();
+    return mapper.writeValueAsString(jsonMap);
   }
 
   @Operation(
@@ -74,15 +74,14 @@ public class WebSocketController {
   @PostMapping("/join.{channelId}")
   @MessageMapping("/join.{channelId}")
   @SendTo("/sub/video.{channelId}")
-  public Map<String, VideoResponse>  syncVideoForNewUser(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) {
+  public String  syncVideoForNewUser(@DestinationVariable Long channelId,
+      @Payload VideoSyncRequest request) throws JsonProcessingException {
     Long currentTime = videoSyncManager.getCurrentTime(channelId);
     log.info("New user joined channel {}", currentTime);
 
     final String TYPE = "videoState";
     jsonMap.setUpData(TYPE,new VideoSyncResponse(request));
-    log.info("jsonMap.getVideoDataResponseMap() = {}", jsonMap.getVideoDataResponseMap());
-    return jsonMap.getVideoDataResponseMap();
+    return mapper.writeValueAsString(jsonMap);
   }
 
   @Operation(
