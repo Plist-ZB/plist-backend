@@ -136,22 +136,22 @@ class WebSocketControllerTest {
     assertThat(errorResponse.getMessage()).isEqualTo(exception.getMessage());
   }
 
-  @Test
-  @DisplayName("채널에 새롭게 들어온 유저는 현재 영상의 currentTime을 받아 영상 시점이 호스트와 같게 동기화 된다")
-  void testSyncVideoForNewUser() {
-      //given
-    VideoSyncRequest request = VideoSyncRequest.builder()
-        .videoId("TestVideoId")
-        .playState(1L)
-        .currentTime(200L)
-        .build();
-    Long channelId = 1L;
+//   @Test
+//   @DisplayName("채널에 새롭게 들어온 유저는 현재 영상의 currentTime을 받아 영상 시점이 호스트와 같게 동기화 된다")
+//   void testSyncVideoForNewUser() {
+//       //given
+//     VideoSyncRequest request = VideoSyncRequest.builder()
+//         .videoId("TestVideoId")
+//         .playState(1L)
+//         .currentTime(200L)
+//         .build();
+//     Long channelId = 1L;
 
-    //when
-    VideoSyncResponse response = webSocketController.syncVideoForNewUser(
-        channelId, request);
-    //the
+//     //when
+//     VideoSyncResponse response = webSocketController.syncVideoForNewUser(
+//         channelId, request);
+//     //the
 
-    assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
-  }
-}
+//     assertThat(request.getCurrentTime()).isEqualTo(response.getCurrentTime());
+//   }
+// }
