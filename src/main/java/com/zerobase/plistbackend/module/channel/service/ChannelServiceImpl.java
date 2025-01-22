@@ -131,9 +131,9 @@ public class ChannelServiceImpl implements ChannelService {
 
     List<Participant> participantList = participantRepository.findByChannel(channel);
 
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
     Channel.closeChannel(channel, participantList);
     channelRepository.save(channel);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 
   @Override

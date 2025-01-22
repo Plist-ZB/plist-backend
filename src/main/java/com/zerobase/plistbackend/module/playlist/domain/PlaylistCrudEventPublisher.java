@@ -32,7 +32,7 @@ public class PlaylistCrudEventPublisher {
   public void handleHostExitEvent(PlaylistCrudEvent event) {
     log.info("Call HostExit Event : {}", event.getChannelId());
     Long destinationVariable = event.getChannelId();
-    String message = "호스트가 퇴장하였습니다.";
+    String message = "CHANNEL_CLOSED";
 
     messagingTemplate.convertAndSend("/sub/exit." + destinationVariable, message);
   }
