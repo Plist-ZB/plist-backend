@@ -133,6 +133,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     Channel.closeChannel(channel, participantList);
     channelRepository.save(channel);
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 
   @Override

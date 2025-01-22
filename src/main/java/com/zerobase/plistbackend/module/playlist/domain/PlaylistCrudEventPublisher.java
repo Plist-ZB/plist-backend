@@ -18,12 +18,22 @@ public class PlaylistCrudEventPublisher {
   private final SimpMessagingTemplate messagingTemplate;
 
   @EventListener
-  public void handlePlaylistUpdateEvent(PlaylistCrudEvent event)  {
+  public void handlePlaylistUpdateEvent(PlaylistCrudEvent event) {
     log.info("Call Playlist Update Event : {}", event.getChannelId());
     Long destinationVariable = event.getChannelId();
     CustomOAuth2User customOAuth2User = event.getCustomOAuth2User();
-    DetailChannelResponse result = channelService.findOneChannel(destinationVariable, customOAuth2User);
+    DetailChannelResponse result = channelService.findOneChannel(destinationVariable,
+        customOAuth2User);
 
     messagingTemplate.convertAndSend("/sub/video." + destinationVariable, result.getVideoList());
+  }
+
+  @EventListener
+  public void handleHostExitEvent(PlaylistCrudEvent event) {
+    log.info("Call HostExit Event : {}", event.getChannelId());
+    Long destinationVariable = event.getChannelId();
+    String message = "호스트가 퇴장하였습니다.";
+
+    messagingTemplate.convertAndSend("/sub/exit." + destinationVariable, message);
   }
 }
