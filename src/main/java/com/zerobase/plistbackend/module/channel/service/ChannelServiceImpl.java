@@ -5,6 +5,7 @@ import com.zerobase.plistbackend.module.category.entity.Category;
 import com.zerobase.plistbackend.module.category.exception.CategoryException;
 import com.zerobase.plistbackend.module.category.repository.CategoryRepository;
 import com.zerobase.plistbackend.module.category.type.CategoryErrorStatus;
+import com.zerobase.plistbackend.module.channel.domain.HostExitEvent;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
@@ -131,7 +132,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     List<Participant> participantList = participantRepository.findByChannel(channel);
 
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
+    applicationEventPublisher.publishEvent(new HostExitEvent(channelId));
     Channel.closeChannel(channel, participantList);
     channelRepository.save(channel);
   }
@@ -217,10 +218,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
-
-    if (channel.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
-      throw new ChannelException(ChannelErrorStatus.NOT_STREAMING);
-    }
 
     String ChannelHostUserName = userRepository.findById(channel.getChannelHostId())
         .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND)).getUserName();

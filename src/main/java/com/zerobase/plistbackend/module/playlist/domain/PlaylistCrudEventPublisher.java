@@ -27,13 +27,4 @@ public class PlaylistCrudEventPublisher {
 
     messagingTemplate.convertAndSend("/sub/video." + destinationVariable, result.getVideoList());
   }
-
-  @EventListener
-  public void handleHostExitEvent(PlaylistCrudEvent event) {
-    log.info("Call HostExit Event : {}", event.getChannelId());
-    Long destinationVariable = event.getChannelId();
-    String message = "CHANNEL_CLOSED";
-
-    messagingTemplate.convertAndSend("/sub/exit." + destinationVariable, message);
-  }
 }
