@@ -63,25 +63,13 @@ public class WebSocketController {
       description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
           + "-> 클라이언트가 데이터를 서버로 전송할 주소 /join.{channelId}, 서버를 거치고 처리한 결과를 전송할 주소 /sub/video.{channelId}"
   )
-/*   @PostMapping("/join.{channelId}")
-  @MessageMapping("/join.{channelId}")
-  @SendTo("/sub/video.{channelId}")
-  public VideoSyncResponse syncVideoForNewUser(@DestinationVariable Long channelId,
-      @Payload VideoSyncRequest request) {
-    Long currentTime = videoSyncManager.getCurrentTime(channelId);
-    log.info("New user joined channel {}", currentTime);
-    return new VideoSyncResponse(request);
-  } */
-  @PostMapping("enter.{channelId}") // 참여자가 입장하자마자 한번만 딱 보냄
+  @PostMapping("/enter.{channelId}")
   @MessageMapping("/enter.{channelId}")
-  @SendTo("/sub/enter.{channelId}") // 호스트만 구독함
-  public String enterNewUserForSync(@DestinationVariable Long channelId) {
-    
-    String message = "ENTER_NEW_USER";
-    
-    return message;
+  @SendTo("/sub/enter.{channelId}")
+  public String enterNewUserForSync() {
+    return "NEW_USER_ENTER";
   }
-
+  
   @Operation(
       summary = "현재 재생중인 비디오의 재생 및 일시정지를 호스트만 요청할 수 있고 재생 및 일시정지의 시점을 사용자 모두 동기화 합니다.",
       description = "WebSocket 연결을 통해 메시지를 전송합니다. REST 호출은 지원하지 않습니다."
