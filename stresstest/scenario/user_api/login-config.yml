@@ -1,11 +1,26 @@
 config:
-  target: 'http://13.209.237.110:8081' # Green
+  target: 'http://13.209.237.110:8080'  # Green
   phases:
-    - duration : 50
-      arrivalRate: 5
-      name: login-test
+    # 초반: 10개의 요청을 시작하고, 30초 동안 10에서 20개로 ramp-up
+    - duration: 30
+      arrivalRate: 10
+      name: initial-phase
+      rampTo: 20
+
+    # 중반: 20개에서 40개로 ramp-up
+    - duration: 60
+      arrivalRate: 20
+      name: middle-phase
+      rampTo: 40
+
+    # 후반: 40개에서 50개로 ramp-up
+    - duration: 30
+      arrivalRate: 40
+      name: peak-phase
+      rampTo: 50
+
 scenarios:
   - name: login
     flow:
       - get:
-          url: "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8081/login/oauth2/code/google"
+          url: "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google"
