@@ -57,7 +57,8 @@ public class SecurityConfig {
       "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com",
       "http://localhost:3000",
       "http://localhost:8080",
-      "https://www.plist.shop"
+      "https://www.plist.shop",
+      "https://plist.shop"
   });
 
 
