@@ -13,11 +13,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   private static final String REACT_PORT = "http://localhost:3000";
+  private static final String PLIST_SHOP = "https://plist.shop";
+  private static final String WWW_PLIST_SHOP = "https://www.plist.shop";
 
   private static final String[] SUBSCRIBE_PREFIX = {"/sub"};
   private static final String[] PUBLISH_PREFIX = {"/pub"};
   private static final String[] STOMP_CONNECT_URLS = {"/ws-connect"};
-  private static final String[] ALLOWED_ORIGINS_URLS = {REACT_PORT};
+  private static final String[] ALLOWED_ORIGINS_URLS = {REACT_PORT, PLIST_SHOP, WWW_PLIST_SHOP};
 
 
   @Override
