@@ -38,24 +38,27 @@ public class SecurityConfig {
       "/v3/api/",
       "/oauth2/**",
       "/auth/access",
-      "/",
+      "/", "index.html",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
       "/sc","/env"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
-      "/categories",
-      "/channels",
-      "/channels/popular",
-      "/channels/search",
-      "/channels/category/**"
+      "/v3/api/categories",
+      "/v3/api/channels",
+      "/v3/api/channels/popular",
+      "/v3/api/channels/search",
+      "/v3/api/channels/category/**"
   );
 
   private static final List<String> CORS_URLS = List.of(new String[]{
       "https://plist-veta96s-projects.vercel.app",
       "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com",
       "http://localhost:3000",
+      "http://localhost:8080",
+      "https://www.plist.shop",
+      "https://plist.shop"
   });
 
 
@@ -80,6 +83,15 @@ public class SecurityConfig {
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable);
 
+    // 경로별 인가 작업
+    http.authorizeHttpRequests((auth) -> {
+      for (String url : PUBLIC_GET_URLS) {
+        auth.requestMatchers(HttpMethod.GET, url).permitAll();
+      }
+      auth.requestMatchers(PUBLIC_URLS).permitAll();
+      auth.anyRequest().authenticated();
+    });
+
     // oauth2
     http
         .oauth2Login((oauth2) ->
@@ -90,15 +102,6 @@ public class SecurityConfig {
                 .successHandler(customSuccessHandler)
         );
 
-    // 경로별 인가 작업
-    http.authorizeHttpRequests(auth -> {
-      for (String url : PUBLIC_GET_URLS) {
-        auth.requestMatchers(HttpMethod.GET, url).permitAll();
-      }
-      auth.requestMatchers(PUBLIC_URLS).permitAll();
-      auth.anyRequest().authenticated();
-    });
-
     // 인증되지 않은 사용자에게 401 Unauthorized 반환
     http
         .exceptionHandling((exception) ->
@@ -108,7 +111,7 @@ public class SecurityConfig {
 
     // JwtFilter 추가
     http
-        .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
+        .addFilterBefore(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 
     http
         .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository),
