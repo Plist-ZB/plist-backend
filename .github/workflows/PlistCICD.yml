@@ -25,10 +25,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Download Gradle Wrapper
-        run: |
-          rm -rf gradle/wrapper/gradle-wrapper.jar
-          ./gradlew wrapper
+#      - name: Download Gradle Wrapper
+#        run: |
+#          rm -rf gradle/wrapper/gradle-wrapper.jar
+#          ./gradlew wrapper
 
       - name: Build with Gradle
         run: |
