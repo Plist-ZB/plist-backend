@@ -25,17 +25,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-#      - name: Download Gradle Wrapper
-#        run: |
-#          rm -rf gradle/wrapper/gradle-wrapper.jar
-#          ./gradlew wrapper
+
 
       - name: Build with Gradle
         run: |
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.properties
           echo ${{ secrets.APPLICATION_PROD }} | base64 --decode > ./src/main/resources/application-prod.properties
-          chmod +x ./gradlew
-          ./gradlew clean build -x test
+
+
+      - name: Download Gradle Wrapper
+        run: |
+         rm -rf gradle/wrapper/gradle-wrapper.jar
+         ./gradlew wrapper
+
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
