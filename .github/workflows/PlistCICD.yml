@@ -25,6 +25,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Ensure Gradle Wrapper is available
+        run: ./gradlew wrapper
+
       - name: Build with Gradle
         run: |
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.properties
