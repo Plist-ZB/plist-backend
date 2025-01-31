@@ -32,11 +32,16 @@ jobs:
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.properties
           echo ${{ secrets.APPLICATION_PROD }} | base64 --decode > ./src/main/resources/application-prod.properties
 
+      - name: Setup Gradle
+        uses: gradle/wrapper-validation-action@v1
+        with:
+          gradle-wrapper-version: '8.10'
+
 
       - name: Download Gradle Wrapper
         run: |
-         rm -rf gradle/wrapper/gradle-wrapper.jar
-         ./gradlew wrapper
+          chmod +x ./gradlew
+          ./gradlew clean build -x test
 
 
       - name: Login to DockerHub
