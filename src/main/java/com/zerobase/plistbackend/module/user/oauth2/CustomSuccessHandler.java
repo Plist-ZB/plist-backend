@@ -1,9 +1,8 @@
 package com.zerobase.plistbackend.module.user.oauth2;
 
-import com.zerobase.plistbackend.module.refresh.service.RefreshService;
+import com.zerobase.plistbackend.module.refresh.service.RefreshServiceImpl;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   private final JwtUtil jwtUtil;
-  private final RefreshService refreshService;
+  private final RefreshServiceImpl refreshService;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -46,12 +45,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ResponseCookie cookie = jwtUtil.createCookie("refresh", refresh);
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-//    String url = String.format("https://plist-veta96s-projects.vercel.app/auth/redirect?access-token=%s&is-member=%s",
-    String url = String.format("http://localhost:3000/auth/redirect?access-token=%s&is-member=%s",
-//    String url = String.format("http://localhost:8080/",
+    String url = String.format("https://api.plist.shop/auth/redirect?access-token=%s&is-member=%s",
         access, customOAuth2User.findIsMember());
     response.sendRedirect(url);
   }
-
 
 }
