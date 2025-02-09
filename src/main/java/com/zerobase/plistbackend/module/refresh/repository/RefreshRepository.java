@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.refresh.repository;
 
 import com.zerobase.plistbackend.module.refresh.entity.Refresh;
+import java.sql.Timestamp;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,6 @@ public interface RefreshRepository extends JpaRepository<Refresh, Long> {
   Optional<Refresh> findByRefreshToken(String token);
 
   void deleteByRefreshToken(String refreshToken);
+
+  void deleteByRefreshExpirationBefore(Timestamp expired);
 }

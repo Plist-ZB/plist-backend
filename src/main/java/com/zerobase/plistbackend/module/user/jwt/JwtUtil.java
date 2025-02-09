@@ -107,8 +107,7 @@ public class JwtUtil {
         .path("/")
         .secure(true)
         .httpOnly(true)
-//        .sameSite("None")
-        .domain(".vercel.app")
+        .sameSite("None")
         .build();
   }
 }
