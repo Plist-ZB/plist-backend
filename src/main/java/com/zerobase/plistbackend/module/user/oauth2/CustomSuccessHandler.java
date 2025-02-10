@@ -45,7 +45,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ResponseCookie cookie = jwtUtil.createCookie("refresh", refresh);
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-    String url = String.format("https://api.plist.shop/auth/redirect?access-token=%s&is-member=%s",
+    String url = String.format("https://plist.shop/auth/redirect?access-token=%s&is-member=%s",
         access, customOAuth2User.findIsMember());
     response.sendRedirect(url);
   }
