@@ -12,12 +12,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  private static final String REACT_PORT = "http://localhost:3000";
+  private static final String REACT_DEV_PORT = "http://localhost:3000";
+  private static final String REACT_PROD_PORT = "https://plist.shop";
 
   private static final String[] SUBSCRIBE_PREFIX = {"/sub"};
   private static final String[] PUBLISH_PREFIX = {"/pub"};
   private static final String[] STOMP_CONNECT_URLS = {"/ws-connect"};
-  private static final String[] ALLOWED_ORIGINS_URLS = {REACT_PORT};
+  private static final String[] ALLOWED_ORIGINS_URLS = {REACT_DEV_PORT, REACT_PROD_PORT};
 
 
   @Override
