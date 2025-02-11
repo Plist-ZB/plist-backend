@@ -49,6 +49,8 @@ jwt:
   access: 604800000  # Access Token: 로컬에서는 1주일
   refresh: 478800000  # Refresh Token: 7 days
 
+login-url : http://localhost:8080
+
 server:
   port: 8080
   serverAddress: localhost
@@ -99,6 +101,8 @@ jwt:
   access: 68400000  # Access Token: 30 min
   refresh: 478800000  # Refresh Token: 7 days
 
+login-url : https://plist.shop
+
 server:
   port: 8080
   serverAddress: 13.209.237.110
@@ -142,6 +146,8 @@ spring:
 jwt:
   access: 68400000  # Access Token: 30 min
   refresh: 478800000  # Refresh Token: 7 days
+
+login-url : https://plist.shop
 
 server:
   port: 8081

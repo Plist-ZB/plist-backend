@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
   private final JwtUtil jwtUtil;
   private final RefreshServiceImpl refreshService;
+
+  @Value("${login-url}")
+  private String loginUrl;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -45,7 +49,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ResponseCookie cookie = jwtUtil.createCookie("refresh", refresh);
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-    String url = String.format("https://plist.shop/auth/redirect?access-token=%s&is-member=%s",
+    String url = String.format(loginUrl + "/auth/redirect?access-token=%s&is-member=%s",
         access, customOAuth2User.findIsMember());
     response.sendRedirect(url);
   }
