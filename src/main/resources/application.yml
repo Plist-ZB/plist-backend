@@ -84,7 +84,7 @@ spring:
             client-name: google
             client-id: ${client_id}
             client-secret: ${client_secret}
-            redirect-uri: http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
+            redirect-uri: https://api.plist.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: profile, email
 
@@ -132,7 +132,7 @@ spring:
             client-name: google
             client-id: ${client_id}
             client-secret: ${client_secret}
-            redirect-uri: http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com:8081/login/oauth2/code/google
+            redirect-uri: https://api.plist.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: profile, email
 
