@@ -115,7 +115,7 @@ spring:
             client-id: ${naver_id}
             client-secret: ${naver_secret}
             authorization-grant-type: authorization_code
-            redirect-uri: https://api.plist.shop/login/oauth2/code/google
+            redirect-uri: https://api.plist.shop/login/oauth2/code/naver
             scope: name, profile
 
   jwt:
@@ -174,7 +174,7 @@ spring:
             client-id: ${naver_id}
             client-secret: ${naver_secret}
             authorization-grant-type: authorization_code
-            redirect-uri: https://api.plist.shop/login/oauth2/code/google
+            redirect-uri: https://api.plist.shop/login/oauth2/code/naver
             scope: name, profile
 
   jwt:
