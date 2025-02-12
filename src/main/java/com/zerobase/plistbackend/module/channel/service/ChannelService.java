@@ -8,12 +8,14 @@ import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelRes
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface ChannelService {
 
   DetailChannelResponse addChannel(CustomOAuth2User customOAuth2User, ChannelRequest channelRequest);
 
-  List<StreamingChannelResponse> findChannelList();
+  Slice<StreamingChannelResponse> findChannelList(Long lastId, Pageable pageable);
 
   List<StreamingChannelResponse> searchChannel(String searchValue);
 

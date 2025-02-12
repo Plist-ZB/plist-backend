@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -171,8 +173,9 @@ public class ChannelController {
       description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 최신순으로 정렬됩니다."
   )
   @GetMapping("/channels")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelList() {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList();
+  public ResponseEntity<Slice<StreamingChannelResponse>> findChannelList(
+      @RequestParam(value = "lastId", required = false) Long lastId, Pageable pageable) {
+    Slice<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList(lastId, pageable);
 
     return ResponseEntity.ok(streamingChannelResponseList);
   }

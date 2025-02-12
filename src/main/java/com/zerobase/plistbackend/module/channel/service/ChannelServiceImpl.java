@@ -14,6 +14,7 @@ import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelRes
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
+import com.zerobase.plistbackend.module.channel.repository.CustomChannelRepository;
 import com.zerobase.plistbackend.module.channel.type.ChannelErrorStatus;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.home.exception.VideoException;
@@ -38,6 +39,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +55,7 @@ public class ChannelServiceImpl implements ChannelService {
   private final CategoryRepository categoryRepository;
   private final ParticipantRepository participantRepository;
   private final UserPlaylistRepository userPlaylistRepository;
+  private final CustomChannelRepository customChannelRepository;
   private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
@@ -254,14 +259,9 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<StreamingChannelResponse> findChannelList() {
-    List<Channel> channelList = channelRepository.findAllByChannelStatusSortedChannelIdDesc(
-        ChannelStatus.CHANNEL_STATUS_ACTIVE);
+  public Slice<StreamingChannelResponse> findChannelList(Long lastId, @PageableDefault(size = 20) Pageable pageable) {
 
-    return channelList.stream().map(
-        it -> StreamingChannelResponse.createStreamingChannelResponse(it,
-            userRepository.findById(it.getChannelHostId()).orElseThrow(() -> new UserException(
-                UserErrorStatus.USER_NOT_FOUND)))).toList();
+    return customChannelRepository.findStreamingChannel(lastId, pageable);
   }
 
   @Override
