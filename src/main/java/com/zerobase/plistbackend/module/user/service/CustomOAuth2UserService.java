@@ -34,7 +34,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
     OAuth2Response oAuth2Response = RegistrationId.fromId(
         userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
-
+    System.out.println("oAuth2Response.findProvider() = " + oAuth2Response.findProvider());
     String email = oAuth2Response.findEmail();
     log.info("Request Login email: {}", email);
     User existData = userRepository.findByUserEmail(email);
