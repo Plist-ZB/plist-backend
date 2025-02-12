@@ -16,11 +16,8 @@ public class PlistProperties {
   @Value("${server.serverAddress}")
   private String serverAddress;
 
-  @Value("${google}")
-  private String googleLoginUrl;
-
-  @Value("${naver}")
-  private String naverLoginUrl;
+  @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+  private String loginRedirectUri;
 
   @Value("${db_class_name}")
   private String dbClassName;

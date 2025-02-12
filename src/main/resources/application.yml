@@ -49,11 +49,11 @@ spring:
             scope: profile, email
           naver:
             client-name: naver
-            client-id: ${naver_id}
-            client-secret: ${naver_secret}
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            client-id: l80DHmkaRzeYM7o4rsUV
+            client-secret: xEv1ycNZp5
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
             authorization-grant-type: authorization_code
-            scope: profile, name
+            scope: name, profil
 
 
   jwt:
@@ -74,9 +74,6 @@ server:
   serverAddress: localhost
 
 serverName: local
-
-naver: http://localhost:8080/oauth2/authorization/naver
-google: http://localhost:8080/oauth2/authorization/google
 
 
 ---
@@ -110,13 +107,6 @@ spring:
             redirect-uri: https://api.plist.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: profile, email
-          naver:
-            client-name: naver
-            client-id: ${naver_id}
-            client-secret: ${naver_secret}
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
-            scope: name, profile
 
   jwt:
     secret: ${jwt_secret}
@@ -136,8 +126,6 @@ server:
   serverAddress: 13.209.237.110
 
 serverName: blue
-naver: https://api.plist.shop/oauth2/authorization/naver
-google: https://api.plist.shop/oauth2/authorization/google
 
 ---
 spring:
@@ -169,13 +157,6 @@ spring:
             redirect-uri: https://api.plist.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
             scope: profile, email
-          naver:
-            client-name: naver
-            client-id: ${naver_id}
-            client-secret: ${naver_secret}
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
-            scope: name, profile
 
   jwt:
     secret: ${jwt_secret}
@@ -191,9 +172,6 @@ server:
   serverAddress: 13.209.237.110
 
 serverName: green
-
-naver: https://api.plist.shop/oauth2/authorization/naver
-google: https://api.plist.shop/oauth2/authorization/google
 ---
 
 youtube-api:

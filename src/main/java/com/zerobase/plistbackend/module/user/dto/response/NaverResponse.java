@@ -7,7 +7,7 @@ public class NaverResponse implements OAuth2Response {
     private final Map<String, Object> attribute;
 
     public NaverResponse(Map<String, Object> attribute) {
-        this.attribute = (Map<String, Object>) attribute.get("response");
+        this.attribute = attribute;
     }
 
     @Override
@@ -33,6 +33,6 @@ public class NaverResponse implements OAuth2Response {
 
     @Override
     public String findImage() {
-        return attribute.get("profile_image").toString();
+        return attribute.get("profile_imag").toString();
     }
 }
