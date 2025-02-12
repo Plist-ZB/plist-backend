@@ -72,12 +72,12 @@ jobs:
       
           if [ "$CURRENT_UPSTREAM" = "blue" ]; then
               TARGET_UPSTREAM="green"
-              CURRENT_PORT=8080
-              STOPPED_PORT=8081
-          elif [ "$CURRENT_UPSTREAM" = "green" ]; then
-              TARGET_UPSTREAM="blue"
               CURRENT_PORT=8081
               STOPPED_PORT=8080
+          elif [ "$CURRENT_UPSTREAM" = "green" ]; then
+              TARGET_UPSTREAM="blue"
+              CURRENT_PORT=8080
+              STOPPED_PORT=8081
           else
               echo "Error: Invalid CURRENT_UPSTREAM value!"
               exit 1
