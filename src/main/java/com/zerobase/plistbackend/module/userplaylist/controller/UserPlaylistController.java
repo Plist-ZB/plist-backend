@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.module.userplaylist.controller;
 
+import com.zerobase.plistbackend.module.channel.util.ControllerApiResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.UserPlaylistRequest;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
@@ -9,8 +10,10 @@ import com.zerobase.plistbackend.module.userplaylist.service.UserPlaylistService
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,13 +55,16 @@ public class UserPlaylistController {
       description = "내 플레이리스트의 모든 플레이리스트를 조회합니다."
   )
   @GetMapping("/user/playlists")
-  public ResponseEntity<List<UserPlaylistResponse>> findAllUserPlaylist(
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+  public ResponseEntity<ControllerApiResponse<UserPlaylistResponse>> findAllUserPlaylist(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @PageableDefault(size = 20) Pageable pageable) {
 
-    List<UserPlaylistResponse> userPlaylistResponseList = userPlaylistService.findAllUserPlaylist(
-        customOAuth2User);
+    Slice<UserPlaylistResponse> userPlaylistResponseList = userPlaylistService.findAllUserPlaylist(
+        customOAuth2User, cursorId, pageable);
 
-    return ResponseEntity.ok(userPlaylistResponseList);
+    return ResponseEntity.ok(new ControllerApiResponse<>(userPlaylistResponseList.getContent(),
+        userPlaylistResponseList.hasNext()));
   }
 
   @Operation(

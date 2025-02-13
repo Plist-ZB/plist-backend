@@ -5,7 +5,8 @@ import com.zerobase.plistbackend.module.userplaylist.dto.request.UserPlaylistReq
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import com.zerobase.plistbackend.module.userplaylist.dto.response.DetailUserPlaylistResponse;
 import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface UserPlaylistService {
 
@@ -15,7 +16,8 @@ public interface UserPlaylistService {
   DetailUserPlaylistResponse findOneUserPlaylist(Long userPlaylistId,
       CustomOAuth2User customOAuth2User);
 
-  List<UserPlaylistResponse> findAllUserPlaylist(CustomOAuth2User customOAuth2User);
+  Slice<UserPlaylistResponse> findAllUserPlaylist(CustomOAuth2User customOAuth2User, Long cursorId,
+      Pageable pageable);
 
   void addVideo(CustomOAuth2User customOAuth2User, Long userPlaylistId, VideoRequest videoRequest);
 
