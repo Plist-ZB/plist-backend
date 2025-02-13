@@ -64,32 +64,34 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          echo "Fetching current upstream..."
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
+          echo "CALL_SC_STATUS: $STATUS"
           CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
-      
           echo "CURRENT_UPSTREAM=$CURRENT_UPSTREAM"
-      
-          if [ "$CURRENT_UPSTREAM" = "blue" ]; then
-              TARGET_UPSTREAM="green"
-              CURRENT_PORT=8081
-              STOPPED_PORT=8080
-          elif [ "$CURRENT_UPSTREAM" = "green" ]; then
-              TARGET_UPSTREAM="blue"
-              CURRENT_PORT=8080
-              STOPPED_PORT=8081
-          else
-              echo "Error: Invalid CURRENT_UPSTREAM value!"
-              exit 1
+          
+           if [ $STATUS = 200 ]; then
+               CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
+               echo "CURRENT_PORT (if STATUS=200): $CURRENT_UPSTREAM"
+           else
+               CURRENT_UPSTREAM=green
+               echo "CURRENT_PORT (else): $CURRENT_UPSTREAM"
+           fi
+          
+           echo "Setting CURRENT_UPSTREAM=$CURRENT_UPSTREAM to GITHUB_ENV"
+           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
+          
+            if [ $CURRENT_UPSTREAM = blue ]; then
+               echo "CURRENT_PORT=8080" >> $GITHUB_ENV
+               echo "STOPPED_PORT=8081" >> $GITHUB_ENV
+               echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
+           elif [ $CURRENT_UPSTREAM = green ]; then
+               echo "CURRENT_PORT=8081" >> $GITHUB_ENV
+               echo "STOPPED_PORT=8080" >> $GITHUB_ENV
+               echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
+           else
+               echo "error"
+               exit 1
           fi
-      
-          echo "Switching upstream to $TARGET_UPSTREAM"
-      
-          echo "Setting CURRENT_UPSTREAM=$CURRENT_UPSTREAM to GITHUB_ENV"
-          echo "CURRENT_UPSTREAM=$CURRENT_UPSTREAM" >> $GITHUB_ENV
-          echo "CURRENT_PORT=$CURRENT_PORT" >> $GITHUB_ENV
-          echo "STOPPED_PORT=$STOPPED_PORT" >> $GITHUB_ENV
-          echo "TARGET_UPSTREAM=$TARGET_UPSTREAM" >> $GITHUB_ENV
 
       - name: Docker compose
         uses: appleboy/ssh-action@master
