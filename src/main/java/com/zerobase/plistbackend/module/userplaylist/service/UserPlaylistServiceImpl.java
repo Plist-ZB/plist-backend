@@ -13,13 +13,15 @@ import com.zerobase.plistbackend.module.userplaylist.dto.response.DetailUserPlay
 import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
+import com.zerobase.plistbackend.module.userplaylist.repository.CustomUserPlaylistRepository;
 import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
 import com.zerobase.plistbackend.module.userplaylist.type.UserPlaylistErrorStatus;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistUtil;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistVideoConverter;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserPlaylistServiceImpl implements UserPlaylistService {
 
+  private final CustomUserPlaylistRepository customUserPlaylistRepository;
   private final UserPlaylistRepository userPlaylistRepository;
   private final UserRepository userRepository;
 
@@ -51,12 +54,12 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<UserPlaylistResponse> findAllUserPlaylist(CustomOAuth2User customOAuth2User) {
+  public Slice<UserPlaylistResponse> findAllUserPlaylist(CustomOAuth2User customOAuth2User,
+      Long cursorId, Pageable pageable) {
 
-    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+    User requestUser = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    return user.getPlaylists().stream().map(UserPlaylistResponse::fromEntity)
-        .collect(Collectors.toList());
+    return customUserPlaylistRepository.findUserPlaylist(requestUser, cursorId, pageable);
   }
 
   @Override

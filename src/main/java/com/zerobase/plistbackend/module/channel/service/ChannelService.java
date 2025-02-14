@@ -15,11 +15,11 @@ public interface ChannelService {
 
   DetailChannelResponse addChannel(CustomOAuth2User customOAuth2User, ChannelRequest channelRequest);
 
-  Slice<StreamingChannelResponse> findChannelList(Long lastId, Pageable pageable);
+  Slice<StreamingChannelResponse> findChannelList(Long cursorId, Pageable pageable);
 
   List<StreamingChannelResponse> searchChannel(String searchValue);
 
-  List<StreamingChannelResponse> findChannelFromChannelCategory(Long categoryId);
+  Slice<StreamingChannelResponse> findChannelFromChannelCategory(Long categoryId, Long cursorId, Long cursorPopular, Pageable pageable);
 
   DetailChannelResponse userEnterChannel(CustomOAuth2User customOAuth2User, Long channelId);
 
@@ -38,9 +38,9 @@ public interface ChannelService {
 
   void updateChannelPlaylist(Long channelId, String updateChannelPlaylistJson, CustomOAuth2User customOAuth2User);
 
-  List<StreamingChannelResponse> findChannelListPopular();
+  Slice<StreamingChannelResponse> findChannelListPopular(Long cursorId, Long cursorPopular, Pageable pageable);
 
-  List<ClosedChannelResponse> findUserChannelHistory(CustomOAuth2User customOAuth2User);
+  Slice<ClosedChannelResponse> findUserChannelHistory(CustomOAuth2User customOAuth2User, Long cursorId, Pageable pageable);
 
   void likeVideo(CustomOAuth2User customOAuth2User, VideoRequest videoRequest);
 
