@@ -22,6 +22,9 @@ public class PlistProperties {
   @Value("${naver}")
   private String naverLoginUrl;
 
+  @Value("${kakao}")
+  private String kakaoLoginUrl;
+
   @Value("${db_class_name}")
   private String dbClassName;
 
