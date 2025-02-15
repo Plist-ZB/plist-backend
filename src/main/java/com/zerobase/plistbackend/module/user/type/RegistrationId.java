@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.user.type;
 
 import com.zerobase.plistbackend.module.user.dto.response.GoogleResponse;
+import com.zerobase.plistbackend.module.user.dto.response.KakaoResponse;
 import com.zerobase.plistbackend.module.user.dto.response.NaverResponse;
 import com.zerobase.plistbackend.module.user.dto.response.OAuth2Response;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public enum  RegistrationId {
       return new NaverResponse(oAuth2User.getAttributes());
     }
     if (id.equalsIgnoreCase(KAKAO.id)) {
-      // return new KakaoResponse
+      return new KakaoResponse(oAuth2User.getAttributes());
     }
     throw new IllegalArgumentException("Unknown RegistrationId: " + id);
   }
