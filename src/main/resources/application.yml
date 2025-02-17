@@ -134,8 +134,8 @@ spring:
             client-name: naver
             client-id: ${naver_id}
             client-secret: ${naver_secret}
-            authorization-grant-type: authorization_code
             redirect-uri: https://api.plist.shop/login/oauth2/code/naver
+            authorization-grant-type: authorization_code
             scope: name, profile
           kakao:
             client-name: kakao
@@ -144,6 +144,7 @@ spring:
             redirect-uri: https://api.plist.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email
+            client-authentication-method: client_secret_post
 
   jwt:
     secret: ${jwt_secret}
@@ -163,8 +164,8 @@ server:
   serverAddress: 13.209.237.110
 
 serverName: blue
-naver: https://api.plist.shop/oauth2/authorization/naver
 google: https://api.plist.shop/oauth2/authorization/google
+naver: https://api.plist.shop/oauth2/authorization/naver
 kakao: https://api.plist.shop/oauth2/authorization/kakao
 
 ---
@@ -201,8 +202,8 @@ spring:
             client-name: naver
             client-id: ${naver_id}
             client-secret: ${naver_secret}
-            authorization-grant-type: authorization_code
             redirect-uri: https://api.plist.shop/login/oauth2/code/naver
+            authorization-grant-type: authorization_code
             scope: name, profile
           kakao:
             client-name: kakao
@@ -211,6 +212,7 @@ spring:
             redirect-uri: https://api.plist.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email
+            client-authentication-method: client_secret_post
 
   jwt:
     secret: ${jwt_secret}
@@ -227,8 +229,8 @@ server:
 
 serverName: green
 
-naver: https://api.plist.shop/oauth2/authorization/naver
 google: https://api.plist.shop/oauth2/authorization/google
+naver: https://api.plist.shop/oauth2/authorization/naver
 kakao: https://api.plist.shop/oauth2/authorization/kakao
 ---
 
