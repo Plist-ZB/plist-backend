@@ -141,7 +141,7 @@ spring:
             client-name: kakao
             client-id: ${kakao_id}
             client-secret: ${kakao_secret}
-            redirect-uri: http://api.plist.shop/login/oauth2/code/kakao
+            redirect-uri: https://api.plist.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email
 
@@ -165,7 +165,7 @@ server:
 serverName: blue
 naver: https://api.plist.shop/oauth2/authorization/naver
 google: https://api.plist.shop/oauth2/authorization/google
-kakao: http://api.plist.shop/oauth2/authorization/kakao
+kakao: https://api.plist.shop/oauth2/authorization/kakao
 
 ---
 spring:
@@ -208,7 +208,7 @@ spring:
             client-name: kakao
             client-id: ${kakao_id}
             client-secret: ${kakao_secret}
-            redirect-uri: http://api.plist.shop/login/oauth2/code/kakao
+            redirect-uri: https://api.plist.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email
 
@@ -229,7 +229,7 @@ serverName: green
 
 naver: https://api.plist.shop/oauth2/authorization/naver
 google: https://api.plist.shop/oauth2/authorization/google
-kakao: http://api.plist.shop/oauth2/authorization/kakao
+kakao: https://api.plist.shop/oauth2/authorization/kakao
 ---
 
 youtube-api:
