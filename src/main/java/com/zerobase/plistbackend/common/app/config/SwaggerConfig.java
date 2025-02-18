@@ -8,10 +8,12 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
+import java.util.Arrays;
 import java.util.List;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 
 @Configuration
 public class SwaggerConfig {
@@ -54,15 +56,18 @@ public class SwaggerConfig {
 
   @Bean
   public OperationCustomizer customizePageable() {
+
     return (operation, handlerMethod) -> {
 
-      if (operation.getParameters() != null) {
+      boolean hasPageable = Arrays.stream(handlerMethod.getMethod().getParameters())
+          .anyMatch(param -> param.getType().equals(Pageable.class));
+
+      if (hasPageable) {
         operation.getParameters()
             .removeIf(param -> "page".equals(param.getName()) || "sort".equals(param.getName())
             );
 
-        QueryParameter sizeParameter = (QueryParameter) new QueryParameter().name("size")
-            .description("페이지 크기");
+        QueryParameter sizeParameter = (QueryParameter) new QueryParameter().name("size");
 
         operation.getParameters().add(sizeParameter);
       }
