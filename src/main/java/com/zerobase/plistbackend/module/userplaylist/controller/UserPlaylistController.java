@@ -8,6 +8,7 @@ import com.zerobase.plistbackend.module.userplaylist.dto.response.DetailUserPlay
 import com.zerobase.plistbackend.module.userplaylist.dto.response.UserPlaylistResponse;
 import com.zerobase.plistbackend.module.userplaylist.service.UserPlaylistService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class UserPlaylistController {
   public ResponseEntity<ControllerApiResponse<UserPlaylistResponse>> findAllUserPlaylist(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @RequestParam(value = "cursorId", required = false) Long cursorId,
-      @PageableDefault(size = 20) Pageable pageable) {
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
 
     Slice<UserPlaylistResponse> userPlaylistResponseList = userPlaylistService.findAllUserPlaylist(
         customOAuth2User, cursorId, pageable);

@@ -3,11 +3,13 @@ package com.zerobase.plistbackend.common.app.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,5 +50,25 @@ public class SwaggerConfig {
         .scheme("bearer")
         .in(SecurityScheme.In.HEADER)
         .name(customSchemeName);
+  }
+
+  @Bean
+  public OperationCustomizer customizePageable() {
+    return (operation, handlerMethod) -> {
+
+      if (operation.getParameters() != null) {
+        operation.getParameters()
+            .removeIf(param -> "page".equals(param.getName()) || "sort".equals(param.getName())
+            );
+
+        QueryParameter sizeParameter = (QueryParameter) new QueryParameter().name("size")
+            .description("페이지 크기");
+
+        operation.getParameters().add(sizeParameter);
+      }
+
+      return operation;
+
+    };
   }
 }
