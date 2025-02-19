@@ -3,13 +3,17 @@ package com.zerobase.plistbackend.common.app.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
+import java.util.Arrays;
 import java.util.List;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 
 @Configuration
 public class SwaggerConfig {
@@ -48,5 +52,28 @@ public class SwaggerConfig {
         .scheme("bearer")
         .in(SecurityScheme.In.HEADER)
         .name(customSchemeName);
+  }
+
+  @Bean
+  public OperationCustomizer customizePageable() {
+
+    return (operation, handlerMethod) -> {
+
+      boolean hasPageable = Arrays.stream(handlerMethod.getMethod().getParameters())
+          .anyMatch(param -> param.getType().equals(Pageable.class));
+
+      if (hasPageable) {
+        operation.getParameters()
+            .removeIf(param -> "page".equals(param.getName()) || "sort".equals(param.getName())
+            );
+
+        QueryParameter sizeParameter = (QueryParameter) new QueryParameter().name("size");
+
+        operation.getParameters().add(sizeParameter);
+      }
+
+      return operation;
+
+    };
   }
 }

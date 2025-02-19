@@ -10,6 +10,7 @@ import com.zerobase.plistbackend.module.channel.util.ControllerApiResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -177,7 +178,7 @@ public class ChannelController {
   @GetMapping("/channels")
   public ResponseEntity<ControllerApiResponse<StreamingChannelResponse>> findChannelList(
       @RequestParam(value = "cursorId", required = false) Long cursorId,
-      @PageableDefault(size = 20) Pageable pageable) {
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
     Slice<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList(
         cursorId, pageable);
 
@@ -193,7 +194,7 @@ public class ChannelController {
   public ResponseEntity<ControllerApiResponse<StreamingChannelResponse>> findChannelListPopular(
       @RequestParam(value = "cursorId", required = false) Long cursorId,
       @RequestParam(value = "cursorPopular", required = false) Long cursorPopular,
-      @PageableDefault(size = 20) Pageable pageable) {
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
     Slice<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelListPopular(
         cursorId, cursorPopular, pageable);
 
@@ -224,9 +225,10 @@ public class ChannelController {
       @PathVariable Long categoryId,
       @RequestParam(value = "cursorId", required = false) Long cursorId,
       @RequestParam(value = "cursorPopular", required = false) Long cursorPopular,
-      @PageableDefault(size = 20) Pageable pageable) {
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
     Slice<StreamingChannelResponse> streamingChannelResponseList =
-        channelService.findChannelFromChannelCategory(categoryId, cursorId, cursorPopular, pageable);
+        channelService.findChannelFromChannelCategory(categoryId, cursorId, cursorPopular,
+            pageable);
 
     return ResponseEntity.ok(new ControllerApiResponse<>(streamingChannelResponseList.getContent(),
         streamingChannelResponseList.hasNext()));
@@ -252,7 +254,7 @@ public class ChannelController {
   public ResponseEntity<ControllerApiResponse<ClosedChannelResponse>> findUserChannelHistory(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
       @RequestParam(value = "cursorId", required = false) Long cursorId,
-      @PageableDefault(size = 20) Pageable pageable) {
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
 
     Slice<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(
         customOAuth2User, cursorId, pageable);
