@@ -16,6 +16,7 @@ public class UserDetail {
 
   public static UserDetail from(User user, Boolean isMember) {
     return UserDetail.builder()
+        .id(user.getUserId())
         .name(user.getUserName())
         .email(user.getUserEmail())
         .role(String.valueOf(user.getUserRole()))
