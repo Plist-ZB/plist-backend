@@ -1,17 +1,29 @@
 package com.zerobase.plistbackend.module.refresh.repository;
 
-import com.zerobase.plistbackend.module.refresh.entity.Refresh;
-import java.sql.Timestamp;
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
-public interface RefreshRepository extends JpaRepository<Refresh, Long> {
+@Component
+@RequiredArgsConstructor
+public class RefreshRepository {
 
-  Optional<Refresh> findByUser_UserEmail(String email);
+  private final RedisTemplate<String, Object> redisTemplate;
 
-  Optional<Refresh> findByRefreshToken(String token);
+  private static final Long EXPIRATION_TIME = 478800000L;
+  //private static final Long EXPIRATION_TIME = 10L;
 
-  void deleteByRefreshToken(String refreshToken);
+  public void saveToken(Long userId, String token) {
+    redisTemplate.opsForValue().set(token, userId.toString(), EXPIRATION_TIME, TimeUnit.SECONDS);
+  }
 
-  void deleteByRefreshExpirationBefore(Timestamp expired);
+  public Boolean hasToken(String token) {
+    return redisTemplate.hasKey(token);
+  }
+
+  public void deleteByToken(String refreshToken) {
+    redisTemplate.delete(refreshToken);
+  }
+
 }
