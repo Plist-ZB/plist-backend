@@ -6,18 +6,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.zerobase.plistbackend.module.refresh.dto.NewAccessResponse;
-import com.zerobase.plistbackend.module.refresh.entity.Refresh;
 import com.zerobase.plistbackend.module.refresh.exception.RefreshException;
 import com.zerobase.plistbackend.module.refresh.repository.RefreshRepository;
 import com.zerobase.plistbackend.module.refresh.service.RefreshServiceImpl;
 import com.zerobase.plistbackend.module.refresh.type.RefreshErrorStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
-import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,46 +25,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class RefreshServiceTest {
 
   private RefreshRepository refreshRepository;
-  private UserRepository userRepository;
   private JwtUtil jwtUtil;
   private RefreshServiceImpl refreshService;
 
   @BeforeEach
   void setUp() {
     refreshRepository = Mockito.mock(RefreshRepository.class);
-    userRepository = Mockito.mock(UserRepository.class);
     jwtUtil = Mockito.mock(JwtUtil.class);
-    refreshService = new RefreshServiceImpl(refreshRepository, userRepository, jwtUtil);
+    refreshService = new RefreshServiceImpl(refreshRepository, jwtUtil);
   }
 
-  @Test
-  @DisplayName("리프레시 토큰 발행 - 성공")
-  void addRefreshEntity_ShouldUpdateExistingRefresh() {
-    String email = "test@example.com";
-    String token = "newRefreshToken";
-    Timestamp expired = new Timestamp(System.currentTimeMillis() + 10000);
-
-    User mockUser = User.builder()
-        .userId(1L)
-        .userEmail(email)
-        .userName("Test User")
-        .userImage("test-image-url")
-        .userRole(UserRole.ROLE_USER)
-        .build();
-
-    Refresh existingRefresh = Refresh.builder()
-        .user(mockUser)
-        .refreshToken(token)
-        .refreshExpiration(expired)
-        .build();
-    existingRefresh.updateRefreshToken("oldToken", expired);
-
-    when(refreshRepository.findByUser_UserEmail(email)).thenReturn(Optional.of(existingRefresh));
-
-    refreshService.addRefreshEntity(email, token, expired);
-
-    assertEquals(token, existingRefresh.getRefreshToken());
-  }
 
   @Test
   @DisplayName("리프레시 토큰이 없음 - 오류 확인")
