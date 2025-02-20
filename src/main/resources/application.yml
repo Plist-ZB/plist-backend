@@ -63,6 +63,12 @@ spring:
       max-file-size: 20MB
       max-request-size: 20MB
 
+  data:
+    redis:
+      host: 3.35.193.245
+      port: 6379
+      password: ${redis_password}
+
 jwt:
   access: 604800000  # Access Token: 로컬에서는 1주일
   refresh: 478800000  # Refresh Token: 7 days
@@ -129,6 +135,12 @@ jwt:
   access: 68400000  # Access Token: 30 min
   refresh: 478800000  # Refresh Token: 7 days
 
+  data:
+    redis:
+      host: 3.35.193.245
+      port: 6379
+      password: ${redis_password}
+
 login-url : https://plist.shop
 
 server:
@@ -179,6 +191,12 @@ spring:
 
   jwt:
     secret: ${jwt_secret}
+
+  data:
+    redis:
+      host: 3.35.193.245
+      port: 6379
+      password: ${redis_password}
 
 jwt:
   access: 68400000  # Access Token: 30 min
