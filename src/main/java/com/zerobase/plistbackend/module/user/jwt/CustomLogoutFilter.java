@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.user.jwt;
 
-import com.zerobase.plistbackend.module.refresh.entity.Refresh;
 import com.zerobase.plistbackend.module.refresh.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.GenericFilterBean;
@@ -64,13 +62,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
       return;
     }
 
-    Optional<Refresh> refreshEntity = refreshRepository.findByRefreshToken(refresh);
-    if (refreshEntity.isEmpty()) {
+    if (refreshRepository.hasToken(refresh)) {
+      refreshRepository.deleteByToken(refresh);
+    } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-
-    refreshRepository.deleteByRefreshToken(refresh);
 
     Cookie cookie = new Cookie("refresh", null);
     cookie.setMaxAge(0);
