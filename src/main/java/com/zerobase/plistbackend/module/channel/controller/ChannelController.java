@@ -6,13 +6,18 @@ import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelRespon
 import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.service.ChannelService;
+import com.zerobase.plistbackend.module.channel.util.ControllerApiResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -134,7 +139,7 @@ public class ChannelController {
     channelService.updateChannelPlaylist(channelId, updateChannelPlaylistJson, customOAuth2User);
 
     return ResponseEntity.status(HttpStatus.OK).build();
-  }//TODO : 테스트 필요
+  }
 
   @Operation(
       summary = "채널 플레이리스트를 내 플레이리스트에 저장",
@@ -171,10 +176,14 @@ public class ChannelController {
       description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 최신순으로 정렬됩니다."
   )
   @GetMapping("/channels")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelList() {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList();
+  public ResponseEntity<ControllerApiResponse<StreamingChannelResponse>> findChannelList(
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
+    Slice<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelList(
+        cursorId, pageable);
 
-    return ResponseEntity.ok(streamingChannelResponseList);
+    return ResponseEntity.ok(new ControllerApiResponse<>(streamingChannelResponseList.getContent(),
+        streamingChannelResponseList.hasNext()));
   }
 
   @Operation(
@@ -182,10 +191,15 @@ public class ChannelController {
       description = "현재 스트리밍 중인 모든 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
   )
   @GetMapping("/channels/popular")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelListPopular() {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelListPopular();
+  public ResponseEntity<ControllerApiResponse<StreamingChannelResponse>> findChannelListPopular(
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @RequestParam(value = "cursorPopular", required = false) Long cursorPopular,
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
+    Slice<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelListPopular(
+        cursorId, cursorPopular, pageable);
 
-    return ResponseEntity.ok(streamingChannelResponseList);
+    return ResponseEntity.ok(new ControllerApiResponse<>(streamingChannelResponseList.getContent(),
+        streamingChannelResponseList.hasNext()));
   }
 
   @Operation(
@@ -207,12 +221,17 @@ public class ChannelController {
       description = "카테고리ID와 일치하는 현재 스트리밍 중인 채널을 조회합니다. 정렬은 시청자가 많은 순서로 정렬됩니다."
   )
   @GetMapping("/channels/category/{categoryId}")
-  public ResponseEntity<List<StreamingChannelResponse>> findChannelFromChannelCategory(
-      @PathVariable Long categoryId) {
-    List<StreamingChannelResponse> streamingChannelResponseList = channelService.findChannelFromChannelCategory(
-        categoryId);
+  public ResponseEntity<ControllerApiResponse<StreamingChannelResponse>> findChannelFromChannelCategory(
+      @PathVariable Long categoryId,
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @RequestParam(value = "cursorPopular", required = false) Long cursorPopular,
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
+    Slice<StreamingChannelResponse> streamingChannelResponseList =
+        channelService.findChannelFromChannelCategory(categoryId, cursorId, cursorPopular,
+            pageable);
 
-    return ResponseEntity.ok(streamingChannelResponseList);
+    return ResponseEntity.ok(new ControllerApiResponse<>(streamingChannelResponseList.getContent(),
+        streamingChannelResponseList.hasNext()));
   }
 
   @Operation(
@@ -232,13 +251,16 @@ public class ChannelController {
       description = "내 과거 호스트 내역을 조회합니다."
   )
   @GetMapping("/user/history")
-  public ResponseEntity<List<ClosedChannelResponse>> findUserChannelHistory(
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+  public ResponseEntity<ControllerApiResponse<ClosedChannelResponse>> findUserChannelHistory(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable) {
 
-    List<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(
-        customOAuth2User);
+    Slice<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(
+        customOAuth2User, cursorId, pageable);
 
-    return ResponseEntity.ok(closedChannelResponsesList);
+    return ResponseEntity.ok(new ControllerApiResponse<>(closedChannelResponsesList.getContent(),
+        closedChannelResponsesList.hasNext()));
   }
 
   @Operation(

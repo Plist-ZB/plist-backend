@@ -10,10 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
-  @Query("SELECT c FROM Channel c WHERE c.channelStatus = :channelStatus ORDER BY c.channelId DESC")
-  List<Channel> findAllByChannelStatusSortedChannelIdDesc(
-      @Param("channelStatus") ChannelStatus channelStatus);
-
   @Query("SELECT c FROM Channel c " +
       "LEFT JOIN c.channelParticipants p " +
       "LEFT JOIN User u ON u.userId = c.channelHostId " +
@@ -26,25 +22,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
       @Param("channelName") String channelName,
       @Param("categoryName") String categoryName,
       @Param("channelHostUserName") String channelHostUserName);
-
-  @Query("SELECT c FROM Channel c LEFT JOIN c.channelParticipants p " +
-      "WHERE c.channelStatus = :channelStatus " +
-      "AND c.category.categoryId = :categoryId " +
-      "GROUP BY c.channelId " +
-      "ORDER BY COUNT(p) DESC")
-  List<Channel> findByChannelStatusAndCategorySortedParticipantCountDesc(
-      @Param("channelStatus") ChannelStatus channelStatus,
-      @Param("categoryId") Long categoryId);
-
-  @Query("SELECT c FROM Channel c LEFT JOIN c.channelParticipants p " +
-      "WHERE c.channelStatus = :channelStatus " +
-      "GROUP BY c.channelId " +
-      "ORDER BY COUNT(p) DESC")
-  List<Channel> findAllByChannelStatusSortedByParticipantCountDesc(
-      @Param("channelStatus") ChannelStatus channelStatus
-  );
-
-  List<Channel> findByChannelHostIdAndChannelStatusOrderByChannelIdDesc(Long userId, ChannelStatus channelStatus);
 
   @Query("SELECT c FROM Channel c " +
       "LEFT JOIN FETCH c.channelPlaylist p " +
