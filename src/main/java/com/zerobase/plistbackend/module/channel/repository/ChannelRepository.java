@@ -37,6 +37,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
   Optional<Channel> findByChannelIdAndChannelHostId(Long channelId, Long userId);
 
    @Lock(LockModeType.PESSIMISTIC_WRITE)
-   @Query("select c from Channel c where c.channelId = :channelId")
+   @Query("select c from Channel c join fetch c.channelPlaylist where c.channelId = :channelId")
    Optional<Channel> findByIdWithLock(@Param("channelId") Long channelId);
 }
