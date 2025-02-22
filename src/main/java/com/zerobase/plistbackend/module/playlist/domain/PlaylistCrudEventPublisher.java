@@ -6,6 +6,7 @@ import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class PlaylistCrudEventPublisher {
 
   private final ChannelService channelService;
-  private final SimpMessagingTemplate messagingTemplate;
+  private final SimpMessageSendingOperations messagingTemplate;
 
   @EventListener
   public void handlePlaylistUpdateEvent(PlaylistCrudEvent event) {
