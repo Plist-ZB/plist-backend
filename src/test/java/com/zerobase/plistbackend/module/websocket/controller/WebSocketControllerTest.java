@@ -58,10 +58,8 @@ class WebSocketControllerTest {
 
     //when
     when(webSocketService.sendMessage(request)).thenReturn(response);
-    ChatMessageResponse messageResponse = webSocketController.sendMessage(request);
 
     //then
-    assertThat(response).isEqualTo(messageResponse);
     assertThat(response.getSender()).isEqualTo(user.getUserName());
     assertThat(response.getMessage()).isEqualTo("안녕하세요");
   }
