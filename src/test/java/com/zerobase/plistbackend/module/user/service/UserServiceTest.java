@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
@@ -14,6 +15,7 @@ import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.user.type.UserRole;
+import com.zerobase.plistbackend.module.user.util.S3Util;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -36,6 +39,9 @@ public class UserServiceTest {
 
   @Mock
   private User mockUser;
+
+  @Mock
+  private S3Util s3Util;
 
   @BeforeEach
   void setUp() {
@@ -55,7 +61,8 @@ public class UserServiceTest {
   @DisplayName("유저 정보 찾기 성공")
   void testFindProfileSuccess() {
     String email = "test@example.com";
-    ProfileResponse response = new ProfileResponse("test@example.com", "Test User", "test-image-url");
+    ProfileResponse response = new ProfileResponse("test@example.com", "Test User",
+        "test-image-url");
     when(userRepository.findProfileByEmail(email)).thenReturn(response);
 
     ProfileResponse actualResponse = userService.findProfile(email);
@@ -65,6 +72,30 @@ public class UserServiceTest {
     assertEquals("test-image-url", actualResponse.image());
 
     verify(userRepository).findProfileByEmail(email);
+  }
+
+  @Test
+  @DisplayName("회원 정보 수정 성공 - 닉네임과 이미지 변경")
+  void testEditProfileWithMultipartFile() {
+    // Given
+    Long userId = 1L;
+    String newNickname = "Updated User";
+
+    MockMultipartFile imageFile = new MockMultipartFile(
+        "image", "test.jpg", "image/jpeg", new byte[]{1, 2, 3, 4}
+    );
+
+    UserProfileRequest request = new UserProfileRequest(imageFile, newNickname);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+    when(s3Util.putImage(imageFile, mockUser.getUserEmail())).thenReturn("updated-image-url");
+
+    // When
+    ProfileResponse response = userService.editProfile(request, userId);
+
+    // Then
+    assertEquals("Updated User", response.nickname());
+    assertEquals("updated-image-url", response.image());
   }
 
   @Test

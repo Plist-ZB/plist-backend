@@ -6,7 +6,6 @@ import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     String access = jwtUtil.createJwt("access", email, role);
     String refresh = jwtUtil.createJwt("refresh", email, role);
-    Timestamp expired = jwtUtil.findExpiration(refresh);
-    refreshService.addRefreshEntity(email, refresh, expired);
+    refreshService.addRefreshEntity(customOAuth2User.findId(), refresh);
 
     response.setStatus(HttpServletResponse.SC_FOUND);
     ResponseCookie cookie = jwtUtil.createCookie("refresh", refresh);
