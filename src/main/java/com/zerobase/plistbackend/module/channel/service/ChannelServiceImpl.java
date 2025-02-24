@@ -147,17 +147,17 @@ public class ChannelServiceImpl implements ChannelService {
       CustomOAuth2User customOAuth2User) {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+    Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
+            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!user.getParticipant().getChannel().equals(channel)) {
+    if (!user.getParticipant().getChannel().equals(channelWithLock)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
 
-    channel.getChannelPlaylist().getVideoList()
-        .add(Video.createVideo(videoRequest, channel.getChannelPlaylist().getVideoList()));
+    channelWithLock.getChannelPlaylist().getVideoList()
+        .add(Video.createVideo(videoRequest, channelWithLock.getChannelPlaylist().getVideoList()));
 
-    channelRepository.save(channel);
+    channelRepository.save(channelWithLock);
     applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
 
   }
@@ -169,23 +169,23 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+    Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
+            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!channel.getChannelHostId().equals(user.getUserId())) {
+    if (!channelWithLock.getChannelHostId().equals(user.getUserId())) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
-    if (channel.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
+    if (channelWithLock.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
       throw new ChannelException(ChannelErrorStatus.NOT_STREAMING);
     }
 
-    Video video = channel.getChannelPlaylist().getVideoList().stream()
+    Video video = channelWithLock.getChannelPlaylist().getVideoList().stream()
         .filter(it -> it.getId().equals(id)).findFirst()
         .orElseThrow(() -> new VideoException(VideoErrorStatus.NOT_EXIST));
-    channel.getChannelPlaylist().getVideoList().remove(video);
+    channelWithLock.getChannelPlaylist().getVideoList().remove(video);
 
-    channelRepository.save(channel);
+    channelRepository.save(channelWithLock);
     applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 
@@ -196,10 +196,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    Channel channel = channelRepository.findById(channelId)
-        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+    Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
+            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!channel.getChannelHostId().equals(user.getUserId())) {
+    if (!channelWithLock.getChannelHostId().equals(user.getUserId())) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
@@ -207,9 +207,9 @@ public class ChannelServiceImpl implements ChannelService {
     List<Video> videoList = playlistVideoConverter.convertToEntityAttribute(
         updateChannelPlaylistJson);
 
-    channel.getChannelPlaylist().setVideoList(videoList);
+    channelWithLock.getChannelPlaylist().setVideoList(videoList);
 
-    channelRepository.save(channel);
+    channelRepository.save(channelWithLock);
     applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
   }
 

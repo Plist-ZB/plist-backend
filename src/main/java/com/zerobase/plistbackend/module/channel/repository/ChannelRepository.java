@@ -4,7 +4,10 @@ import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -32,4 +35,8 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
       @Param("channelStatus") ChannelStatus channelStatus);
 
   Optional<Channel> findByChannelIdAndChannelHostId(Long channelId, Long userId);
+
+   @Lock(LockModeType.PESSIMISTIC_WRITE)
+   @Query("select c from Channel c join fetch c.channelPlaylist where c.channelId = :channelId")
+   Optional<Channel> findByIdWithLock(@Param("channelId") Long channelId);
 }
