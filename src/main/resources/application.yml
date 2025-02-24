@@ -158,16 +158,16 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-
-jwt:
-  access: 68400000  # Access Token: 30 min
-  refresh: 478800000  # Refresh Token: 7 days
-
   data:
     redis:
       host: 3.35.193.245
       port: 6379
       password: ${redis_password}
+
+jwt:
+  access: 68400000  # Access Token: 30 min
+  refresh: 478800000  # Refresh Token: 7 days
+
 
 login-url : https://plist.shop
 
