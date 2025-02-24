@@ -1,13 +1,19 @@
 package com.zerobase.plistbackend.common.app.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 
 @Configuration
 public class RedisConfig {
@@ -41,4 +47,32 @@ public class RedisConfig {
     return template;
   }
 
+  @Bean
+  @Qualifier("chatPubSub")
+  public RedisConnectionFactory chatPubSubConnectionFactory() {
+    RedisStandaloneConfiguration chatPubSubConfig = new RedisStandaloneConfiguration();
+    chatPubSubConfig.setHostName(host);
+    chatPubSubConfig.setPort(port);
+    chatPubSubConfig.setPassword(password);
+    return new LettuceConnectionFactory(chatPubSubConfig);
+  }
+  @Bean
+  public RedisTemplate<String,String> chatMessageTemplate(@Qualifier("chatPubSub") RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String,String> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setValueSerializer(new StringRedisSerializer());
+    return template;
+  }
+  @Bean
+  public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("chatPubSub") RedisConnectionFactory connectionFactory, MessageListener messageListener) {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    container.addMessageListener(messageListener, new PatternTopic("chat"));
+    return container;
+  }
+  @Bean
+  public MessageListener messageListener(RedisChatPubSubService service) {
+    return new MessageListenerAdapter(service, "receiveMessage");
+  }
 }
