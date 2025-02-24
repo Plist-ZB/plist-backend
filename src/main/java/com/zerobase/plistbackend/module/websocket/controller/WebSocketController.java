@@ -32,6 +32,7 @@ public class WebSocketController {
 
 
   @MessageMapping("/chat.{channelId}")
+//  @SendTo("/sub/chat.{channelId}")
   public void sendMessage(@DestinationVariable Long channelId, @Payload ChatMessageRequest request) throws JsonProcessingException {
     request.allocateChannelId(channelId);
     String message = mapper.writeValueAsString(webSocketService.sendMessage(request));
@@ -39,7 +40,7 @@ public class WebSocketController {
   }
 
   @MessageMapping("/video.{channelId}")
-  @SendTo("/sub/chat.{channelId}")
+//  @SendTo("/sub/chat.{channelId}")
   public VideoSyncResponse syncVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request) {
     videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
@@ -47,13 +48,13 @@ public class WebSocketController {
   }
 
   @MessageMapping("/enter.{channelId}")
-  @SendTo("/sub/chat.{channelId}")
+//  @SendTo("/sub/chat.{channelId}")
   public String enterNewUserForSync() {
     return "NEW_USER_ENTER";
   }
   
   @MessageMapping("/video.control.{channelId}")
-  @SendTo("/sub/chat.{channelId}")
+//  @SendTo("/sub/chat.{channelId}")
   public VideoControlResponse controlVideo(@DestinationVariable Long channelId,
       @Payload VideoControlRequest request) {
     if (!webSocketService.isHost(channelId, request.getEmail())) {
