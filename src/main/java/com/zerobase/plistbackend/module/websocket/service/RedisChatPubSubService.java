@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 public class RedisChatPubSubService implements MessageListener {
     private final ObjectMapper mapper;
     private final SimpMessageSendingOperations messagingTemplate;
-    private final RedisTemplate<String,String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+
 
     public void publish(String channelId, String message) {
         redisTemplate.convertAndSend(channelId, message);
