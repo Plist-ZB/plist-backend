@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.common.app.config;
 
+import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -48,29 +49,13 @@ public class RedisConfig {
   }
 
   @Bean
-  @Qualifier("chatPubSub")
-  public RedisConnectionFactory chatPubSubConnectionFactory() {
-    RedisStandaloneConfiguration chatPubSubConfig = new RedisStandaloneConfiguration();
-    chatPubSubConfig.setHostName(host);
-    chatPubSubConfig.setPort(port);
-    chatPubSubConfig.setPassword(password);
-    return new LettuceConnectionFactory(chatPubSubConfig);
-  }
-  @Bean
-  public RedisTemplate<String,String> chatMessageTemplate(@Qualifier("chatPubSub") RedisConnectionFactory connectionFactory) {
-    RedisTemplate<String,String> template = new RedisTemplate<>();
-    template.setConnectionFactory(connectionFactory);
-    template.setKeySerializer(new StringRedisSerializer());
-    template.setValueSerializer(new StringRedisSerializer());
-    return template;
-  }
-  @Bean
-  public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("chatPubSub") RedisConnectionFactory connectionFactory, MessageListener messageListener) {
+  public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory, MessageListener messageListener) {
     RedisMessageListenerContainer container = new RedisMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
     container.addMessageListener(messageListener, new PatternTopic("chat"));
     return container;
   }
+
   @Bean
   public MessageListener messageListener(RedisChatPubSubService service) {
     return new MessageListenerAdapter(service, "receiveMessage");
