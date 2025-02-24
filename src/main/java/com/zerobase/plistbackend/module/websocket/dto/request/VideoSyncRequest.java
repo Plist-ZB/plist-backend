@@ -13,4 +13,5 @@ public class VideoSyncRequest {
   private String videoId;
   private Long currentTime;
   private Long playState;
+  private Long channelId;
 }
