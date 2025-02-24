@@ -1,6 +1,8 @@
 package com.zerobase.plistbackend.common.app.config;
 
 import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService;
+import com.zerobase.plistbackend.module.websocket.service.RedisVideoSyncService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,15 +50,32 @@ public class RedisConfig {
   }
 
   @Bean
-  public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory, MessageListener messageListener) {
+  @Qualifier("chatListener")
+  public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory, @Qualifier("chatListener") MessageListener messageListener) {
+
     RedisMessageListenerContainer container = new RedisMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
     container.addMessageListener(messageListener, new PatternTopic("chat"));
     return container;
   }
+  @Bean
+  @Qualifier("chatListener")
+  public MessageListener messageListener(RedisChatPubSubService service) {
+    return new MessageListenerAdapter(service, "onMessage");
+  }
 
   @Bean
-  public MessageListener messageListener(RedisChatPubSubService service) {
+  @Qualifier("videoSyncListener")
+  public RedisMessageListenerContainer redisVideoSyncListenerContainer(RedisConnectionFactory connectionFactory,@Qualifier("videoSyncListener") MessageListener messageListener) {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    container.addMessageListener(messageListener, new PatternTopic("videoSync"));
+    return container;
+  }
+
+  @Bean
+  @Qualifier("videoSyncListener")
+  public MessageListener messageListener(RedisVideoSyncService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 }
