@@ -36,6 +36,8 @@ import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepo
 import com.zerobase.plistbackend.module.userplaylist.type.UserPlaylistErrorStatus;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistUtil;
 import java.util.List;
+
+import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,6 +58,7 @@ public class ChannelServiceImpl implements ChannelService {
   private final UserPlaylistRepository userPlaylistRepository;
   private final CustomChannelRepository customChannelRepository;
   private final ApplicationEventPublisher applicationEventPublisher;
+  private final VideoSyncManager videoSyncManager;
 
   @Override
   @Transactional
@@ -139,6 +142,7 @@ public class ChannelServiceImpl implements ChannelService {
     applicationEventPublisher.publishEvent(new HostExitEvent(channelId));
     Channel.closeChannel(channel, participantList);
     channelRepository.save(channel);
+    videoSyncManager.removeCurrentTime(channelId);
   }
 
   @Override
