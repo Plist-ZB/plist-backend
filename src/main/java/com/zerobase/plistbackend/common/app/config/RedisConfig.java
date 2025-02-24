@@ -58,6 +58,6 @@ public class RedisConfig {
 
   @Bean
   public MessageListener messageListener(RedisChatPubSubService service) {
-    return new MessageListenerAdapter(service, "receiveMessage");
+    return new MessageListenerAdapter(service, "onMessage");
   }
 }
