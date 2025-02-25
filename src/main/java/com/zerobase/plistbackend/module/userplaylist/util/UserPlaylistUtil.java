@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 
 @RequiredArgsConstructor
 public class UserPlaylistUtil {
@@ -18,7 +17,6 @@ public class UserPlaylistUtil {
     List<UserPlaylist> userPlaylists = userPlaylistRepository.findByUserAndUserPlaylistNameContaining(
         user, userPlaylistName);
 
-    String newString = userPlaylistName;
     int maxNum = 0;
 
     Pattern pattern = Pattern.compile(Pattern.quote(userPlaylistName) + "\\((\\d+)\\)");
@@ -32,8 +30,6 @@ public class UserPlaylistUtil {
       }
     }
 
-    newString = userPlaylistName + "(" + (maxNum + 1) + ")";
-
-    return newString;
+    return userPlaylistName + "(" + (maxNum + 1) + ")";
   }
 }
