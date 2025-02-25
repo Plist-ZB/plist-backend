@@ -55,7 +55,7 @@ public class WebSocketController {
   public void enterNewUserForSync(@DestinationVariable Long channelId) throws JsonProcessingException {
     String welcomeMessage =
             mapper.writeValueAsString(new NewUserWelcomeMessage(channelId, "NEW_USER_ENTER"));
-    redisNewUserEnterService.publish("userWelcomeMessage", welcomeMessage);
+    redisNewUserEnterService.publish("newUserEnter", welcomeMessage);
   }
   
   @MessageMapping("/video.control.{channelId}")
