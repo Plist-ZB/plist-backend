@@ -14,4 +14,9 @@ public class VideoControlRequest {
   private String videoId;
   private Long currentTime;
   private Long playState;
+  private Long channelId;
+
+  public void allocateChannelId(Long channelId) {
+    this.channelId = channelId;
+  }
 }
