@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.common.app.config;
 
 import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService;
 import com.zerobase.plistbackend.module.websocket.service.RedisNewUserEnterService;
+import com.zerobase.plistbackend.module.websocket.service.RedisVideoControlService;
 import com.zerobase.plistbackend.module.websocket.service.RedisVideoSyncService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +60,7 @@ public class RedisConfig {
     container.addMessageListener(messageListener, new PatternTopic("chat"));
     return container;
   }
+
   @Bean
   @Qualifier("chatListener")
   public MessageListener messageListener(RedisChatPubSubService service) {
@@ -79,6 +81,7 @@ public class RedisConfig {
   public MessageListener messageListener(RedisVideoSyncService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
+
   @Bean
   @Qualifier("newUserWelcomeListener")
   public RedisMessageListenerContainer redisNewUserWelcomeListener(RedisConnectionFactory connectionFactory,@Qualifier("newUserWelcomeListener") MessageListener messageListener) {
@@ -91,6 +94,21 @@ public class RedisConfig {
   @Bean
   @Qualifier("newUserWelcomeListener")
   public MessageListener messageListener(RedisNewUserEnterService service) {
+    return new MessageListenerAdapter(service, "onMessage");
+  }
+
+  @Bean
+  @Qualifier("videoControlListener")
+  public RedisMessageListenerContainer redisVideoControlListener(RedisConnectionFactory connectionFactory,@Qualifier("videoControlListener") MessageListener messageListener) {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    container.addMessageListener(messageListener, new PatternTopic("videoControl"));
+    return container;
+  }
+
+  @Bean
+  @Qualifier("videoControlListener")
+  public MessageListener messageListener(RedisVideoControlService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 }
