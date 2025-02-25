@@ -10,10 +10,7 @@ import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
-import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService;
-import com.zerobase.plistbackend.module.websocket.service.RedisNewUserEnterService;
-import com.zerobase.plistbackend.module.websocket.service.RedisVideoSyncService;
-import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
+import com.zerobase.plistbackend.module.websocket.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -30,6 +27,7 @@ public class WebSocketController {
   private final RedisChatPubSubService redisChatPubSubService;
   private final RedisVideoSyncService redisVideoSyncService;
   private final RedisNewUserEnterService redisNewUserEnterService;
+  private final RedisVideoControlService redisVideoControlService;
   private final ObjectMapper mapper;
 
 
@@ -53,20 +51,22 @@ public class WebSocketController {
   @MessageMapping("/enter.{channelId}")
 //     @SendTo("/sub/enter.{channelId}")
   public void enterNewUserForSync(@DestinationVariable Long channelId) throws JsonProcessingException {
-    String welcomeMessage =
-            mapper.writeValueAsString(new NewUserWelcomeMessage(channelId, "NEW_USER_ENTER"));
+    String welcomeMessage = mapper.writeValueAsString(new NewUserWelcomeMessage(channelId, "NEW_USER_ENTER"));
     redisNewUserEnterService.publish("newUserEnter", welcomeMessage);
   }
   
   @MessageMapping("/video.control.{channelId}")
 //     @SendTo("/sub/video.{channelId}")
-  public VideoControlResponse controlVideo(@DestinationVariable Long channelId,
-      @Payload VideoControlRequest request) {
+  public void controlVideo(@DestinationVariable Long channelId,
+      @Payload VideoControlRequest request) throws JsonProcessingException {
     if (!webSocketService.isHost(channelId, request.getEmail())) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
-//    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
+
+    request.allocateChannelId(channelId);
+    String response = mapper.writeValueAsString(new VideoControlResponse(request));
+    redisVideoControlService.publish("videoControl", response);
+
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
-    return new VideoControlResponse(request);
   }
 }
