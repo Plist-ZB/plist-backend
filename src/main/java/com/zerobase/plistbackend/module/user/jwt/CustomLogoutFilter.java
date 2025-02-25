@@ -62,8 +62,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
       return;
     }
 
-    if (refreshRepository.hasToken(refresh)) {
-      refreshRepository.deleteByToken(refresh);
+    Long userId = jwtUtil.findId(refresh);
+    if (refreshRepository.hasToken(userId)) {
+      refreshRepository.deleteByToken(userId);
     } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
