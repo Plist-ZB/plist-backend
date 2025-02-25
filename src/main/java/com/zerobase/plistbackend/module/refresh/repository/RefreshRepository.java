@@ -1,5 +1,7 @@
 package com.zerobase.plistbackend.module.refresh.repository;
 
+import com.zerobase.plistbackend.module.refresh.exception.RefreshException;
+import com.zerobase.plistbackend.module.refresh.type.RefreshErrorStatus;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,7 +24,11 @@ public class RefreshRepository {
   }
 
   public String findTokenByUserId(Long userId) {
-    return redisTemplate.opsForValue().get(userId.toString()).toString();
+    Object token = redisTemplate.opsForValue().get(userId.toString());
+    if (token == null) {
+      throw new RefreshException(RefreshErrorStatus.REFRESH_NOT_FOUND);
+    }
+    return token.toString();
   }
 
   public void deleteByToken(Long userId) {
