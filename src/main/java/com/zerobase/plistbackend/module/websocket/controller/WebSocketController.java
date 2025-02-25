@@ -18,7 +18,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class WebSocketController {
@@ -62,11 +61,8 @@ public class WebSocketController {
     if (!webSocketService.isHost(channelId, request.getEmail())) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
-
     request.allocateChannelId(channelId);
     String response = mapper.writeValueAsString(new VideoControlResponse(request));
     redisVideoControlService.publish("videoControl", response);
-
-    log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
   }
 }
