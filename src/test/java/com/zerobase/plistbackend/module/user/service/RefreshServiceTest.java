@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.user.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -10,9 +11,7 @@ import com.zerobase.plistbackend.module.refresh.exception.RefreshException;
 import com.zerobase.plistbackend.module.refresh.repository.RefreshRepository;
 import com.zerobase.plistbackend.module.refresh.service.RefreshServiceImpl;
 import com.zerobase.plistbackend.module.refresh.type.RefreshErrorStatus;
-import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
-import com.zerobase.plistbackend.module.user.type.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -71,6 +70,7 @@ public class RefreshServiceTest {
     when(jwtUtil.findRole(refreshToken)).thenReturn(role);
     when(jwtUtil.findCategory(refreshToken)).thenReturn("refresh");
     when(jwtUtil.createJwt("access", email, role)).thenReturn(accessToken);
+    when(refreshRepository.findTokenByUserId(anyLong())).thenReturn(refreshToken);
 
     NewAccessResponse response = refreshService.newAccessToken(request);
 

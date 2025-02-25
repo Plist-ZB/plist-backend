@@ -55,7 +55,7 @@ class ChannelServiceImplTest {
         .channelPlaylist(new Playlist())
         .build();
 
-    when(channelRepository.findById(channelId)).thenReturn(Optional.of(channel));
+    when(channelRepository.findByIdWithLock(channelId)).thenReturn(Optional.of(channel));
 
     Participant participant = Participant.builder()
         .participantId(1L)
@@ -85,28 +85,32 @@ class ChannelServiceImplTest {
   public void success_updateVideoToChannel() {
     Long channelId = 1L;
 
-    Channel channel = Channel.builder()
-        .channelId(channelId)
-        .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
-        .channelPlaylist(new Playlist())
-        .channelHostId(1L)
-        .build();
-
-    when(channelRepository.findById(channelId)).thenReturn(Optional.of(channel));
-
-    Participant participant = Participant.builder()
-        .participantId(1L)
-        .channel(channel)
-        .build();
-
     User user = User.builder()
         .userId(1L)
         .userEmail("TestUser@test.com")
         .userName("TestUser")
-        .participant(participant)
         .build();
-    when(userRepository.findByUserEmail(anyString())).thenReturn(user);
 
+    Channel channel = Channel.builder()
+        .channelId(channelId)
+        .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
+        .channelPlaylist(new Playlist())
+        .channelParticipants(new ArrayList<>())
+        .channelHost(user)
+        .build();
+
+    Participant participant = Participant.builder()
+        .participantId(1L)
+        .user(user)
+        .channel(channel)
+        .build();
+
+    channel.getChannelParticipants().add(participant);
+    user.setParticipant(participant);
+
+    when(channelRepository.findByIdWithLock(channelId)).thenReturn(Optional.of(channel));
+
+    when(userRepository.findByUserEmail(anyString())).thenReturn(user);
 
     CustomOAuth2User oAuth2User = mock(CustomOAuth2User.class);
     when(oAuth2User.findEmail()).thenReturn("TestUser@test.com");
@@ -154,9 +158,9 @@ class ChannelServiceImplTest {
         .channelId(1L)
         .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
         .channelPlaylist(playlist)
-        .channelHostId(user.getUserId())
+        .channelHost(user)
         .build();
-    when(channelRepository.findById(channel.getChannelId())).thenReturn(Optional.of(channel));
+    when(channelRepository.findByIdWithLock(channel.getChannelId())).thenReturn(Optional.of(channel));
 
     CustomOAuth2User oAuth2User = mock(CustomOAuth2User.class);
     when(oAuth2User.findEmail()).thenReturn("TestUser@test.com");
