@@ -25,10 +25,8 @@ import com.zerobase.plistbackend.module.participant.repository.ParticipantReposi
 import com.zerobase.plistbackend.module.playlist.domain.PlaylistCrudEvent;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
 import com.zerobase.plistbackend.module.user.entity.User;
-import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
-import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
@@ -85,7 +83,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     channelRepository.save(channel);
 
-    return DetailChannelResponse.createDetailChannelResponse(channel);
+    return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
 
   @Override
@@ -105,7 +103,7 @@ public class ChannelServiceImpl implements ChannelService {
     channel.getChannelParticipants().add(participant);
     channelRepository.save(channel);
 
-    return DetailChannelResponse.createDetailChannelResponse(channel);
+    return DetailChannelResponse.createDetailChannelResponse(channel, user);
   } // TODO: 테스트코드를 활용해 테스트 필요.
 
   @Override
@@ -117,7 +115,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    if (!user.getParticipant().getChannel().equals(channel)) {
+    if (user.getParticipant() == null || !user.getParticipant().getChannel().equals(channel)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
     Participant participant = participantRepository.findByUser(user);
@@ -133,14 +131,12 @@ public class ChannelServiceImpl implements ChannelService {
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
-    if (!channel.getChannelHostId().equals(user.getUserId())) {
+    if (!channel.getChannelHost().equals(user)) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
-    List<Participant> participantList = participantRepository.findByChannel(channel);
-
     applicationEventPublisher.publishEvent(new HostExitEvent(channelId));
-    Channel.closeChannel(channel, participantList);
+    Channel.closeChannel(channel);
     channelRepository.save(channel);
     videoSyncManager.removeCurrentTime(channelId);
   }
@@ -152,7 +148,7 @@ public class ChannelServiceImpl implements ChannelService {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
-            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
     if (!user.getParticipant().getChannel().equals(channelWithLock)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
@@ -174,9 +170,9 @@ public class ChannelServiceImpl implements ChannelService {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
-            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!channelWithLock.getChannelHostId().equals(user.getUserId())) {
+    if (!channelWithLock.getChannelHost().equals(user)) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
@@ -201,9 +197,9 @@ public class ChannelServiceImpl implements ChannelService {
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
-            .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
+        .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!channelWithLock.getChannelHostId().equals(user.getUserId())) {
+    if (!channelWithLock.getChannelHost().equals(user)) {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
@@ -227,11 +223,8 @@ public class ChannelServiceImpl implements ChannelService {
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    String ChannelHostUserName = userRepository.findById(channel.getChannelHostId())
-        .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND)).getUserName();
-
     UserPlaylist userPlaylist = UserPlaylist.fromChannelPlaylist(
-        user, channel, ChannelHostUserName);
+        user, channel);
 
     if (userPlaylistRepository.existsByUserAndUserPlaylistName(user,
         userPlaylist.getUserPlaylistName())) {
@@ -269,9 +262,11 @@ public class ChannelServiceImpl implements ChannelService {
 
   @Override
   @Transactional(readOnly = true)
-  public Slice<StreamingChannelResponse> findChannelListPopular(Long cursorId, Long cursorPopular, Pageable pageable) {
+  public Slice<StreamingChannelResponse> findChannelListPopular(Long cursorId, Long cursorPopular,
+      Pageable pageable) {
 
-    return customChannelRepository.findStreamingChannelOrderByParticipantCount(cursorId, cursorPopular, pageable);
+    return customChannelRepository.findStreamingChannelOrderByParticipantCount(cursorId,
+        cursorPopular, pageable);
   }
 
   @Override
@@ -280,10 +275,8 @@ public class ChannelServiceImpl implements ChannelService {
     List<Channel> channelList = channelRepository.search(
         ChannelStatus.CHANNEL_STATUS_ACTIVE, searchValue, searchValue, searchValue);
 
-    return channelList.stream().map(
-        it -> StreamingChannelResponse.createStreamingChannelResponse(it,
-            userRepository.findById(it.getChannelHostId()).orElseThrow(() -> new UserException(
-                UserErrorStatus.USER_NOT_FOUND)))).toList();
+    return channelList.stream().map(StreamingChannelResponse::createStreamingChannelResponse)
+        .toList();
   }
 
   @Override
@@ -304,6 +297,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
+    if (!participantRepository.existsByUser(user)) {
+      throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
+    }
+
     return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
 
@@ -314,7 +311,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     User requestUser = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    return customChannelRepository.findClosedChannelOrderByChannelId(requestUser, cursorId, pageable);
+    return customChannelRepository.findClosedChannelOrderByChannelId(requestUser, cursorId,
+        pageable);
   }
 
   @Override
@@ -324,7 +322,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    Channel channel = channelRepository.findByChannelIdAndChannelHostId(channelId, user.getUserId())
+    Channel channel = channelRepository.findByChannelIdAndChannelHost(channelId, user)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
     return DetailClosedChannelResponse.createClosedChannelResponse(channel, user);
