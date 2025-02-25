@@ -63,13 +63,13 @@ public class RedisConfig {
 
   @Bean
   @Qualifier("chatListener")
-  public MessageListener messageListener(RedisChatPubSubService service) {
+  public MessageListener chatMessageListener(RedisChatPubSubService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 
   @Bean
   @Qualifier("videoSyncListener")
-  public RedisMessageListenerContainer redisVideoSyncListenerContainer(RedisConnectionFactory connectionFactory,@Qualifier("videoSyncListener") MessageListener messageListener) {
+  public RedisMessageListenerContainer redisVideoSyncListenerContainer(RedisConnectionFactory connectionFactory, @Qualifier("videoSyncListener") MessageListener messageListener) {
     RedisMessageListenerContainer container = new RedisMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
     container.addMessageListener(messageListener, new PatternTopic("videoSync"));
@@ -78,7 +78,7 @@ public class RedisConfig {
 
   @Bean
   @Qualifier("videoSyncListener")
-  public MessageListener messageListener(RedisVideoSyncService service) {
+  public MessageListener videoSyncMessageListener(RedisVideoSyncService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 
@@ -93,7 +93,7 @@ public class RedisConfig {
 
   @Bean
   @Qualifier("newUserWelcomeListener")
-  public MessageListener messageListener(RedisNewUserEnterService service) {
+  public MessageListener newUserWelcomeListener(RedisNewUserEnterService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 
@@ -108,7 +108,7 @@ public class RedisConfig {
 
   @Bean
   @Qualifier("videoControlListener")
-  public MessageListener messageListener(RedisVideoControlService service) {
+  public MessageListener videoControlListener(RedisVideoControlService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 }
