@@ -9,13 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoSyncRequest {
-  private String videoId;
-  private Long currentTime;
-  private Long playState;
-  private Long channelId;
+public class NewUserWelcomeMessage {
+    private Long channelId;
+    private String message;
 
-  public void allocateChannelId(Long channelId) {
-    this.channelId = channelId;
-  }
 }

@@ -15,8 +15,10 @@ public class VideoControlResponse implements VideoResponse {
   private String videoId;
   private Long playStates;
   private Long currentTime;
+  private Long channelId;
 
   public VideoControlResponse(VideoControlRequest request) {
+    this.channelId = request.getChannelId();
     this.videoId = request.getVideoId();
     this.playStates = request.getPlayState();
     this.currentTime = request.getCurrentTime();

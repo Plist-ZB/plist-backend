@@ -15,4 +15,8 @@ public class VideoSyncManager {
   public Long getCurrentTime(Long channelId) {
     return videoSyncDataMap.getOrDefault(channelId, 0L);
   }
+
+  public void removeCurrentTime(Long channelId) {
+    videoSyncDataMap.remove(channelId);
+  }
 }

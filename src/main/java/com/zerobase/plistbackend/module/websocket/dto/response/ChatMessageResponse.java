@@ -15,9 +15,11 @@ public class ChatMessageResponse {
   private String sender;
   private String message;
   private String userProfileImg;
+  private Long channelId;
 
   public static ChatMessageResponse from(ChatMessageRequest request, User findUser) {
     return ChatMessageResponse.builder()
+        .channelId(request.getChannelId())
         .sender(findUser.getUserName())
         .message(request.getMessage())
         .userProfileImg(findUser.getUserImage())
