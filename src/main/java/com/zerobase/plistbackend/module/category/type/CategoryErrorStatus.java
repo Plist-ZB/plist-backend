@@ -10,7 +10,7 @@ public enum CategoryErrorStatus implements ErrorStatus {
       HttpStatus.NOT_FOUND.value(),
       HttpStatus.NOT_FOUND.getReasonPhrase(),
       "해당 카테고리는 존재하지 않습니다"
-  ),;
+  );
 
   private final int errorCode;
   private final String message;
