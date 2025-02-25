@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.common.app.config;
 
 import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService;
+import com.zerobase.plistbackend.module.websocket.service.RedisNewUserEnterService;
 import com.zerobase.plistbackend.module.websocket.service.RedisVideoSyncService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +77,20 @@ public class RedisConfig {
   @Bean
   @Qualifier("videoSyncListener")
   public MessageListener messageListener(RedisVideoSyncService service) {
+    return new MessageListenerAdapter(service, "onMessage");
+  }
+  @Bean
+  @Qualifier("newUserWelcomeListener")
+  public RedisMessageListenerContainer redisNewUserWelcomeListener(RedisConnectionFactory connectionFactory,@Qualifier("newUserWelcomeListener") MessageListener messageListener) {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    container.addMessageListener(messageListener, new PatternTopic("newUserEnter"));
+    return container;
+  }
+
+  @Bean
+  @Qualifier("newUserWelcomeListener")
+  public MessageListener messageListener(RedisNewUserEnterService service) {
     return new MessageListenerAdapter(service, "onMessage");
   }
 }
