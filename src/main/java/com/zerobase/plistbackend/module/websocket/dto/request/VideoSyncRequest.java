@@ -14,4 +14,8 @@ public class VideoSyncRequest {
   private Long currentTime;
   private Long playState;
   private Long channelId;
+
+  public void allocateChannelId(Long channelId) {
+    this.channelId = channelId;
+  }
 }
