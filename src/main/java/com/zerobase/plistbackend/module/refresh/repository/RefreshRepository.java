@@ -12,18 +12,21 @@ public class RefreshRepository {
   private final RedisTemplate<String, Object> redisTemplate;
 
   private static final Long EXPIRATION_TIME = 478800000L;
-  //private static final Long EXPIRATION_TIME = 10L;
 
   public void saveToken(Long userId, String token) {
-    redisTemplate.opsForValue().set(token, userId.toString(), EXPIRATION_TIME, TimeUnit.SECONDS);
+    redisTemplate.opsForValue().set(userId.toString(), token, EXPIRATION_TIME, TimeUnit.SECONDS);
   }
 
-  public Boolean hasToken(String token) {
-    return redisTemplate.hasKey(token);
+  public Boolean hasToken(Long userId) {
+    return redisTemplate.hasKey(userId.toString());
   }
 
-  public void deleteByToken(String refreshToken) {
-    redisTemplate.delete(refreshToken);
+  public String findTokenByUserId(Long userId) {
+    return redisTemplate.opsForValue().get(userId.toString()).toString();
+  }
+
+  public void deleteByToken(Long userId) {
+    redisTemplate.delete(userId.toString());
   }
 
 }
