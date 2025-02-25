@@ -7,6 +7,7 @@ import com.zerobase.plistbackend.module.refresh.type.RefreshErrorStatus;
 import com.zerobase.plistbackend.module.user.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,11 @@ public class RefreshServiceImpl implements RefreshService {
     // 토큰이 refresh 인지 확인
     String category = jwtUtil.findCategory(refreshToken);
     if (!category.equals("refresh")) {
+      throw new RefreshException(RefreshErrorStatus.REFRESH_INVALID);
+    }
+
+    Long userId = jwtUtil.findId(refreshToken);
+    if (!Objects.equals(refreshRepository.findTokenByUserId(userId), refreshToken)) {
       throw new RefreshException(RefreshErrorStatus.REFRESH_INVALID);
     }
   }
