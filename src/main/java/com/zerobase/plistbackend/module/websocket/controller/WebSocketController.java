@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebSocketController {
 
   private final WebSocketService webSocketService;
-  private final VideoSyncManager videoSyncManager;
   private final RedisChatPubSubService redisChatPubSubService;
   private final RedisVideoSyncService redisVideoSyncService;
   private final ObjectMapper mapper;
@@ -44,7 +43,7 @@ public class WebSocketController {
 //        @SendTo("/sub/video.{channelId}")
   public void syncVideo(@DestinationVariable Long channelId,
       @Payload VideoSyncRequest request) throws JsonProcessingException {
-    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
+    request.allocateChannelId(channelId);
     String syncData = mapper.writeValueAsString(new VideoSyncResponse(request));
     redisVideoSyncService.publish("videoSync",syncData);
   }
@@ -62,7 +61,7 @@ public class WebSocketController {
     if (!webSocketService.isHost(channelId, request.getEmail())) {
       throw new WebSocketControllerException(ChannelErrorStatus.NOT_HOST);
     }
-    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
+//    videoSyncManager.updateCurrentTime(channelId, request.getCurrentTime());
     log.info("호스트가 채널 {}의 비디오 상태를 업데이트: 현재 시간={}", channelId, request.getCurrentTime());
     return new VideoControlResponse(request);
   }
