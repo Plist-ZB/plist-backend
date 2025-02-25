@@ -12,7 +12,6 @@ import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
