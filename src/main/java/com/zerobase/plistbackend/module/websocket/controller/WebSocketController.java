@@ -7,6 +7,7 @@ import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest
 import com.zerobase.plistbackend.module.websocket.dto.request.NewUserWelcomeMessage;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
+import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
 import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
@@ -31,10 +32,12 @@ public class WebSocketController {
 
   @MessageMapping("/chat.{channelId}")
 //        @SendTo("/sub/chat.{channelId}") // 서버를 거치고 처리한 결과를 전송할 주소
-  public void sendMessage(@DestinationVariable Long channelId, @Payload ChatMessageRequest request) throws JsonProcessingException {
+  public ChatMessageResponse sendMessage(@DestinationVariable Long channelId, @Payload ChatMessageRequest request) throws JsonProcessingException {
     request.allocateChannelId(channelId);
-    String message = mapper.writeValueAsString(webSocketService.sendMessage(request));
+    ChatMessageResponse response = webSocketService.sendMessage(request);
+    String message = mapper.writeValueAsString(response);
     redisChatPubSubService.publish("chat", message);
+    return response;
   }
 
   @MessageMapping("/video.{channelId}")
