@@ -15,8 +15,6 @@ import com.zerobase.plistbackend.module.websocket.dto.request.ChatMessageRequest
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoControlRequest;
 import com.zerobase.plistbackend.module.websocket.dto.request.VideoSyncRequest;
 import com.zerobase.plistbackend.module.websocket.dto.response.ChatMessageResponse;
-import com.zerobase.plistbackend.module.websocket.dto.response.VideoControlResponse;
-import com.zerobase.plistbackend.module.websocket.dto.response.VideoSyncResponse;
 import com.zerobase.plistbackend.module.websocket.exception.WebSocketControllerException;
 import com.zerobase.plistbackend.module.websocket.service.WebSocketService;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +55,7 @@ class WebSocketControllerTest {
         .from(request, user);
 
     //when
-    when(webSocketService.sendMessage(request)).thenReturn(response);
+//    when(webSocketService.sendMessage(request)).thenReturn(response);
 
     //then
     assertThat(response.getSender()).isEqualTo(user.getUserName());
@@ -95,9 +93,8 @@ class WebSocketControllerTest {
         .build();
     Long channelId = 1L;
 
-
     //when
-    when(webSocketService.isHost(channelId, request.getEmail())).thenReturn(true);
+//    when(webSocketService.isHost(channelId, request.getEmail())).thenReturn(true);
     /*VideoControlResponse response = webSocketController.controlVideo(channelId, request);*/
 
     //then

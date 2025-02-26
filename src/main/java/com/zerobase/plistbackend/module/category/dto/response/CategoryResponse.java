@@ -11,7 +11,7 @@ public class CategoryResponse {
   private Long categoryId;
   private String categoryName;
 
-  public static CategoryResponse fromEntity(Category category) {
+  public static CategoryResponse of(Category category) {
     return CategoryResponse.builder()
         .categoryId(category.getCategoryId())
         .categoryName(category.getCategoryName())

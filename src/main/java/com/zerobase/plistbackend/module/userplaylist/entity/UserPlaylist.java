@@ -61,8 +61,8 @@ public class UserPlaylist {
         .build();
   }
 
-  public static UserPlaylist fromChannelPlaylist(User user, Channel channel, String channelHostUserName) {
-    String userPlaylistName = "(" + channelHostUserName + ")" + channel.getChannelName() + "_"
+  public static UserPlaylist fromChannelPlaylist(User user, Channel channel) {
+    String userPlaylistName = "(" + channel.getChannelHost().getUserName() + ")" + channel.getChannelName() + "_"
         + channel.getChannelId();
 
     return UserPlaylist.builder()

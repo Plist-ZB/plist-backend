@@ -25,7 +25,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,8 +38,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @AllArgsConstructor
 @Table(name = "channel")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Channel {
 
   @Id
@@ -60,19 +59,20 @@ public class Channel {
 
   private Timestamp channelFinishedAt;
 
-//  @Column(nullable = false)
-//  private Long channelCapacity;
-
   @Enumerated(value = EnumType.STRING)
   @Column(nullable = false)
   private ChannelStatus channelStatus;
 
-  @Column(nullable = false)
-  private Long channelHostId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User channelHost;
 
   private int channelLastParticipantCount;
 
-  @OneToOne(mappedBy = "channel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//  @Column(nullable = false)
+//  private Long channelCapacity;
+
+  @OneToOne(mappedBy = "channel", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   @Builder.Default
   private Playlist channelPlaylist = new Playlist();
 
@@ -85,7 +85,7 @@ public class Channel {
         .channelName(request.getChannelName())
         .category(category)
         .channelStatus(ChannelStatus.CHANNEL_STATUS_ACTIVE)
-        .channelHostId(user.getUserId())
+        .channelHost(user)
         .build();
 
     Participant participant = Participant.host(user, channel);
@@ -95,11 +95,12 @@ public class Channel {
     return channel;
   }
 
-  public static void closeChannel(Channel channel, List<Participant> participantList) {
+  public static void closeChannel(Channel channel) {
     Date date = new Date();
     channel.channelFinishedAt = new Timestamp(date.getTime());
     channel.channelStatus = ChannelStatus.CHANNEL_STATUS_CLOSED;
     channel.channelLastParticipantCount = channel.getChannelParticipants().size();
+    List<Participant> participantList = List.copyOf(channel.getChannelParticipants());
     for (Participant participant : participantList) {
       channel.removeParticipant(participant);
     }
@@ -110,16 +111,5 @@ public class Channel {
     participant.setChannel(null);
     participant.getUser().setParticipant(null);
     participant.setUser(null);
-  }
-
-  public boolean validateIfHostRequest(Long userId) {
-    return channelHostId.equals(userId);
-  }
-
-  public Optional<User> findUserFromParticipantsByEmail(String email, Channel findedChannel) {
-    return findedChannel.getChannelParticipants().stream()
-        .map(Participant::getUser)
-        .filter(user -> user.getUserEmail().equals(email))
-        .findAny();
   }
 }
