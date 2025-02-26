@@ -4,6 +4,7 @@ import com.zerobase.plistbackend.module.websocket.service.RedisChatPubSubService
 import com.zerobase.plistbackend.module.websocket.service.RedisNewUserEnterService;
 import com.zerobase.plistbackend.module.websocket.service.RedisVideoControlService;
 import com.zerobase.plistbackend.module.websocket.service.RedisVideoSyncService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-
+@Slf4j
 @Configuration
 public class RedisConfig {
 
@@ -58,12 +59,14 @@ public class RedisConfig {
     RedisMessageListenerContainer container = new RedisMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
     container.addMessageListener(messageListener, new PatternTopic("chat"));
+    log.info("RedisMessageListenerContainer created");
     return container;
   }
 
   @Bean
   @Qualifier("chatListener")
   public MessageListener chatMessageListener(RedisChatPubSubService service) {
+    log.info("ChatMessageListener created");
     return new MessageListenerAdapter(service, "onMessage");
   }
 
