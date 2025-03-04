@@ -72,7 +72,7 @@ public class RefreshServiceTest {
     when(jwtUtil.createJwt("access", email, role)).thenReturn(accessToken);
     when(refreshRepository.findTokenByUserId(anyLong())).thenReturn(refreshToken);
 
-    NewAccessResponse response = refreshService.newAccessToken(request);
+    NewAccessResponse response = refreshService.newAccessToken(request, refreshToken);
 
     assertEquals(accessToken, response.accessToken());
   }
