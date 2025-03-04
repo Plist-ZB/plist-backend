@@ -88,6 +88,7 @@ public class SecurityConfig {
       for (String url : PUBLIC_GET_URLS) {
         auth.requestMatchers(HttpMethod.GET, url).permitAll();
       }
+      auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
       auth.requestMatchers(PUBLIC_URLS).permitAll();
       auth.anyRequest().authenticated();
     });
