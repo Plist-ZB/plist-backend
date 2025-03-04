@@ -31,7 +31,7 @@ public class RefreshRepository {
     return token.toString();
   }
 
-  public void deleteByToken(Long userId) {
+  public void deleteByUserId(Long userId) {
     redisTemplate.delete(userId.toString());
   }
 
