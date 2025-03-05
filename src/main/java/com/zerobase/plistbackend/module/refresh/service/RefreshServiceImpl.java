@@ -47,16 +47,19 @@ public class RefreshServiceImpl implements RefreshService {
 
     Long userId = jwtUtil.findId(refreshToken);
     if (!Objects.equals(refreshRepository.findTokenByUserId(userId), refreshToken)) {
+      refreshRepository.deleteByUserId(userId);
       throw new RefreshException(RefreshErrorStatus.REFRESH_INVALID);
     }
   }
 
-  public NewAccessResponse newAccessToken(HttpServletRequest request) {
+  public NewAccessResponse newAccessToken(HttpServletRequest request, String newRefresh) {
     String refreshToken = jwtUtil.findToken(request, "refresh");
     checkRefresh(refreshToken);
 
     String email = jwtUtil.findEmail(refreshToken);
     String role = jwtUtil.findRole(refreshToken);
+
+    addRefreshEntity(jwtUtil.findId(refreshToken), newRefresh);
 
     return new NewAccessResponse(jwtUtil.createJwt("access", email, role));
   }

@@ -9,6 +9,6 @@ public interface RefreshService {
 
   void checkRefresh(String refreshToken);
 
-  NewAccessResponse newAccessToken(HttpServletRequest request);
+  NewAccessResponse newAccessToken(HttpServletRequest request, String refresh);
 
 }
