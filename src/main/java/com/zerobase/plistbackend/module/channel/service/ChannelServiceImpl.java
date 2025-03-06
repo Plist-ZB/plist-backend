@@ -21,7 +21,6 @@ import com.zerobase.plistbackend.module.home.exception.VideoException;
 import com.zerobase.plistbackend.module.home.model.Video;
 import com.zerobase.plistbackend.module.home.type.VideoErrorStatus;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
-import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
 import com.zerobase.plistbackend.module.playlist.domain.PlaylistCrudEvent;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
 import com.zerobase.plistbackend.module.user.entity.User;
