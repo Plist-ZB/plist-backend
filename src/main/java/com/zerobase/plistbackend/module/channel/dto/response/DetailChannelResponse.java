@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
-import com.zerobase.plistbackend.module.channel.util.ResponseUtil;
+import com.zerobase.plistbackend.module.channel.util.ChannelResponseMapper;
 import com.zerobase.plistbackend.module.home.model.Video;
 import com.zerobase.plistbackend.module.user.entity.User;
 import java.util.List;
@@ -23,9 +23,9 @@ public class DetailChannelResponse {
     return DetailChannelResponse.builder()
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
-        .channelCreatedAt(ResponseUtil.convertStringFormat(channel.getChannelCreatedAt()))
+        .channelCreatedAt(ChannelResponseMapper.convertStringFormat(channel.getChannelCreatedAt()))
         .videoList(channel.getChannelPlaylist().getVideoList())
-        .isHost(ResponseUtil.isChannelHost(channel, user))
+        .isHost(ChannelResponseMapper.isChannelHost(channel, user))
         .build();
   }
 }
