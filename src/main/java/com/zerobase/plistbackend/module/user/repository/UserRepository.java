@@ -8,7 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-  User findByUserEmail(String email);
+  @Query("SELECT u FROM User u LEFT JOIN FETCH u.participant WHERE u.userEmail = :email")
+  User findByUserEmail(@Param("email") String email);
 
   @Query("SELECT new com.zerobase.plistbackend.module.user.dto.response.ProfileResponse(u.userEmail, u.userName, u.userImage) " +
       "FROM User u WHERE u.userEmail = :email")

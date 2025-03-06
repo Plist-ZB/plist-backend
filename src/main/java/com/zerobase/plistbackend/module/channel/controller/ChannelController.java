@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Channel API", description = "채널과 관련된 API Controller")
 public class ChannelController {
 
+  private static final Logger log = LoggerFactory.getLogger(ChannelController.class);
   private final ChannelService channelService;
 
   @Operation(
@@ -49,6 +52,8 @@ public class ChannelController {
 
     DetailChannelResponse detailChannelResponse = channelService.addChannel(customOAuth2User,
         channelRequest);
+
+    log.info("{}번 채널이 생성되었습니다.", detailChannelResponse.getChannelId());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(detailChannelResponse);
   }
@@ -94,6 +99,8 @@ public class ChannelController {
       @PathVariable Long channelId) {
 
     channelService.hostExitChannel(customOAuth2User, channelId);
+
+    log.info("{}번 채널이 종료되었습니다.", channelId);
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }
@@ -202,6 +209,7 @@ public class ChannelController {
         streamingChannelResponseList.hasNext()));
   }
 
+  //Todo : 기능개발
   @Operation(
       summary = "현재 스트리밍 중인 채널 검색 기능",
       description = "'채널 이름 & 채널 카테고리이름 & 채널 호스트닉네임' 이랑 검색어가 유사한 모든 채널을"
@@ -247,8 +255,8 @@ public class ChannelController {
   }
 
   @Operation(
-      summary = "내 과거 호스트 내역",
-      description = "내 과거 호스트 내역을 조회합니다."
+      summary = "내 과거 호스트 내역 전체조회",
+      description = "내 과거 호스트 내역을 전체조회합니다. 정렬은 최신순입니다."
   )
   @GetMapping("/user/history")
   public ResponseEntity<ControllerApiResponse<ClosedChannelResponse>> findUserChannelHistory(

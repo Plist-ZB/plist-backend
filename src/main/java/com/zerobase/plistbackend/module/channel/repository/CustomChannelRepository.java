@@ -11,8 +11,8 @@ public interface CustomChannelRepository {
   Slice<StreamingChannelResponse> findStreamingChannelOrderByChannelId(Long cursorId,
       Pageable pageable);
 
-  Slice<StreamingChannelResponse> findStreamingChannelOrderByParticipantCount(Long cursorId, Long cursorPopular,
-      Pageable pageable);
+  Slice<StreamingChannelResponse> findStreamingChannelOrderByParticipantCount(Long cursorId,
+      Long cursorPopular, Pageable pageable);
 
   Slice<StreamingChannelResponse> findStreamingChannelFromCategoryIdOrderByParticipantCount(
       Long categoryId, Long cursorId, Long cursorPopular, Pageable pageable);
