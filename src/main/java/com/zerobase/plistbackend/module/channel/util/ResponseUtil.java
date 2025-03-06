@@ -11,6 +11,10 @@ import java.util.List;
 
 public class ResponseUtil {
 
+  private ResponseUtil() {
+    throw new AssertionError("ResponseUtil 객체 생성 금지");
+  }
+
   public static String findThumbnail(List<Video> videoList) {
     if (!videoList.isEmpty()) {
       return videoList.get(0).getVideoThumbnail();
