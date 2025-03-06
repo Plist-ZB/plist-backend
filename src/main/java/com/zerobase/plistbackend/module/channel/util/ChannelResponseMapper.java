@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class ResponseUtil {
+public class ChannelResponseMapper {
 
-  private ResponseUtil() {
+  private ChannelResponseMapper() {
     throw new AssertionError("ResponseUtil 객체 생성 금지");
   }
 

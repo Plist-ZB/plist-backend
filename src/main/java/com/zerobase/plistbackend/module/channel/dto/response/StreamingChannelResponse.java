@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
-import com.zerobase.plistbackend.module.channel.util.ResponseUtil;
+import com.zerobase.plistbackend.module.channel.util.ChannelResponseMapper;
 import com.zerobase.plistbackend.module.home.model.Video;
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,8 +25,8 @@ public class StreamingChannelResponse {
     this.channelId = channelId;
     this.channelName = channelName;
     this.channelCategoryName = channelCategoryName;
-    this.channelThumbnail = ResponseUtil.findThumbnail(videoList);
-    this.channelStreamingTime = ResponseUtil.streamingTime(channelCreatedAt);
+    this.channelThumbnail = ChannelResponseMapper.findThumbnail(videoList);
+    this.channelStreamingTime = ChannelResponseMapper.streamingTime(channelCreatedAt);
     this.channelHostName = channelHostName;
     this.channelParticipantCount = channelParticipantCount;
   }

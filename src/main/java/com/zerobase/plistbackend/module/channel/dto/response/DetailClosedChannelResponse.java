@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
-import com.zerobase.plistbackend.module.channel.util.ResponseUtil;
+import com.zerobase.plistbackend.module.channel.util.ChannelResponseMapper;
 import com.zerobase.plistbackend.module.home.model.Video;
 import java.util.List;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class DetailClosedChannelResponse {
   private String channelThumbnail;
   private String channelCreatedAt;
   private String channelDurationTime;
-  private String channelHost;
+  private String channelHostName;
   private List<Video> videoList;
   private int channelLastParticipantCount;
   //  private Long channelCapacity;
@@ -29,11 +29,12 @@ public class DetailClosedChannelResponse {
         .channelId(channel.getChannelId())
         .channelName(channel.getChannelName())
         .channelCategoryName(channel.getCategory().getCategoryName())
-        .channelThumbnail(ResponseUtil.findThumbnail(channel.getChannelPlaylist().getVideoList()))
-        .channelCreatedAt(ResponseUtil.convertStringFormat(channel.getChannelCreatedAt()))
-        .channelDurationTime(ResponseUtil.durationTime(channel.getChannelCreatedAt(),
+        .channelThumbnail(
+            ChannelResponseMapper.findThumbnail(channel.getChannelPlaylist().getVideoList()))
+        .channelCreatedAt(ChannelResponseMapper.convertStringFormat(channel.getChannelCreatedAt()))
+        .channelDurationTime(ChannelResponseMapper.durationTime(channel.getChannelCreatedAt(),
             channel.getChannelFinishedAt()))
-        .channelHost(channel.getChannelHost().getUserName())
+        .channelHostName(channel.getChannelHost().getUserName())
         .videoList(channel.getChannelPlaylist().getVideoList())
         .channelLastParticipantCount(channel.getChannelLastParticipantCount())
 //        .channelCapacity(channel.getChannelCapacity())

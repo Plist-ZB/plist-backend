@@ -1,6 +1,6 @@
 package com.zerobase.plistbackend.module.userplaylist.dto.response;
 
-import com.zerobase.plistbackend.module.channel.util.ResponseUtil;
+import com.zerobase.plistbackend.module.channel.util.ChannelResponseMapper;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class UserPlaylistResponse {
     return UserPlaylistResponse.builder()
         .userPlaylistId(userPlaylist.getUserPlaylistId())
         .userPlaylistName(userPlaylist.getUserPlaylistName())
-        .userPlaylistThumbnail(ResponseUtil.findThumbnail(userPlaylist.getVideoList()))
+        .userPlaylistThumbnail(ChannelResponseMapper.findThumbnail(userPlaylist.getVideoList()))
         .videoCount(userPlaylist.getVideoList().size())
         .build();
   }
