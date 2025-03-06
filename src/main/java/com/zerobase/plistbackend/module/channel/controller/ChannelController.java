@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -32,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v3/api")
 @Tag(name = "Channel API", description = "채널과 관련된 API Controller")
 public class ChannelController {
 
-  private static final Logger log = LoggerFactory.getLogger(ChannelController.class);
   private final ChannelService channelService;
 
   @Operation(

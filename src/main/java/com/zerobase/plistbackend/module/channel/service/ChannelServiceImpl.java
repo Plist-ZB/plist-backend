@@ -183,7 +183,6 @@ public class ChannelServiceImpl implements ChannelService {
         .orElseThrow(() -> new VideoException(VideoErrorStatus.NOT_EXIST));
     channelWithLock.getChannelPlaylist().getVideoList().remove(video);
 
-    channelRepository.save(channelWithLock);
     applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelWithLock));
   }
 
