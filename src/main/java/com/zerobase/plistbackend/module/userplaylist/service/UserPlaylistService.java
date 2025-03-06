@@ -23,7 +23,7 @@ public interface UserPlaylistService {
 
   void removeVideo(CustomOAuth2User customOAuth2User, Long userPlaylistId, Long id);
 
-  void deleteUserPlaylist(Long userPlaylistId);
+  void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User);
 
   void updateUserPlaylist(Long userPlaylistId, String updateUserPlaylistJson,
       CustomOAuth2User customOAuth2User);

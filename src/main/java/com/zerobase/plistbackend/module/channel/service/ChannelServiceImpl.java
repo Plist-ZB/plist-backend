@@ -21,7 +21,6 @@ import com.zerobase.plistbackend.module.home.exception.VideoException;
 import com.zerobase.plistbackend.module.home.model.Video;
 import com.zerobase.plistbackend.module.home.type.VideoErrorStatus;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
-import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
 import com.zerobase.plistbackend.module.playlist.domain.PlaylistCrudEvent;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
 import com.zerobase.plistbackend.module.user.entity.User;
@@ -33,9 +32,8 @@ import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistExcep
 import com.zerobase.plistbackend.module.userplaylist.repository.UserPlaylistRepository;
 import com.zerobase.plistbackend.module.userplaylist.type.UserPlaylistErrorStatus;
 import com.zerobase.plistbackend.module.userplaylist.util.UserPlaylistUtil;
-import java.util.List;
-
 import com.zerobase.plistbackend.module.websocket.domain.VideoSyncManager;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,19 +42,20 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class ChannelServiceImpl implements ChannelService {
 
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
   private final CategoryRepository categoryRepository;
-  private final ParticipantRepository participantRepository;
   private final UserPlaylistRepository userPlaylistRepository;
   private final CustomChannelRepository customChannelRepository;
   private final ApplicationEventPublisher applicationEventPublisher;
   private final VideoSyncManager videoSyncManager;
+
+  private static final String FAVORITE = "favorite";
 
   @Override
   @Transactional
@@ -68,7 +67,7 @@ public class ChannelServiceImpl implements ChannelService {
     Category category = categoryRepository.findById(channelRequest.getCategoryId())
         .orElseThrow(() -> new CategoryException(CategoryErrorStatus.NOT_FOUND));
 
-    if (participantRepository.existsByUser(user)) {
+    if (user.getParticipant() != null) {
       throw new ChannelException(ChannelErrorStatus.ALREADY_ENTER);
     }
 
@@ -101,10 +100,9 @@ public class ChannelServiceImpl implements ChannelService {
 
     Participant participant = Participant.viewer(user, channel);
     channel.getChannelParticipants().add(participant);
-    channelRepository.save(channel);
 
     return DetailChannelResponse.createDetailChannelResponse(channel, user);
-  } // TODO: 테스트코드를 활용해 테스트 필요.
+  } // TODO: 테스트코드를 활용해 테스트 필요. Playlist 변경이 없는 경우에도 업데이트 쿼리 나가는 이슈
 
   @Override
   @Transactional
@@ -118,10 +116,9 @@ public class ChannelServiceImpl implements ChannelService {
     if (user.getParticipant() == null || !user.getParticipant().getChannel().equals(channel)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
-    Participant participant = participantRepository.findByUser(user);
+    Participant participant = user.getParticipant();
     channel.removeParticipant(participant);
-    channelRepository.save(channel);
-  } // TODO: 테스트코드를 활용해 테스트 필요.
+  } // TODO: 테스트코드를 활용해 테스트 필요. Playlist 변경이 없는 경우에도 업데이트 쿼리 나가는 이슈
 
   @Override
   @Transactional
@@ -139,7 +136,7 @@ public class ChannelServiceImpl implements ChannelService {
     Channel.closeChannel(channel);
     channelRepository.save(channel);
     videoSyncManager.removeCurrentTime(channelId);
-  }
+  } // TODO: Playlist 변경이 없는 경우에도 업데이트 쿼리 나가는 이슈
 
   @Override
   @Transactional
@@ -150,7 +147,8 @@ public class ChannelServiceImpl implements ChannelService {
     Channel channelWithLock = channelRepository.findByIdWithLock(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    if (!user.getParticipant().getChannel().equals(channelWithLock)) {
+    if (user.getParticipant() == null || !user.getParticipant().getChannel()
+        .equals(channelWithLock)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
 
@@ -158,7 +156,7 @@ public class ChannelServiceImpl implements ChannelService {
         .add(Video.createVideo(videoRequest, channelWithLock.getChannelPlaylist().getVideoList()));
 
     channelRepository.save(channelWithLock);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelWithLock));
 
   }
 
@@ -181,12 +179,11 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     Video video = channelWithLock.getChannelPlaylist().getVideoList().stream()
-        .filter(it -> it.getId().equals(id)).findFirst()
+        .filter(it -> it.getId().equals(id)).findAny()
         .orElseThrow(() -> new VideoException(VideoErrorStatus.NOT_EXIST));
     channelWithLock.getChannelPlaylist().getVideoList().remove(video);
 
-    channelRepository.save(channelWithLock);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelWithLock));
   }
 
   @Override
@@ -203,6 +200,10 @@ public class ChannelServiceImpl implements ChannelService {
       throw new ChannelException(ChannelErrorStatus.NOT_HOST);
     }
 
+    if (channelWithLock.getChannelStatus().equals(ChannelStatus.CHANNEL_STATUS_CLOSED)) {
+      throw new ChannelException(ChannelErrorStatus.NOT_STREAMING);
+    }
+
     PlaylistVideoConverter playlistVideoConverter = new PlaylistVideoConverter(new ObjectMapper());
     List<Video> videoList = playlistVideoConverter.convertToEntityAttribute(
         updateChannelPlaylistJson);
@@ -210,7 +211,7 @@ public class ChannelServiceImpl implements ChannelService {
     channelWithLock.getChannelPlaylist().setVideoList(videoList);
 
     channelRepository.save(channelWithLock);
-    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelId, customOAuth2User));
+    applicationEventPublisher.publishEvent(new PlaylistCrudEvent(channelWithLock));
   }
 
   @Override
@@ -220,7 +221,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    Channel channel = channelRepository.findById(channelId)
+    Channel channel = channelRepository.findByIdFetchJoinPlaylist(channelId)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
     UserPlaylist userPlaylist = UserPlaylist.fromChannelPlaylist(
@@ -234,7 +235,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     userPlaylistRepository.save(userPlaylist);
-  }
+  } // TODO: 변경이 없는 Playlist 업데이트 쿼리 1번, 저장한 userPlaylist 업데이트 쿼리 2번 이슈
 
   @Override
   @Transactional
@@ -242,8 +243,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    String favorite = "favorite";
-    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistName(user, favorite)
+    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistName(user, FAVORITE)
         .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
 
     userPlaylist.getVideoList().add(Video.createVideo(videoRequest, userPlaylist.getVideoList()));
@@ -277,7 +277,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     return channelList.stream().map(StreamingChannelResponse::createStreamingChannelResponse)
         .toList();
-  }
+  }//TODO: 기능개발
 
   @Override
   @Transactional(readOnly = true)
@@ -297,7 +297,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    if (!participantRepository.existsByUser(user)) {
+    if (!user.getParticipant().getChannel().equals(channel)) {
       throw new ChannelException(ChannelErrorStatus.NOT_ENTER);
     }
 
@@ -325,7 +325,7 @@ public class ChannelServiceImpl implements ChannelService {
     Channel channel = channelRepository.findByChannelIdAndChannelHost(channelId, user)
         .orElseThrow(() -> new ChannelException(ChannelErrorStatus.NOT_FOUND));
 
-    return DetailClosedChannelResponse.createClosedChannelResponse(channel, user);
+    return DetailClosedChannelResponse.createClosedChannelResponse(channel);
   }
 }
 

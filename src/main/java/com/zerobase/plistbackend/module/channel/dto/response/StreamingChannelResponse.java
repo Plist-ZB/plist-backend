@@ -1,48 +1,45 @@
 package com.zerobase.plistbackend.module.channel.dto.response;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
-import java.time.Duration;
-import lombok.Builder;
+import com.zerobase.plistbackend.module.channel.util.ResponseUtil;
+import com.zerobase.plistbackend.module.home.model.Video;
+import java.sql.Timestamp;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class StreamingChannelResponse {
 
-  private Long channelId;
-  private String channelName;
-  private String channelCategoryName;
-  private String channelThumbnail;
-  private String channelStreamingTime;
-  private String channelHost;
-  private int channelParticipantCount;
+  private final Long channelId;
+  private final String channelName;
+  private final String channelCategoryName;
+  private final String channelThumbnail;
+  private final String channelStreamingTime;
+  private final String channelHostName;
+  private final Long channelParticipantCount;
   //  private Long channelCapacity;
 
-
-  public static StreamingChannelResponse createStreamingChannelResponse(Channel channel) {
-    String thumbnail = "";
-    if (!channel.getChannelPlaylist().getVideoList().isEmpty()) {
-      thumbnail = channel.getChannelPlaylist().getVideoList().get(0).getVideoThumbnail();
-    }
-
-    return StreamingChannelResponse.builder()
-        .channelId(channel.getChannelId())
-        .channelName(channel.getChannelName())
-        .channelCategoryName(channel.getCategory().getCategoryName())
-        .channelThumbnail(thumbnail)
-        .channelStreamingTime(streamingTime(channel))
-        .channelHost(channel.getChannelHost().getUserName())
-        .channelParticipantCount(channel.getChannelParticipants().size())
-        .build();
+  public StreamingChannelResponse(Long channelId, String channelName, String channelCategoryName,
+      List<Video> videoList, Timestamp channelCreatedAt, String channelHostName,
+      Long channelParticipantCount) {
+    this.channelId = channelId;
+    this.channelName = channelName;
+    this.channelCategoryName = channelCategoryName;
+    this.channelThumbnail = ResponseUtil.findThumbnail(videoList);
+    this.channelStreamingTime = ResponseUtil.streamingTime(channelCreatedAt);
+    this.channelHostName = channelHostName;
+    this.channelParticipantCount = channelParticipantCount;
   }
 
-  public static String streamingTime(Channel channel) {
-    Duration duration = Duration.ofMillis(
-        System.currentTimeMillis() - channel.getChannelCreatedAt().getTime());
+  public static StreamingChannelResponse createStreamingChannelResponse(Channel channel) {
 
-    long hours = duration.toHours();
-    long minutes = duration.toMinutes() % 60;
-
-    return String.format("%d시간%d분", hours, minutes);
+    return new StreamingChannelResponse(
+        channel.getChannelId(),
+        channel.getChannelName(),
+        channel.getCategory().getCategoryName(),
+        channel.getChannelPlaylist().getVideoList(),
+        channel.getChannelCreatedAt(),
+        channel.getChannelHost().getUserName(),
+        (long) channel.getChannelParticipants().size());
   }
 }

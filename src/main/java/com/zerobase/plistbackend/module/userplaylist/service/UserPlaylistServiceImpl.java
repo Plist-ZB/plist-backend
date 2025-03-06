@@ -33,6 +33,8 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
   private final UserPlaylistRepository userPlaylistRepository;
   private final UserRepository userRepository;
 
+  private static final String FAVORITE = "favorite";
+
   @Override
   @Transactional
   public void createUserPlayList(UserPlaylistRequest userPlaylistRequest,
@@ -78,17 +80,20 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
   @Override
   @Transactional
-  public void deleteUserPlaylist(Long userPlaylistId) {
+  public void deleteUserPlaylist(Long userPlaylistId, CustomOAuth2User customOAuth2User) {
 
-    UserPlaylist userPlaylist = userPlaylistRepository.findById(userPlaylistId)
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistId(user,
+            userPlaylistId)
         .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
 
-    if (userPlaylist.getUserPlaylistName().equals("favorite")) {
+    if (userPlaylist.getUserPlaylistName().equals(FAVORITE)) {
       throw new UserPlaylistException(UserPlaylistErrorStatus.CANT_DELETE_FAVORITE);
     }
 
     userPlaylistRepository.deleteById(userPlaylistId);
-  }
+  }// TODO: 업데이트 쿼리 한번 나가는 이슈
 
   @Override
   @Transactional
@@ -121,7 +126,7 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
     List<Video> videoList = userPlaylist.getVideoList();
 
-    Video video = videoList.stream().filter(it -> it.getId().equals(id)).findFirst()
+    Video video = videoList.stream().filter(it -> it.getId().equals(id)).findAny()
         .orElseThrow(() -> new VideoException(VideoErrorStatus.NOT_EXIST));
     videoList.remove(video);
 
@@ -156,10 +161,11 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    UserPlaylist userPlaylist = userPlaylistRepository.findById(userPlaylistId)
+    UserPlaylist userPlaylist = userPlaylistRepository.findByUserAndUserPlaylistId(user,
+            userPlaylistId)
         .orElseThrow(() -> new UserPlaylistException(UserPlaylistErrorStatus.NOT_FOUND));
 
-    if (userPlaylist.getUserPlaylistName().equals("favorite")) {
+    if (userPlaylist.getUserPlaylistName().equals(FAVORITE)) {
       throw new UserPlaylistException(UserPlaylistErrorStatus.CANT_UPDATE_FAVORITE);
     }
 
@@ -171,5 +177,5 @@ public class UserPlaylistServiceImpl implements UserPlaylistService {
     userPlaylist.setUserPlaylistName(userPlaylistRequest.getUserPlaylistName());
 
     userPlaylistRepository.save(userPlaylist);
-  }
+  }//TODO: 업데이트 쿼리 한번 날라가는 이슈.
 }
