@@ -53,12 +53,12 @@ public class SecurityConfig {
   );
 
   private static final List<String> CORS_URLS = List.of(new String[]{
-      "https://plist-veta96s-projects.vercel.app",
       "http://ec2-13-209-237-110.ap-northeast-2.compute.amazonaws.com",
       "http://localhost:3000",
       "http://localhost:8080",
       "https://www.plist.shop",
-      "https://plist.shop"
+      "https://plist.shop",
+      "https://api.plist.shop"
   });
 
 
