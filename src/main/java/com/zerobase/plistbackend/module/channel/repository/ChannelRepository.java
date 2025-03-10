@@ -4,6 +4,7 @@ import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import jakarta.persistence.LockModeType;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,17 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
   @Query("select c from Channel c join fetch c.channelPlaylist where c.channelId = :channelId")
   Optional<Channel> findByIdFetchJoinPlaylist(@Param("channelId") Long channelId);
+
+  @Query("SELECT c FROM Channel c " +
+          "JOIN FETCH c.channelHost " +
+          "WHERE c.channelHost.userId = :hostId " +
+          "AND c.channelStatus = :channelStatus " +
+          "AND c.channelCreatedAt >= :startDate " +
+          "AND c.channelCreatedAt < :endDate")
+  List<Channel> findByChannelHostId(
+          @Param("hostId") Long hostId,
+          @Param("startDate") Timestamp startDate,
+          @Param("endDate") Timestamp endDate,
+          @Param("channelStatus") ChannelStatus channelStatus
+  );
 }
