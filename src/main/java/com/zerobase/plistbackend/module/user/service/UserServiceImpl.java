@@ -69,24 +69,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PlayTimeResponse> getPlaytime(Long hostId, int year) {
-        Timestamp startDate = Timestamp.valueOf(LocalDateTime.now().withYear(year).withMonth(1));
-        Timestamp endDate = Timestamp.valueOf(LocalDateTime.now().withYear(year + 1).withMonth(1));
+    public PlayTimeResponse getPlaytime(Long hostId, int year) {
+        Timestamp startDate = Timestamp.valueOf(LocalDateTime.of(year, 1, 1, 0, 0));
+        Timestamp endDate = Timestamp.valueOf(LocalDateTime.of(year + 1, 1, 1, 0, 0));
 
+        // hostId, 기간, 종료된 채널 상태로 채널 목록 조회
         List<Channel> channels = channelRepository.findByChannelHostId(
                 hostId, startDate, endDate, ChannelStatus.CHANNEL_STATUS_CLOSED);
 
-        return channels.stream()
-                .map(channel -> {
-                    String totalPlayTime = TimeValueFormatter.formatToString(channel.getChannelCreatedAt(), channel.getChannelFinishedAt());
-                    int totalParticipants = channel.getChannelLastParticipantCount();
-                    //TODO : 각 채널별 팔로워 수 기능 추가 예정
-                    return PlayTimeResponse.builder()
-                            .totalPlayTime(totalPlayTime)
-                            .totalParticipant(totalParticipants)
-                            .totalFollowers(0L)
-                            .build();
-                })
-                .toList();
+        int totalParticipants = channels.stream()
+                .mapToInt(Channel::getChannelLastParticipantCount)
+                .sum();
+
+        long totalDurationMinutes = channels.stream()
+                .mapToLong(Channel::getTotalPlaytime)
+                .sum();
+
+        String aggregatedPlayTime = TimeValueFormatter.formatToString(totalDurationMinutes);
+
+        // TODO : 팔로워 기능 추가 시 ->
+        long totalFollowers = 0L;
+
+        // Aggregated 결과를 빌드하여 단일 요소의 리스트로 반환
+        return PlayTimeResponse.builder()
+                .totalPlayTime(aggregatedPlayTime)
+                .totalParticipant(totalParticipants)
+                .totalFollowers(totalFollowers)
+                .build();
     }
 }

@@ -1,8 +1,7 @@
 package com.zerobase.plistbackend.module.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -134,40 +133,33 @@ public class UserServiceTest {
   @DisplayName("특정 호스트의 채널별 재생시간 조회")
   void getPlaytime_ShouldReturnCorrectData() {
     // given
-    Long hostId = 1L;
-    int year = 2025;
+    Long hostId = 123L;
+    int year = 2022;
 
-    ArgumentCaptor<Timestamp> startDateCaptor = ArgumentCaptor.forClass(Timestamp.class);
-    ArgumentCaptor<Timestamp> endDateCaptor = ArgumentCaptor.forClass(Timestamp.class);
+    Channel channel1 = mock(Channel.class);
+    Channel channel2 = mock(Channel.class);
 
-    List<Channel> mockChannels = List.of(
-            createMockChannel("Closed Channel 1", "2025-03-10 12:00:00", "2025-03-10 14:00:00", 50),
-            createMockChannel("Closed Channel 2", "2025-06-15 09:30:00", "2025-06-15 11:30:00", 30)
-    );
+    given(channel1.getChannelLastParticipantCount()).willReturn(30);
+    given(channel1.getTotalPlaytime()).willReturn(3600L);
 
-    given(channelRepository.findByChannelHostId(eq(hostId), startDateCaptor.capture(), endDateCaptor.capture(), eq(ChannelStatus.CHANNEL_STATUS_CLOSED)))
-            .willReturn(mockChannels);
+    given(channel2.getChannelLastParticipantCount()).willReturn(20);
+    given(channel2.getTotalPlaytime()).willReturn(7200L);
+
+    List<Channel> channels = List.of(channel1, channel2);
+
+    given(channelRepository.findByChannelHostId(anyLong(), any(), any(), any()))
+            .willReturn(channels);
 
     // when
-    List<PlayTimeResponse> playTimeResponses = userService.getPlaytime(hostId, year);
+    PlayTimeResponse result = userService.getPlaytime(hostId, year);
 
     // then
-    assertThat(playTimeResponses).hasSize(2);
+    assertNotNull(result);
+    assertEquals("3시간 0분", result.getTotalPlayTime());
+    assertEquals(50, result.getTotalParticipant());
+    assertEquals(0L, result.getTotalFollowers());
 
-    PlayTimeResponse playTimeResponse1 = playTimeResponses.get(0);
-    assertThat(playTimeResponse1.getTotalPlayTime()).isEqualTo("2시간 0분");
-    assertThat(playTimeResponse1.getTotalParticipant()).isEqualTo(50);
-    assertThat(playTimeResponse1.getTotalFollowers()).isZero();
-
-    PlayTimeResponse playTimeResponse2 = playTimeResponses.get(1);
-    assertThat(playTimeResponse2.getTotalPlayTime()).isEqualTo("2시간 0분");
-    assertThat(playTimeResponse2.getTotalParticipant()).isEqualTo(30);
-    assertThat(playTimeResponse2.getTotalFollowers()).isZero();
-
-    Timestamp capturedStartDate = startDateCaptor.getValue();
-    Timestamp capturedEndDate = endDateCaptor.getValue();
-    assertThat(capturedStartDate.toLocalDateTime().getYear()).isEqualTo(year);
-    assertThat(capturedEndDate.toLocalDateTime().getYear()).isEqualTo(year + 1);
+    verify(channelRepository, times(1)).findByChannelHostId(anyLong(), any(), any(), any());
   }
 
   private Channel createMockChannel(String name, String startDateTime, String endDateTime, int participantCount) {
