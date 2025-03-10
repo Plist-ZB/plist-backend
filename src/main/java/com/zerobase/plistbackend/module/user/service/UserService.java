@@ -4,7 +4,6 @@ import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
 import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 
-import java.util.List;
 
 public interface UserService {
 
@@ -14,5 +13,5 @@ public interface UserService {
 
    ProfileResponse editProfile(UserProfileRequest request, Long userId);
 
-   List<PlayTimeResponse> getPlaytime(Long hostId, int year);
+   PlayTimeResponse getPlaytime(Long hostId, int year);
 }
