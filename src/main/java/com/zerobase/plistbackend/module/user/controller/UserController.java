@@ -54,7 +54,7 @@ public class UserController {
           description = "연도별 호스트 재생 시간, 전체 참여자수, 팔로워 수(팔로워 수는 기능이 완료되면 추가 예정)," +
                   " 쿼리 스트링으로 년도만 입력 ex)2024 입력시 2024~2025 데이터 추출")
   @GetMapping("/me/playtime")
-  public ResponseEntity<List<PlayTimeResponse>> getSomething(
+  public ResponseEntity<PlayTimeResponse> getSomething(
           @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
           @RequestParam("year") int year) {
     return ResponseEntity.ok(userService.getPlaytime(customOAuth2User.findId(), year));
