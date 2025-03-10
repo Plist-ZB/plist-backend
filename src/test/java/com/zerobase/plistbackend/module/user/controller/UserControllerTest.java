@@ -49,31 +49,22 @@ class UserControllerTest {
         int year = 2022;
         Long userId = 123L;
 
-        List<PlayTimeResponse> playTimeResponses = new ArrayList<>();
+        String wholePlayTime = "3시간 0분";
+        PlayTimeResponse playTimeResponse = new PlayTimeResponse(wholePlayTime, 50, 0L);
 
-        Timestamp startDate = Timestamp.valueOf(LocalDateTime.now().withYear(year).withMonth(1));
-        Timestamp endDate = Timestamp.valueOf(LocalDateTime.now().withYear(year + 1).withMonth(1));
-        String time = TimeValueFormatter.formatToString(startDate, endDate);
-
-        PlayTimeResponse playTimeResponse = new PlayTimeResponse(time, 50, 0L);
-        playTimeResponses.add(playTimeResponse);
+        given(userService.getPlaytime(userId, year)).willReturn(playTimeResponse);
 
         CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
         given(dummyUser.findId()).willReturn(userId);
-
-        given(userService.getPlaytime(userId, year)).willReturn(playTimeResponses);
-
 
         // when & then
         mockMvc.perform(get("/v3/api/me/playtime")
                         .param("year", String.valueOf(year))
                         .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].totalPlayTime").value("8760시간 0분"))
-                .andExpect(jsonPath("$[0].totalParticipant").value(50))
-                .andExpect(jsonPath("$[0].totalFollowers").value(0))
+                .andExpect(jsonPath("$.totalPlayTime").value(wholePlayTime))
+                .andExpect(jsonPath("$.totalParticipant").value(50))
+                .andExpect(jsonPath("$.totalFollowers").value(0))
                 .andDo(print());
-
     }
 }
