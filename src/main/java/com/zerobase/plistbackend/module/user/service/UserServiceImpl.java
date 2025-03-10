@@ -70,31 +70,25 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public PlayTimeResponse getPlaytime(Long hostId, int year) {
-        Timestamp startDate = Timestamp.valueOf(LocalDateTime.of(year, 1, 1, 0, 0));
-        Timestamp endDate = Timestamp.valueOf(LocalDateTime.of(year + 1, 1, 1, 0, 0));
-
-        // hostId, 기간, 종료된 채널 상태로 채널 목록 조회
         List<Channel> channels = channelRepository.findByChannelHostId(
-                hostId, startDate, endDate, ChannelStatus.CHANNEL_STATUS_CLOSED);
+                hostId,
+                Timestamp.valueOf(LocalDateTime.of(year, 1, 1, 0, 0)),
+                Timestamp.valueOf(LocalDateTime.of(year + 1, 1, 1, 0, 0)),
+                ChannelStatus.CHANNEL_STATUS_CLOSED
+        );
 
-        int totalParticipants = channels.stream()
-                .mapToInt(Channel::getChannelLastParticipantCount)
-                .sum();
-
-        long totalDurationMinutes = channels.stream()
-                .mapToLong(Channel::getTotalPlaytime)
-                .sum();
-
-        String aggregatedPlayTime = TimeValueFormatter.formatToString(totalDurationMinutes);
-
-        // TODO : 팔로워 기능 추가 시 ->
-        long totalFollowers = 0L;
-
-        // Aggregated 결과를 빌드하여 단일 요소의 리스트로 반환
         return PlayTimeResponse.builder()
-                .totalPlayTime(aggregatedPlayTime)
-                .totalParticipant(totalParticipants)
-                .totalFollowers(totalFollowers)
+                .totalPlayTime(
+                        TimeValueFormatter.formatToString(
+                                channels.stream()
+                                        .mapToLong(Channel::getTotalPlaytimeOfMinutes)
+                                        .sum())
+                )
+                .totalParticipant(
+                        channels.stream().
+                                mapToInt(Channel::getChannelLastParticipantCount)
+                                .sum())
+                .totalFollowers(0L)  // 팔로워 기능 추가 예정
                 .build();
     }
 }

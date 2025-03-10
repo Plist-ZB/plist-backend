@@ -26,7 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -140,10 +139,10 @@ public class UserServiceTest {
     Channel channel2 = mock(Channel.class);
 
     given(channel1.getChannelLastParticipantCount()).willReturn(30);
-    given(channel1.getTotalPlaytime()).willReturn(3600L);
+    given(channel1.getTotalPlaytimeOfMinutes()).willReturn(3600L);
 
     given(channel2.getChannelLastParticipantCount()).willReturn(20);
-    given(channel2.getTotalPlaytime()).willReturn(7200L);
+    given(channel2.getTotalPlaytimeOfMinutes()).willReturn(7200L);
 
     List<Channel> channels = List.of(channel1, channel2);
 
@@ -162,13 +161,4 @@ public class UserServiceTest {
     verify(channelRepository, times(1)).findByChannelHostId(anyLong(), any(), any(), any());
   }
 
-  private Channel createMockChannel(String name, String startDateTime, String endDateTime, int participantCount) {
-    return Channel.builder()
-            .channelName(name)
-            .channelStatus(ChannelStatus.CHANNEL_STATUS_CLOSED)
-            .channelCreatedAt(Timestamp.valueOf(startDateTime))
-            .channelFinishedAt(Timestamp.valueOf(endDateTime))
-            .channelLastParticipantCount(participantCount)
-            .build();
-  }
 }
