@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 .totalPlayTime(
                         TimeValueFormatter.formatToString(
                                 channels.stream()
-                                        .mapToLong(Channel::getTotalPlaytimeOfMinutes)
+                                        .mapToLong(Channel::getTotalPlaytimeOfSeconds)
                                         .sum())
                 )
                 .totalParticipant(
