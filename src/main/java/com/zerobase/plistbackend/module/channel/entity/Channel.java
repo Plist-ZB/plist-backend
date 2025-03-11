@@ -22,6 +22,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,5 +113,9 @@ public class Channel {
     participant.setChannel(null);
     participant.getUser().setParticipant(null);
     participant.setUser(null);
+  }
+
+  public long getTotalPlaytimeOfSeconds() {
+    return Duration.between((Temporal) this.getChannelCreatedAt(), (Temporal) this.getChannelFinishedAt()).toSeconds();
   }
 }
