@@ -13,8 +13,6 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.swing.*;
-
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -45,13 +43,13 @@ class UserControllerTest {
         String playtime = TimeValueFormatter.formatToString(16028L);  // 4시간 27분
         PlayTimeResponse playTimeResponse = new PlayTimeResponse(playtime, 50, 0L);
 
-        given(userService.getPlaytime(userId, year)).willReturn(playTimeResponse);
+        given(userService.getPlayTimeForHistroyOfHost(userId, year)).willReturn(playTimeResponse);
 
         CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
         given(dummyUser.findId()).willReturn(userId);
 
         // when & then
-        mockMvc.perform(get("/v3/api/me/playtime")
+        mockMvc.perform(get("/v3/api/me/playtime/host")
                         .param("year", String.valueOf(year))
                         .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
                 .andExpect(status().isOk())
