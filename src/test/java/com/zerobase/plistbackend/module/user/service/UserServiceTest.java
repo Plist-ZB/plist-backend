@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
-import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
 import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
@@ -19,7 +18,6 @@ import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import com.zerobase.plistbackend.module.user.util.S3Util;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -139,10 +137,10 @@ public class UserServiceTest {
     Channel channel2 = mock(Channel.class);
 
     given(channel1.getChannelLastParticipantCount()).willReturn(30);
-    given(channel1.getTotalPlaytimeOfMinutes()).willReturn(3600L);
+    given(channel1.getTotalPlaytimeOfSeconds()).willReturn(3600L);
 
     given(channel2.getChannelLastParticipantCount()).willReturn(20);
-    given(channel2.getTotalPlaytimeOfMinutes()).willReturn(7200L);
+    given(channel2.getTotalPlaytimeOfSeconds()).willReturn(7200L);
 
     List<Channel> channels = List.of(channel1, channel2);
 
