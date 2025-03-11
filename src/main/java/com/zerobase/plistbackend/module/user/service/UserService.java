@@ -13,5 +13,5 @@ public interface UserService {
 
    ProfileResponse editProfile(UserProfileRequest request, Long userId);
 
-   PlayTimeResponse getPlaytime(Long hostId, int year);
+   PlayTimeResponse getPlayTimeForHistroyOfHost(Long hostId, int year);
 }

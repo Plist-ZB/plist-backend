@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlayTimeResponse getPlaytime(Long hostId, int year) {
+    public PlayTimeResponse getPlayTimeForHistroyOfHost(Long hostId, int year) {
         List<Channel> channels = channelRepository.findByChannelHostId(
                 hostId,
                 Timestamp.valueOf(LocalDateTime.of(year, 1, 1, 0, 0)),

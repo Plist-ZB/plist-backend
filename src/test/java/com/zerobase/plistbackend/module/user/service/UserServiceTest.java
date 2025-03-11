@@ -128,7 +128,7 @@ public class UserServiceTest {
 
   @Test
   @DisplayName("특정 호스트의 채널별 재생시간 조회")
-  void getPlaytime_ShouldReturnCorrectData() {
+  void getPlayTimeForHistroyOfHost_ShouldReturnCorrectData() {
     // given
     Long hostId = 123L;
     int year = 2022;
@@ -148,7 +148,7 @@ public class UserServiceTest {
             .willReturn(channels);
 
     // when
-    PlayTimeResponse result = userService.getPlaytime(hostId, year);
+    PlayTimeResponse result = userService.getPlayTimeForHistroyOfHost(hostId, year);
 
     // then
     assertNotNull(result);
