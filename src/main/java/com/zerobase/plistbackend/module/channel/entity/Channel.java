@@ -115,7 +115,7 @@ public class Channel {
     participant.setUser(null);
   }
 
-  public long getTotalPlaytimeOfMinutes() {
-    return Duration.between((Temporal) this.getChannelCreatedAt(), (Temporal) this.getChannelFinishedAt()).toMinutes();
+  public long getTotalPlaytimeOfSeconds() {
+    return Duration.between((Temporal) this.getChannelCreatedAt(), (Temporal) this.getChannelFinishedAt()).toSeconds();
   }
 }
