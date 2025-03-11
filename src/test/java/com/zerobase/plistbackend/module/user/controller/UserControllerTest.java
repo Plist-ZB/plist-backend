@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.service.UserServiceImpl;
+import com.zerobase.plistbackend.module.user.util.TimeValueFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.swing.*;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -39,8 +42,8 @@ class UserControllerTest {
         int year = 2022;
         Long userId = 123L;
 
-        String wholePlayTime = "3시간 0분";
-        PlayTimeResponse playTimeResponse = new PlayTimeResponse(wholePlayTime, 50, 0L);
+        String playtime = TimeValueFormatter.formatToString(16028L);  // 4시간 27분
+        PlayTimeResponse playTimeResponse = new PlayTimeResponse(playtime, 50, 0L);
 
         given(userService.getPlaytime(userId, year)).willReturn(playTimeResponse);
 
@@ -52,7 +55,7 @@ class UserControllerTest {
                         .param("year", String.valueOf(year))
                         .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalPlayTime").value(wholePlayTime))
+                .andExpect(jsonPath("$.totalPlayTime").value(playtime))
                 .andExpect(jsonPath("$.totalParticipant").value(50))
                 .andExpect(jsonPath("$.totalFollowers").value(0))
                 .andDo(print());
