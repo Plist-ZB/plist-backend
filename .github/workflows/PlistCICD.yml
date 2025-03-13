@@ -37,6 +37,14 @@ jobs:
           min-wrapper-count: 1
           allow-snapshots: false
 
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: "firebase-service-account.json"
+          json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          dir: "src/main/resources/"
+
       - name: Build with Gradle
         run: |
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.properties
@@ -60,13 +68,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: create-json
-        id: create-json
-        uses: jsdaniell/create-json@v1.2.3
-        with:
-          name: "firebase-service-account.json"
-          json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          dir: "src/main/resources/"
       - name: Set target IP
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
