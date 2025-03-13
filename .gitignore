@@ -43,9 +43,8 @@ application-secret.yml
 ### PROD SETTING ###
 application-prod.properties
 
-### HAKSUYOON TEST ###
-**/src/main/java/com/zerobase/plistbackend/test/
-**/src/main/resources/templates/
+### FIREBASE SECRET JSON ###
+firebase-service-account.json
 
 ### Scratch ###
 **/src/test/http/

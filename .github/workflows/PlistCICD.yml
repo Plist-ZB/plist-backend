@@ -60,6 +60,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: "firebase-service-account.json"
+          json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          dir: "src/main/resources/"
       - name: Set target IP
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
