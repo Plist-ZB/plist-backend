@@ -72,7 +72,7 @@ jobs:
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
           echo "CALL_SC_STATUS: $STATUS"
           CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
-          echo "CURRENT_UPSTREAM=$CURRENT_UPSTREAM
+          echo "CURRENT_UPSTREAM=$CURRENT_UPSTREAM"
           
            if [ $STATUS = 200 ]; then
                CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
