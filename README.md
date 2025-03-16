@@ -83,7 +83,8 @@
 [![My Skills](https://skillicons.dev/icons?i=js,html,css,react,ts,vercel,vite)](https://skillicons.dev)
 
 ### - Back-End
-[![My Skills](https://skillicons.dev/icons?i=firebase,gcp,hibernate,java,mysql,redis,springboot)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=firebase,gcp,hibernate,java,mysql,redis)](https://skillicons.dev)
+![icons8-봄-로고-48](https://github.com/user-attachments/assets/0dabdff1-a841-413a-b1e0-638c246510b4)
 
 ### - Infra
 [![My Skills](https://skillicons.dev/icons?i=docker,githubactions,nginx,ubuntu,aws,gradle)](https://skillicons.dev)
@@ -94,7 +95,7 @@
 <br>
 
 # 🔗 아키텍처
-
+![image](https://github.com/user-attachments/assets/d93d6958-1e1f-46de-ae21-89224ee2594c)
 <br>
 
 # 📑 시작 가이드
