@@ -59,20 +59,42 @@
 # 화면 구성
 <table>
   <tr>
-    <td align="center">메인 홈페이지</td>
-    <td align="center">내 정보</td>
+    <td align="center">메인 페이지</td>
+    <td align="center">채널 검색</td>
+    <td align="center">카테고리 검색</td>
   </tr>
     <tr>  
-    <td align="center"><img width="300" src="https://github.com/user-attachments/assets/39856681-b18e-43fc-9a6d-29abfad1f2d8" /></td>
-    <td align="center"><img width="300" src="https://github.com/user-attachments/assets/39856681-b18e-43fc-9a6d-29abfad1f2d8" /></td>
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/c35beae7-e7e4-4b9c-9c92-76b1cebffb37" />
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/10b39cec-0b2c-43d2-a52d-a5e1a4048a32" />
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/c35beae7-e7e4-4b9c-9c92-76b1cebffb37" />
   </tr>
   <tr>
-    <td align="center">플리방</td>
-    <td align="center">채팅</td>
+    <td align="center">로그인/회원가입</td>
+    <td align="center">마이페이지 프로필 변경</td>
+    <td align="center">내 호스트 이력</td>
   </tr>
-    <tr>  
-    <td align="center"><img width="300" src="https://github.com/user-attachments/assets/39856681-b18e-43fc-9a6d-29abfad1f2d8" /></td>
-    <td align="center"><img width="300" src="https://github.com/user-attachments/assets/39856681-b18e-43fc-9a6d-29abfad1f2d8" /></td>
+  <tr>  
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/9e1a8b44-470e-4bca-a3f1-f7f553dd88b5" /></td>
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/20c8c0dc-6c4b-490b-81a5-65e77e8fd6ae" /></td>
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/6d38b736-7ddf-47c1-820f-cd7f4cdc9118" /></td>
+  </tr>
+  <tr>
+    <td align="center">내 플레이리스트 추가</td>
+    <td align="center">플레이리스트 음악 추가</td>
+    <td align="center">플리방 나가기</td>
+  </tr>
+  <tr>  
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/ff7bbfe7-8a54-448b-9e7c-497d60de1c99" /></td>
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/2fe046fe-5822-4ebb-a494-7fc698604970" /></td>
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/02696c51-1b64-4586-9503-088524808172" /></td>
+  </tr>
+  <tr>
+    <td align="center">플리방 생성</td>
+    <td align="center" colspan="2">플리방 웹소켓</td>
+  </tr>
+  <tr>      
+    <td align="center"><img width="200" src="https://github.com/user-attachments/assets/bc63a07f-e837-4e30-a2f2-55bae2b5f201" /></td>
+    <td align="center" colspan="2"><img width="100%" src="https://github.com/user-attachments/assets/3b529b07-08f9-4399-9a8a-036d2e8397af" /></td>
   </tr>
 </table>
 
@@ -83,8 +105,8 @@
 [![My Skills](https://skillicons.dev/icons?i=js,html,css,react,ts,vercel,vite)](https://skillicons.dev)
 
 ### - Back-End
-[![My Skills](https://skillicons.dev/icons?i=firebase,gcp,hibernate,java,mysql,redis)](https://skillicons.dev)
 ![icons8-봄-로고-48](https://github.com/user-attachments/assets/0dabdff1-a841-413a-b1e0-638c246510b4)
+[![My Skills](https://skillicons.dev/icons?i=firebase,gcp,hibernate,java,mysql,redis)](https://skillicons.dev)
 
 ### - Infra
 [![My Skills](https://skillicons.dev/icons?i=docker,githubactions,nginx,ubuntu,aws,gradle)](https://skillicons.dev)
