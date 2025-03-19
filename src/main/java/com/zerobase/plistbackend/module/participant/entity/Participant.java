@@ -14,6 +14,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +58,9 @@ public class Participant {
   @Column(name = "participant_created_at")
   private Timestamp participantCreatedAt;
 
+  @Column(name = "participant_exited_at")
+  private Timestamp participantExitedAt;
+
   public static Participant host(User user, Channel channel) {
     return Participant.builder()
         .user(user)
@@ -68,5 +75,12 @@ public class Participant {
         .channel(channel)
         .isHost(false)
         .build();
+  }
+
+  public void setExitedAt(LocalDateTime now) {
+    this.participantExitedAt = Timestamp.valueOf(now);
+  }
+  public long getTotalPlaytimeOfSeconds() {
+    return Duration.between((Temporal) this.getParticipantCreatedAt(), (Temporal) this.getParticipantCreatedAt()).toSeconds();
   }
 }
