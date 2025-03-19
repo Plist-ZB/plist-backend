@@ -2,6 +2,7 @@ package com.zerobase.plistbackend.module.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.UserPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.service.UserServiceImpl;
 import com.zerobase.plistbackend.module.user.util.TimeValueFormatter;
@@ -34,8 +35,8 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("회원의 플리방 이력 정보 가져오기 API 테스트")
-    void getPlaytime() throws Exception {
+    @DisplayName("호스트의 플리방 이력 정보 가져오기 API 테스트")
+    void getPlaytimeForHost() throws Exception {
         // given
         int year = 2022;
         Long userId = 123L;
@@ -56,6 +57,29 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.totalPlayTime").value(playtime))
                 .andExpect(jsonPath("$.totalParticipant").value(50))
                 .andExpect(jsonPath("$.totalFollowers").value(0))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("유저의 플레이타임 이력 정보 가져오기 API 테스트")
+    void getPlaytimeForUser() throws Exception {
+        // Given
+        int year = 2024;
+        Long userId = 123L;
+        String playtime = "3시간 30분";
+        UserPlaytimeResponse userPlaytimeResponse = UserPlaytimeResponse.from(playtime);
+
+        given(userService.getHistoryOfUser(userId, year)).willReturn(userPlaytimeResponse);
+
+        CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
+        given(dummyUser.findId()).willReturn(userId);
+
+        // When & Then
+        mockMvc.perform(get("/v3/api/me/playtime/user")
+                        .param("year", String.valueOf(year))
+                        .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPlayTime").value(playtime))
                 .andDo(print());
     }
 }
