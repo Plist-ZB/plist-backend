@@ -3,9 +3,12 @@ package com.zerobase.plistbackend.module.user.service;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
+import com.zerobase.plistbackend.module.participant.entity.Participant;
+import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
+import com.zerobase.plistbackend.module.user.dto.response.UserPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
@@ -18,15 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
+    private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final ChannelRepository channelRepository;
     private final S3Util s3Util;
@@ -69,15 +71,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlayTimeResponse getPlayTimeForHistroyOfHost(Long hostId, int year) {
+    public HostPlaytimeResponse getHistoryOfHost(Long hostId, int year) {
         List<Channel> channels = channelRepository.findByChannelHostId(
                 hostId,
-                Timestamp.valueOf(LocalDateTime.of(year, 1, 1, 0, 0)),
-                Timestamp.valueOf(LocalDateTime.of(year + 1, 1, 1, 0, 0)),
+                LocalDate.of(year, 1, 1).atStartOfDay(),
+                LocalDate.of(year + 1, 1, 1).atStartOfDay(),
                 ChannelStatus.CHANNEL_STATUS_CLOSED
         );
 
-        return PlayTimeResponse.builder()
+        return HostPlaytimeResponse.builder()
                 .totalPlayTime(
                         TimeValueFormatter.formatToString(
                                 channels.stream()
@@ -90,5 +92,16 @@ public class UserServiceImpl implements UserService {
                                 .sum())
                 .totalFollowers(0L)  // 팔로워 기능 추가 예정
                 .build();
+    }
+
+    public UserPlaytimeResponse getHistoryOfUser(Long userId, int year) {
+        long totalSeconds = participantRepository.findByUserIdAndDate(userId,
+                        LocalDate.of(year, 1, 1).atStartOfDay(),
+                        LocalDate.of(year + 1, 1, 1).atStartOfDay())
+                .stream()
+                .mapToLong(Participant::getTotalPlaytimeOfSeconds)
+                .sum();
+        return UserPlaytimeResponse.from(TimeValueFormatter.formatToString(totalSeconds));
+
     }
 }
