@@ -23,6 +23,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,7 +79,7 @@ public class Channel {
   @Builder.Default
   private Playlist channelPlaylist = new Playlist();
 
-  @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<Participant> channelParticipants = new ArrayList<>();
 
@@ -113,6 +114,7 @@ public class Channel {
     participant.setChannel(null);
     participant.getUser().setParticipant(null);
     participant.setUser(null);
+    participant.setExitedAt(LocalDateTime.now());
   }
 
   public long getTotalPlaytimeOfSeconds() {
