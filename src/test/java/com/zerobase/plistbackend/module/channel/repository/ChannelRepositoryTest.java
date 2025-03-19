@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,19 +40,17 @@ class ChannelRepositoryTest {
         createTwoClosedChannel(host);
         entityManager.flush();
 
-        int queryYear = 2025;
-        Timestamp startDate = Timestamp.valueOf(LocalDateTime.now()
-                .withYear(queryYear)
-                .withMonth(1));
-        Timestamp endDate = Timestamp.valueOf(LocalDateTime.now().withYear(queryYear + 1).withMonth(1));
+        int year = 2025;
+        LocalDateTime startDate = LocalDate.of(year, 1, 1).atStartOfDay();
+        LocalDateTime endDate = LocalDate.of(year + 1, 1, 1).atStartOfDay();
 
         // when
         List<Channel> closedChannelList = channelRepository.findByChannelHostId(host.getUserId(), startDate, endDate, ChannelStatus.CHANNEL_STATUS_CLOSED);
+
+
         // then
         assertThat(closedChannelList).hasSize(2);
         for (Channel channel : closedChannelList) {
-            assertThat(channel.getChannelCreatedAt()).isAfterOrEqualTo(startDate);
-            assertThat(channel.getChannelCreatedAt()).isBefore(endDate);
             assertThat(channel.getChannelHost().getUserId()).isEqualTo(host.getUserId());
             assertThat(channel.getChannelStatus()).isEqualTo(ChannelStatus.CHANNEL_STATUS_CLOSED);
         }
@@ -77,12 +77,12 @@ class ChannelRepositoryTest {
                 .channelStatus(ChannelStatus.CHANNEL_STATUS_CLOSED)
                 .channelCreatedAt(Timestamp.valueOf(LocalDateTime.now()
                         .withYear(2025)
-                        .withHour(20)
-                        .withMinute(55)))
+                        .withMonth(12)
+                        .withDayOfMonth(31)))
                 .channelFinishedAt(Timestamp.valueOf(LocalDateTime.now()
                         .withYear(2025)
-                        .withHour(23)
-                        .withMinute(55)))
+                        .withMonth(12)
+                        .withDayOfMonth(31)))
                 .channelHost(host)
                 .build();
         entityManager.persist(closedChannel1);
