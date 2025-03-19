@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.service.UserServiceImpl;
 import com.zerobase.plistbackend.module.user.util.TimeValueFormatter;
@@ -41,9 +41,9 @@ class UserControllerTest {
         Long userId = 123L;
 
         String playtime = TimeValueFormatter.formatToString(16028L);  // 4시간 27분
-        PlayTimeResponse playTimeResponse = new PlayTimeResponse(playtime, 50, 0L);
+        HostPlaytimeResponse hostPlaytimeResponse = new HostPlaytimeResponse(playtime, 50, 0L);
 
-        given(userService.getPlayTimeForHistroyOfHost(userId, year)).willReturn(playTimeResponse);
+        given(userService.getHistoryOfHost(userId, year)).willReturn(hostPlaytimeResponse);
 
         CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
         given(dummyUser.findId()).willReturn(userId);
