@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.user.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -8,7 +7,7 @@ import static org.mockito.Mockito.*;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
@@ -128,7 +127,7 @@ public class UserServiceTest {
 
   @Test
   @DisplayName("특정 호스트의 채널별 재생시간 조회")
-  void getPlayTimeForHistroyOfHost_ShouldReturnCorrectData() {
+  void getHistoryOfHost_ShouldReturnCorrectData() {
     // given
     Long hostId = 123L;
     int year = 2022;
@@ -148,7 +147,7 @@ public class UserServiceTest {
             .willReturn(channels);
 
     // when
-    PlayTimeResponse result = userService.getPlayTimeForHistroyOfHost(hostId, year);
+    HostPlaytimeResponse result = userService.getHistoryOfHost(hostId, year);
 
     // then
     assertNotNull(result);
