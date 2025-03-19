@@ -78,7 +78,7 @@ public class Channel {
   @Builder.Default
   private Playlist channelPlaylist = new Playlist();
 
-  @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
   @Builder.Default
   private List<Participant> channelParticipants = new ArrayList<>();
 
