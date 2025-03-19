@@ -5,6 +5,8 @@ import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import jakarta.persistence.LockModeType;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,8 +59,8 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
           "AND c.channelCreatedAt < :endDate")
   List<Channel> findByChannelHostId(
           @Param("hostId") Long hostId,
-          @Param("startDate") Timestamp startDate,
-          @Param("endDate") Timestamp endDate,
+          @Param("startDate") LocalDateTime startDate,
+          @Param("endDate") LocalDateTime endDate,
           @Param("channelStatus") ChannelStatus channelStatus
   );
 }
