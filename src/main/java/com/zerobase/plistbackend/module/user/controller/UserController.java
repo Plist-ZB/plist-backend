@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.user.controller;
 
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.service.UserServiceImpl;
@@ -52,10 +52,18 @@ public class UserController {
           description = "연도별 호스트 재생 시간, 전체 참여자수, 팔로워 수(팔로워 수는 기능이 완료되면 추가 예정)," +
                   " 쿼리 스트링으로 년도만 입력 ex)2024 입력시 2024~2025 데이터 추출")
   @GetMapping("/me/playtime/host")
-  public ResponseEntity<PlayTimeResponse> getHistoryOfPlaytimeForHost(
+  public ResponseEntity<HostPlaytimeResponse> getHistoryOfHost(
           @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
           @RequestParam("year") int year) {
-    return ResponseEntity.ok(userService.getPlaytime(customOAuth2User.findId(), year));
+    return ResponseEntity.ok(userService.getHistoryOfHost(customOAuth2User.findId(), year));
   }
-
+  @Operation(summary = "회원의 플리방 이력 정보 가져오기",
+          description = "연도별 플리방 이용시간" +
+                  " 쿼리 스트링으로 년도만 입력 ex)2024 입력시 2024~2025 데이터 추출")
+  @GetMapping("/me/playtime/user")
+  public ResponseEntity<?> getHistoryOfUser(
+          @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+          @RequestParam("year") int year) {
+    return ResponseEntity.ok(userService.getHistoryOfUser(customOAuth2User.findId(), year));
+  }
 }
