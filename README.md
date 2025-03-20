@@ -43,7 +43,7 @@
 - 원하는 플레이리스트 채널에 입장
 ### 3. 실시간 채널
 - 회원 누구나 실시간 채널 생성이 되고 호스트로 지정이 됨
-- 호스트는 `유튜브 API`를 이용해 원하는 음악을 검색하여 실시간 플레이리스트의 새로운 음악을 추가하거나 리스트에 대기 중인 음악 삭제 및 순서 조정
+- 호스트는 유튜브 API를 이용해 원하는 음악을 검색하여 실시간 플레이리스트의 새로운 음악을 추가하거나 리스트에 대기 중인 음악 삭제 및 순서 조정
 ### 4. 실시간 플레이리스트 및 실시간 채팅
 - 실시간 채널에 입장할 경우 현재 호스트의 재생 시점을 기준으로 입장한 사용자에게도 플레이리스트가 재생
 - 호스트와 참여자는 채널 내의 채팅을 이용해 실시간으로 소통
@@ -56,7 +56,7 @@
 
 <br>
 
-# 화면 구성
+# 🎞️ 화면 구성
 <table>
   <tr>
     <td align="center">메인 페이지</td>
@@ -117,7 +117,7 @@
 <br>
 
 # 🔗 아키텍처
-![image](https://github.com/user-attachments/assets/d93d6958-1e1f-46de-ae21-89224ee2594c)
+![image](https://github.com/user-attachments/assets/a3f24ab8-7a3f-4b3f-af4f-ddff7e127992)
 <br>
 
 # 📑 시작 가이드
@@ -131,4 +131,14 @@
 - Git
 ```
 
-여기 보류...
+### Installation
+- Frontend
+```
+$ git clone https://github.com/Plist-ZB/plist-frontend.git
+$ cd plist-frontend
+```
+- Backend
+```
+$ git clone https://github.com/Plist-ZB/plist-backend.git
+$ cd plist-backend
+```
