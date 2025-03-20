@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlayTimeResponse {
+public class HostPlaytimeResponse {
     private String totalPlayTime;
     private int totalParticipant;
     private Long totalFollowers;

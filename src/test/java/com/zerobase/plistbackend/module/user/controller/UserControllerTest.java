@@ -1,9 +1,11 @@
 package com.zerobase.plistbackend.module.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.UserPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.service.UserServiceImpl;
+import com.zerobase.plistbackend.module.user.util.TimeValueFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,28 +35,51 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("회원의 플리방 이력 정보 가져오기 API 테스트")
-    void getPlaytime() throws Exception {
+    @DisplayName("호스트의 플리방 이력 정보 가져오기 API 테스트")
+    void getPlaytimeForHost() throws Exception {
         // given
         int year = 2022;
         Long userId = 123L;
 
-        String wholePlayTime = "3시간 0분";
-        PlayTimeResponse playTimeResponse = new PlayTimeResponse(wholePlayTime, 50, 0L);
+        String playtime = TimeValueFormatter.formatToString(16028L);  // 4시간 27분
+        HostPlaytimeResponse hostPlaytimeResponse = new HostPlaytimeResponse(playtime, 50, 0L);
 
-        given(userService.getPlaytime(userId, year)).willReturn(playTimeResponse);
+        given(userService.getHistoryOfHost(userId, year)).willReturn(hostPlaytimeResponse);
 
         CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
         given(dummyUser.findId()).willReturn(userId);
 
         // when & then
-        mockMvc.perform(get("/v3/api/me/playtime")
+        mockMvc.perform(get("/v3/api/me/playtime/host")
                         .param("year", String.valueOf(year))
                         .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalPlayTime").value(wholePlayTime))
+                .andExpect(jsonPath("$.totalPlayTime").value(playtime))
                 .andExpect(jsonPath("$.totalParticipant").value(50))
                 .andExpect(jsonPath("$.totalFollowers").value(0))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("유저의 플레이타임 이력 정보 가져오기 API 테스트")
+    void getPlaytimeForUser() throws Exception {
+        // Given
+        int year = 2024;
+        Long userId = 123L;
+        String playtime = "3시간 30분";
+        UserPlaytimeResponse userPlaytimeResponse = UserPlaytimeResponse.from(playtime);
+
+        given(userService.getHistoryOfUser(userId, year)).willReturn(userPlaytimeResponse);
+
+        CustomOAuth2User dummyUser = mock(CustomOAuth2User.class);
+        given(dummyUser.findId()).willReturn(userId);
+
+        // When & Then
+        mockMvc.perform(get("/v3/api/me/playtime/user")
+                        .param("year", String.valueOf(year))
+                        .with(authentication(new TestingAuthenticationToken(dummyUser, null, "ROLE_USER"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPlayTime").value(playtime))
                 .andDo(print());
     }
 }

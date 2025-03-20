@@ -1,7 +1,7 @@
 package com.zerobase.plistbackend.module.user.service;
 
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
 
 
@@ -13,5 +13,5 @@ public interface UserService {
 
    ProfileResponse editProfile(UserProfileRequest request, Long userId);
 
-   PlayTimeResponse getPlaytime(Long hostId, int year);
+   HostPlaytimeResponse getHistoryOfHost(Long hostId, int year);
 }

@@ -1,15 +1,17 @@
 package com.zerobase.plistbackend.module.user.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
+import com.zerobase.plistbackend.module.participant.entity.Participant;
+import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
-import com.zerobase.plistbackend.module.user.dto.response.PlayTimeResponse;
+import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
+import com.zerobase.plistbackend.module.user.dto.response.UserPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
@@ -18,6 +20,8 @@ import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.user.type.UserRole;
 import com.zerobase.plistbackend.module.user.util.S3Util;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,13 +34,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
   @Mock
   ChannelRepository channelRepository;
 
   @Mock
   private UserRepository userRepository;
+
+  @Mock
+  ParticipantRepository participantRepository;
 
   private CustomOAuth2User mockOAuth2User;
 
@@ -128,7 +135,7 @@ public class UserServiceTest {
 
   @Test
   @DisplayName("특정 호스트의 채널별 재생시간 조회")
-  void getPlaytime_ShouldReturnCorrectData() {
+  void getHistoryOfHost_ShouldReturnCorrectData() {
     // given
     Long hostId = 123L;
     int year = 2022;
@@ -148,7 +155,7 @@ public class UserServiceTest {
             .willReturn(channels);
 
     // when
-    PlayTimeResponse result = userService.getPlaytime(hostId, year);
+    HostPlaytimeResponse result = userService.getHistoryOfHost(hostId, year);
 
     // then
     assertNotNull(result);
@@ -159,4 +166,35 @@ public class UserServiceTest {
     verify(channelRepository, times(1)).findByChannelHostId(anyLong(), any(), any(), any());
   }
 
+  @Test
+  @DisplayName("특정 유저의 연도별 이용시간 조회")
+  void doTest() {
+      //given
+    Long userId = 123L;
+    int year = 2024;
+    LocalDateTime startDate = LocalDate.of(year, 1, 1).atStartOfDay();
+    LocalDateTime endDate = LocalDate.of(year+1, 1, 1).atStartOfDay();
+
+    List<Participant> mockParticipant = List.of(
+            createMockParticipant(3600),
+            createMockParticipant(7200),
+            createMockParticipant(1800)
+    );
+
+    given(participantRepository.findByUserIdAndDate(userId, startDate, endDate))
+            .willReturn(mockParticipant);
+    //when
+    UserPlaytimeResponse result = userService.getHistoryOfUser(userId, year);
+
+    //then
+    assertNotNull(result);
+    assertEquals("3시간 30분", result.getTotalPlayTime());
+
+
+  }
+  private Participant createMockParticipant(long totalPlaytimeSeconds) {
+    Participant participant = mock(Participant.class);
+    given(participant.getTotalPlaytimeOfSeconds()).willReturn(totalPlaytimeSeconds);
+    return participant;
+  }
 }
