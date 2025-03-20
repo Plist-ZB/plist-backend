@@ -81,6 +81,6 @@ public class Participant {
     this.participantExitedAt = Timestamp.valueOf(now);
   }
   public long getTotalPlaytimeOfSeconds() {
-    return Duration.between((Temporal) this.getParticipantCreatedAt(), (Temporal) this.getParticipantCreatedAt()).toSeconds();
+    return Duration.between((Temporal) this.getParticipantCreatedAt(), (Temporal) this.getParticipantExitedAt()).toSeconds();
   }
 }
