@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "fcm_token")
 @Builder
 @AllArgsConstructor
+@Table(name = "fcm_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FCMToken {
 
