@@ -142,7 +142,7 @@ public class CustomChannelRepositoryImpl implements CustomChannelRepository {
       Pageable pageable) {
 
     BooleanBuilder booleanBuilder = new BooleanBuilder();
-    booleanBuilder.and(channel.channelHost.userId.eq(user.userId));
+    booleanBuilder.and(channel.channelHost.userId.eq(requestUser.getUserId()));
     booleanBuilder.and(channel.channelStatus.eq(ChannelStatus.CHANNEL_STATUS_CLOSED));
     if (cursorId != null) {
       booleanBuilder.and(channel.channelId.lt(cursorId));
