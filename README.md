@@ -102,14 +102,15 @@
 
 # ⚙️ 기술 스택
 ### - Front-End
-[![My Skills](https://skillicons.dev/icons?i=js,html,css,react,ts,vercel,vite)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=html,css,js,react,ts,vite,styledcomponents,tailwind,yarn)](https://skillicons.dev)
+&nbsp;<img width="48px" height="48px" src="https://github.com/user-attachments/assets/524be433-5c89-4869-b19e-2de47d9c3513"/>
 
 ### - Back-End
-![icons8-봄-로고-48](https://github.com/user-attachments/assets/0dabdff1-a841-413a-b1e0-638c246510b4)
-[![My Skills](https://skillicons.dev/icons?i=firebase,gcp,hibernate,java,mysql,redis)](https://skillicons.dev)
+<img width="48" alt="Frame 82 (1)" src="https://github.com/user-attachments/assets/be7950c2-ef99-4cb8-9997-79a0bd9d6217" />&nbsp;
+[![My Skills](https://skillicons.dev/icons?i=java,gradle,mysql,hibernate,firebase,gcp,redis)](https://skillicons.dev)
 
 ### - Infra
-[![My Skills](https://skillicons.dev/icons?i=docker,githubactions,nginx,ubuntu,aws,gradle)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=docker,githubactions,nginx,ubuntu,aws)](https://skillicons.dev)
 
 ### - Collaboration
 [![My Skills](https://skillicons.dev/icons?i=git,github,notion,discord,figma,postman)](https://skillicons.dev)
@@ -129,6 +130,8 @@
 - MySQL 8.0 이상
 - Docker (선택 사항: Redis 및 기타 서비스 컨테이너 실행용)
 - Git
+- node 20.11 이상
+- yarn 1.22
 ```
 
 ### Installation
