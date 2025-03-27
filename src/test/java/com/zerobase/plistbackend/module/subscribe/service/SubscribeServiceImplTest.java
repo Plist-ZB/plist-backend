@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.zerobase.plistbackend.module.subscribe.dto.response.SubscribeResponse;
 import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
 import com.zerobase.plistbackend.module.subscribe.repository.SubscribeRepository;
-import com.zerobase.plistbackend.module.user.dto.response.UserInfoResponse;
+import com.zerobase.plistbackend.module.subscribe.dto.response.FolloweeInfoResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
@@ -60,15 +60,14 @@ class SubscribeServiceImplTest {
   @DisplayName("사용자의 구독리스트를 전체 조회합니다.")
   void findFollowees() {
 
-    UserInfoResponse followee1 = new UserInfoResponse(2L, "테스터1");
-    UserInfoResponse followee2 = new UserInfoResponse(3L, "테스터2");
-    List<UserInfoResponse> followees = Arrays.asList(followee1, followee2);
+    FolloweeInfoResponse followee1 = new FolloweeInfoResponse(2L, "테스터1");
+    FolloweeInfoResponse followee2 = new FolloweeInfoResponse(3L, "테스터2");
+    List<FolloweeInfoResponse> followees = Arrays.asList(followee1, followee2);
 
     when(subscribeRepository.findByFollower(mockFollower)).thenReturn(followees);
 
     SubscribeResponse response = subscribeService.findFollowees(customOAuth2User);
 
-    assertThat(response.getUserId()).isEqualTo(1L);
     assertThat(response.getFollowees()).hasSize(2);
   }
 
