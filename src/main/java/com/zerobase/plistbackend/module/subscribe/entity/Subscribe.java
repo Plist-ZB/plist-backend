@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.fcmtoken.entity;
+package com.zerobase.plistbackend.module.subscribe.entity;
 
 import com.zerobase.plistbackend.module.user.entity.User;
 import jakarta.persistence.Entity;
@@ -8,8 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.sql.Timestamp;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,31 +18,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "fcm_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FCMToken {
+public class Subscribe {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long fcmTokenId;
+  private Long subscribeId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+  @JoinColumn(name = "follower_id")
+  private User follower;
 
-  private String fcmTokenValue;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "followee_id")
+  private User followee;
 
-  private Timestamp fcmTokenCreatedAt;
-
-  public static FCMToken from(String token, User user) {
-    return FCMToken.builder()
-        .user(user)
-        .fcmTokenValue(token)
-        .fcmTokenCreatedAt(new Timestamp(System.currentTimeMillis()))
+  public static Subscribe from(User follower, User followee) {
+    return Subscribe.builder()
+        .follower(follower)
+        .followee(followee)
         .build();
-  }
-
-  public void updateFCMToken() {
-    this.fcmTokenCreatedAt = new Timestamp(System.currentTimeMillis());
   }
 }

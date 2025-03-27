@@ -23,17 +23,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class) // Mockito 확장 기능 활성화
 class FCMTokenServiceImplTest {
 
-  private final String email = "test@test.com";
-  private final String token = "test_token";
   @InjectMocks
   private FCMTokenServiceImpl fcmTokenService;
+
   @Mock
   private FCMTokenRepository fcmTokenRepository;
+
   @Mock
   private UserRepository userRepository;
+
   @Mock
   private CustomOAuth2User customOAuth2User;
+
   private User mockUser;
+
+  private final String email = "test@test.com";
+  private final String token = "test_token";
 
   @BeforeEach
   void setUp() {
