@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.subscribe.dto.response;
 
-import com.zerobase.plistbackend.module.user.dto.response.UserInfoResponse;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +8,10 @@ import lombok.Getter;
 @Builder
 public class SubscribeResponse {
 
-  private Long userId;
+  private List<FolloweeInfoResponse> followees;
 
-  private List<UserInfoResponse> followees;
-
-  public static SubscribeResponse of(Long userId, List<UserInfoResponse> followees) {
+  public static SubscribeResponse of(List<FolloweeInfoResponse> followees) {
     return SubscribeResponse.builder()
-        .userId(userId)
         .followees(followees)
         .build();
   }

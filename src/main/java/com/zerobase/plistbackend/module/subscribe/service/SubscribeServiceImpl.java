@@ -5,7 +5,7 @@ import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
 import com.zerobase.plistbackend.module.subscribe.exception.SubscribeException;
 import com.zerobase.plistbackend.module.subscribe.repository.SubscribeRepository;
 import com.zerobase.plistbackend.module.subscribe.type.SubscribeErrorStatus;
-import com.zerobase.plistbackend.module.user.dto.response.UserInfoResponse;
+import com.zerobase.plistbackend.module.subscribe.dto.response.FolloweeInfoResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
@@ -31,9 +31,9 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     User follower = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    List<UserInfoResponse> followees = subscribeRepository.findByFollower(follower);
+    List<FolloweeInfoResponse> followees = subscribeRepository.findByFollower(follower);
 
-    return SubscribeResponse.of(follower.getUserId(), followees);
+    return SubscribeResponse.of(followees);
   }
 
   @Override
@@ -44,6 +44,10 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     User followee = userRepository.findByUserId(followeeId).orElseThrow(() -> new UserException(
         UserErrorStatus.USER_NOT_FOUND));
+
+    if (subscribeRepository.existsByFollowerAndFollowee(follower, followee)) {
+      throw new SubscribeException(SubscribeErrorStatus.SUBSCRIBE_ALREADY_EXIST);
+    }
 
     Subscribe subscribe = Subscribe.from(follower, followee);
 
