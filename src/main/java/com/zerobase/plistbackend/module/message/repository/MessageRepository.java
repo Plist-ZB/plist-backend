@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.message.repository;
 
-import com.zerobase.plistbackend.module.message.dto.response.UnreadResponse;
 import com.zerobase.plistbackend.module.message.entity.Message;
 import com.zerobase.plistbackend.module.user.entity.User;
 import java.time.LocalDateTime;

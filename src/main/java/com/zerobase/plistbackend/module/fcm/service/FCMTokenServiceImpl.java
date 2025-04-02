@@ -4,8 +4,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.WebpushConfig;
-import com.google.firebase.messaging.WebpushFcmOptions;
-import com.google.firebase.messaging.WebpushNotification;
 import com.zerobase.plistbackend.module.fcm.entity.FCMToken;
 import com.zerobase.plistbackend.module.fcm.repository.FCMTokenRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
