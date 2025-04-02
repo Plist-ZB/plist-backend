@@ -1,6 +1,5 @@
 package com.zerobase.plistbackend.module.subscribe.service;
 
-import com.zerobase.plistbackend.module.subscribe.domain.SubscribeEvent;
 import com.zerobase.plistbackend.module.subscribe.dto.response.FollowerInfoResponse;
 import com.zerobase.plistbackend.module.subscribe.dto.response.SubscribeResponse;
 import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
@@ -54,8 +53,8 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     Subscribe subscribe = Subscribe.from(followee, follower);
 
-    applicationEventPublisher.publishEvent(
-        new SubscribeEvent(follower, followee.getUserName()));
+//    applicationEventPublisher.publishEvent(
+//        new SubscribeEvent(follower, followee.getUserName()));
     subscribeRepository.save(subscribe);
   }
 
