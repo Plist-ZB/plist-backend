@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.message.controller;
 
 import com.zerobase.plistbackend.module.message.dto.response.MessageResponse;
+import com.zerobase.plistbackend.module.message.dto.response.UnreadResponse;
 import com.zerobase.plistbackend.module.message.service.MessageService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,5 +65,18 @@ public class MessageController {
     messageService.readAllMessage(customOAuth2User);
 
     return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
+  @Operation(
+      summary = "사용자 메시지 안읽음 표시",
+      description = "사용자가 읽지 않은 메시지가 있는지 확인합니다."
+  )
+  @GetMapping("/messages/unread")
+  public ResponseEntity<UnreadResponse> checkUnreadMessage(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+    UnreadResponse response = messageService.checkUnreadMessage(customOAuth2User);
+
+    return ResponseEntity.ok(response);
   }
 }
