@@ -13,11 +13,11 @@ public class DetailClosedChannelResponse {
 
   private Long channelId;
   private String channelName;
-  private String channelCategoryName;
+  private String channelCategoryName; // 불필요
   private String channelThumbnail;
   private String channelCreatedAt;
   private String channelDurationTime;
-  private String channelHostName;
+  private String channelHostName; // 불필요
   private List<Video> videoList;
   private int channelLastParticipantCount;
   //  private Long channelCapacity;
