@@ -39,7 +39,7 @@ public class Message {
 
   private String messageLink;
 
-  private boolean read;
+  private boolean readCheck;
 
   @CreatedDate
   @Column(updatable = false)
@@ -49,12 +49,12 @@ public class Message {
     return Message.builder()
         .user(user)
         .messageContent(messageContent)
-        .read(false)
+        .readCheck(false)
         .messageLink(messageLink)
         .build();
   }
 
   public void read() {
-    this.read = true;
+    this.readCheck = true;
   }
 }
