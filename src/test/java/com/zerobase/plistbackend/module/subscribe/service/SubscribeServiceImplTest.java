@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.module.subscribe.domain.SubscribeEvent;
 import com.zerobase.plistbackend.module.subscribe.dto.response.FollowerInfoResponse;
 import com.zerobase.plistbackend.module.subscribe.dto.response.SubscribeResponse;
 import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class SubscribeServiceImplTest {
@@ -38,6 +40,8 @@ class SubscribeServiceImplTest {
   private UserRepository userRepository;
   @Mock
   private CustomOAuth2User customOAuth2User;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
   private User mockFollowee;
   private User mockFollower;
 
@@ -81,6 +85,7 @@ class SubscribeServiceImplTest {
     subscribeService.subscribe(customOAuth2User, mockFollower.getUserId());
 
     verify(subscribeRepository, times(1)).save(any(Subscribe.class));
+    verify(eventPublisher,times(1)).publishEvent(any(SubscribeEvent.class));
   }
 
   @Test
