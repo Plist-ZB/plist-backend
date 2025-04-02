@@ -93,7 +93,7 @@ jwt:
   access: 604800000  # Access Token: 로컬에서는 1주일
   refresh: 478800000  # Refresh Token: 7 days
 
-login-url : http://localhost:8080
+login-url : http://localhost:3000
 
 server:
   port: 8080

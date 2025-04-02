@@ -1,11 +1,11 @@
 package com.zerobase.plistbackend.module.subscribe.service;
 
+import com.zerobase.plistbackend.module.subscribe.dto.response.FollowerInfoResponse;
 import com.zerobase.plistbackend.module.subscribe.dto.response.SubscribeResponse;
 import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
 import com.zerobase.plistbackend.module.subscribe.exception.SubscribeException;
 import com.zerobase.plistbackend.module.subscribe.repository.SubscribeRepository;
 import com.zerobase.plistbackend.module.subscribe.type.SubscribeErrorStatus;
-import com.zerobase.plistbackend.module.subscribe.dto.response.FolloweeInfoResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
@@ -14,6 +14,7 @@ import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,46 +25,49 @@ public class SubscribeServiceImpl implements SubscribeService {
 
   private final UserRepository userRepository;
   private final SubscribeRepository subscribeRepository;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
   @Transactional(readOnly = true)
-  public SubscribeResponse findFollowees(CustomOAuth2User customOAuth2User) {
+  public SubscribeResponse findFollowers(CustomOAuth2User customOAuth2User) {
 
-    User follower = userRepository.findByUserEmail(customOAuth2User.findEmail());
+    User followee = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    List<FolloweeInfoResponse> followees = subscribeRepository.findByFollower(follower);
+    List<FollowerInfoResponse> followers = subscribeRepository.findByFollowee(followee);
 
-    return SubscribeResponse.of(followees);
+    return SubscribeResponse.of(followers);
   }
 
   @Override
   @Transactional
-  public void subcribe(CustomOAuth2User customOAuth2User, Long followeeId) {
+  public void subscribe(CustomOAuth2User customOAuth2User, Long followerId) {
 
-    User follower = userRepository.findByUserEmail(customOAuth2User.findEmail());
+    User followee = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    User followee = userRepository.findByUserId(followeeId).orElseThrow(() -> new UserException(
+    User follower = userRepository.findByUserId(followerId).orElseThrow(() -> new UserException(
         UserErrorStatus.USER_NOT_FOUND));
 
-    if (subscribeRepository.existsByFollowerAndFollowee(follower, followee)) {
+    if (subscribeRepository.existsByFolloweeAndFollower(followee, follower)) {
       throw new SubscribeException(SubscribeErrorStatus.SUBSCRIBE_ALREADY_EXIST);
     }
 
-    Subscribe subscribe = Subscribe.from(follower, followee);
+    Subscribe subscribe = Subscribe.from(followee, follower);
 
+//    applicationEventPublisher.publishEvent(
+//        new SubscribeEvent(follower, followee.getUserName()));
     subscribeRepository.save(subscribe);
   }
 
   @Override
   @Transactional
-  public void unsubscribe(CustomOAuth2User customOAuth2User, Long followeeId) {
+  public void unsubscribe(CustomOAuth2User customOAuth2User, Long followerId) {
 
-    User follower = userRepository.findByUserEmail(customOAuth2User.findEmail());
+    User followee = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    User followee = userRepository.findByUserId(followeeId).orElseThrow(() -> new UserException(
+    User follower = userRepository.findByUserId(followerId).orElseThrow(() -> new UserException(
         UserErrorStatus.USER_NOT_FOUND));
 
-    Subscribe subscribe = subscribeRepository.findByFollowerAndFollowee(follower, followee)
+    Subscribe subscribe = subscribeRepository.findByFolloweeAndFollower(followee, follower)
         .orElseThrow(() -> new SubscribeException(SubscribeErrorStatus.SUBSCRIBE_NOT_FOUND));
 
     subscribeRepository.delete(subscribe);
