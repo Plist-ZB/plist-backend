@@ -5,6 +5,8 @@ import com.zerobase.plistbackend.module.category.entity.Category;
 import com.zerobase.plistbackend.module.category.exception.CategoryException;
 import com.zerobase.plistbackend.module.category.repository.CategoryRepository;
 import com.zerobase.plistbackend.module.category.type.CategoryErrorStatus;
+import com.zerobase.plistbackend.module.channel.domain.ChannelEvent;
+import com.zerobase.plistbackend.module.channel.domain.ChannelEvent.EventType;
 import com.zerobase.plistbackend.module.channel.domain.HostExitEvent;
 import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
@@ -47,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ChannelServiceImpl implements ChannelService {
 
+  private static final String FAVORITE = "favorite";
   private final UserRepository userRepository;
   private final ChannelRepository channelRepository;
   private final CategoryRepository categoryRepository;
@@ -54,8 +57,6 @@ public class ChannelServiceImpl implements ChannelService {
   private final CustomChannelRepository customChannelRepository;
   private final ApplicationEventPublisher applicationEventPublisher;
   private final VideoSyncManager videoSyncManager;
-
-  private static final String FAVORITE = "favorite";
 
   @Override
   @Transactional
@@ -81,6 +82,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     channelRepository.save(channel);
+    applicationEventPublisher.publishEvent(
+        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(), EventType.CREATED));
 
     return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
@@ -133,6 +136,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     applicationEventPublisher.publishEvent(new HostExitEvent(channelId));
+    applicationEventPublisher.publishEvent(
+        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(), EventType.CLOSED));
     Channel.closeChannel(channel);
     channelRepository.save(channel);
     videoSyncManager.removeCurrentTime(channelId);
