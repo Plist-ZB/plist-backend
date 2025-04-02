@@ -7,10 +7,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.module.subscribe.dto.response.FollowerInfoResponse;
 import com.zerobase.plistbackend.module.subscribe.dto.response.SubscribeResponse;
 import com.zerobase.plistbackend.module.subscribe.entity.Subscribe;
 import com.zerobase.plistbackend.module.subscribe.repository.SubscribeRepository;
-import com.zerobase.plistbackend.module.subscribe.dto.response.FolloweeInfoResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
@@ -29,60 +29,56 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class SubscribeServiceImplTest {
 
+  private final String email = "test@test.com";
   @InjectMocks
   private SubscribeServiceImpl subscribeService;
-
   @Mock
   private SubscribeRepository subscribeRepository;
-
   @Mock
   private UserRepository userRepository;
-
   @Mock
   private CustomOAuth2User customOAuth2User;
-
-  private User mockFollower;
   private User mockFollowee;
-  private final String email = "test@test.com";
+  private User mockFollower;
 
   @BeforeEach
   void setUp() {
-    mockFollower = User.builder()
+    mockFollowee = User.builder()
         .userId(1L)
         .userEmail(email)
         .build();
 
     when(customOAuth2User.findEmail()).thenReturn(email);
-    when(userRepository.findByUserEmail(email)).thenReturn(mockFollower);
+    when(userRepository.findByUserEmail(email)).thenReturn(mockFollowee);
   }
 
   @Test
   @DisplayName("사용자의 구독리스트를 전체 조회합니다.")
-  void findFollowees() {
+  void findFollowers() {
 
-    FolloweeInfoResponse followee1 = new FolloweeInfoResponse(2L, "테스터1");
-    FolloweeInfoResponse followee2 = new FolloweeInfoResponse(3L, "테스터2");
-    List<FolloweeInfoResponse> followees = Arrays.asList(followee1, followee2);
+    FollowerInfoResponse follower1 = new FollowerInfoResponse(2L, "테스터1", "테스트이미지");
+    FollowerInfoResponse follower2 = new FollowerInfoResponse(3L, "테스터2", "테스트이미지");
+    List<FollowerInfoResponse> followers = Arrays.asList(follower1, follower2);
 
-    when(subscribeRepository.findByFollower(mockFollower)).thenReturn(followees);
+    when(subscribeRepository.findByFollowee(mockFollowee)).thenReturn(followers);
 
-    SubscribeResponse response = subscribeService.findFollowees(customOAuth2User);
+    SubscribeResponse response = subscribeService.findFollowers(customOAuth2User);
 
-    assertThat(response.getFollowees()).hasSize(2);
+    assertThat(response.getFollowers()).hasSize(2);
   }
 
   @Test
   @DisplayName("사용자는 한 사용자를 구독할 수 있습니다.")
-  void subcribe() {
+  void subscribe() {
 
-    mockFollowee = User.builder()
+    mockFollower = User.builder()
         .userId(2L)
         .build();
 
-    when(userRepository.findByUserId(mockFollowee.getUserId())).thenReturn(
-        Optional.ofNullable(mockFollowee));
+    when(userRepository.findByUserId(mockFollower.getUserId())).thenReturn(
+        Optional.ofNullable(mockFollower));
 
-    subscribeService.subcribe(customOAuth2User, mockFollowee.getUserId());
+    subscribeService.subscribe(customOAuth2User, mockFollower.getUserId());
 
     verify(subscribeRepository, times(1)).save(any(Subscribe.class));
   }
@@ -93,14 +89,14 @@ class SubscribeServiceImplTest {
 
     Subscribe subscribe = mock(Subscribe.class);
 
-    mockFollowee = User.builder()
+    mockFollower = User.builder()
         .userId(2L)
         .build();
 
-    when(userRepository.findByUserId(mockFollowee.getUserId())).thenReturn(
-        Optional.ofNullable(mockFollowee));
+    when(userRepository.findByUserId(mockFollower.getUserId())).thenReturn(
+        Optional.ofNullable(mockFollower));
 
-    when(subscribeRepository.findByFollowerAndFollowee(mockFollower, mockFollowee)).thenReturn(
+    when(subscribeRepository.findByFolloweeAndFollower(mockFollowee, mockFollower)).thenReturn(
         Optional.ofNullable(subscribe));
 
     subscribeService.unsubscribe(customOAuth2User, 2L);

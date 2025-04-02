@@ -8,11 +8,11 @@ import lombok.Getter;
 @Builder
 public class SubscribeResponse {
 
-  private List<FolloweeInfoResponse> followees;
+  private List<FollowerInfoResponse> followers;
 
-  public static SubscribeResponse of(List<FolloweeInfoResponse> followees) {
+  public static SubscribeResponse of(List<FollowerInfoResponse> followers) {
     return SubscribeResponse.builder()
-        .followees(followees)
+        .followers(followers)
         .build();
   }
 }

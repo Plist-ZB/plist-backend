@@ -30,11 +30,11 @@ public class SubscribeController {
       summary = "사용자 구독리스트 전체 조회",
       description = "사용자의 구독리스트를 전체 조회합니다."
   )
-  @GetMapping("/subscribe/followees")
-  public ResponseEntity<SubscribeResponse> findFollowees(
+  @GetMapping("/subscribe/followers")
+  public ResponseEntity<SubscribeResponse> findFollowers(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-    SubscribeResponse response = subscribeService.findFollowees(customOAuth2User);
+    SubscribeResponse response = subscribeService.findFollowers(customOAuth2User);
 
     return ResponseEntity.ok(response);
   }
@@ -45,9 +45,9 @@ public class SubscribeController {
   )
   @PostMapping("/subscribe")
   public ResponseEntity<Void> subscribe(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-      @RequestBody Long followeeId) {
+      @RequestBody Long followerId) {
 
-    subscribeService.subcribe(customOAuth2User, followeeId);
+    subscribeService.subscribe(customOAuth2User, followerId);
 
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -58,9 +58,9 @@ public class SubscribeController {
   )
   @DeleteMapping("/unsubscribe")
   public ResponseEntity<Void> unsubscribe(
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody Long followeeId) {
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody Long followerId) {
 
-    subscribeService.unsubscribe(customOAuth2User, followeeId);
+    subscribeService.unsubscribe(customOAuth2User, followerId);
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }

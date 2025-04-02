@@ -26,17 +26,17 @@ public class Subscribe {
   private Long subscribeId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "follower_id")
-  private User follower;
-
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "followee_id")
   private User followee;
 
-  public static Subscribe from(User follower, User followee) {
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "follower_id")
+  private User follower;
+
+  public static Subscribe from(User followee, User follower) {
     return Subscribe.builder()
-        .follower(follower)
         .followee(followee)
+        .follower(follower)
         .build();
   }
 }
