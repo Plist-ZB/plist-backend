@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.fcmtoken.service;
+package com.zerobase.plistbackend.module.fcm.service;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
@@ -6,8 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.zerobase.plistbackend.module.fcmtoken.entity.FCMToken;
-import com.zerobase.plistbackend.module.fcmtoken.repository.FCMTokenRepository;
+import com.zerobase.plistbackend.module.fcm.entity.FCMToken;
+import com.zerobase.plistbackend.module.fcm.repository.FCMTokenRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;

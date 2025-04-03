@@ -1,4 +1,4 @@
-package com.zerobase.plistbackend.module.fcmtoken.entity;
+package com.zerobase.plistbackend.module.fcm.entity;
 
 import com.zerobase.plistbackend.module.user.entity.User;
 import jakarta.persistence.Entity;

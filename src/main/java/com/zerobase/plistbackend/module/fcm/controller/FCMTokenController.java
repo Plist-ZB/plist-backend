@@ -1,6 +1,6 @@
-package com.zerobase.plistbackend.module.fcmtoken.controller;
+package com.zerobase.plistbackend.module.fcm.controller;
 
-import com.zerobase.plistbackend.module.fcmtoken.service.FCMTokenService;
+import com.zerobase.plistbackend.module.fcm.service.FCMTokenService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,6 +1,7 @@
 package com.zerobase.plistbackend.module.message.service;
 
 import com.zerobase.plistbackend.module.message.dto.response.MessageResponse;
+import com.zerobase.plistbackend.module.message.dto.response.UnreadResponse;
 import com.zerobase.plistbackend.module.message.entity.Message;
 import com.zerobase.plistbackend.module.message.exception.MessageException;
 import com.zerobase.plistbackend.module.message.repository.MessageRepository;
@@ -23,6 +24,7 @@ public class MessageServiceImpl implements MessageService{
   private final MessageRepository messageRepository;
 
   @Override
+  @Transactional(readOnly = true)
   public List<MessageResponse> findMessages(CustomOAuth2User customOAuth2User) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
@@ -53,5 +55,16 @@ public class MessageServiceImpl implements MessageService{
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
     messageRepository.updateAllMessageByUser(user);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public UnreadResponse checkUnreadMessage(CustomOAuth2User customOAuth2User) {
+
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    boolean result = messageRepository.existsByUserAndReadCheck(user, false);
+
+    return UnreadResponse.of(result);
   }
 }

@@ -26,7 +26,7 @@ public class MessageResponse {
         .messageId(message.getMessageId())
         .messageContent(message.getMessageContent())
         .messageLink(message.getMessageLink())
-        .read(message.isRead())
+        .read(message.isReadCheck())
         .messageCreatedAt(convertStringFormat(message.getMessageCreatedAt()))
         .build();
   }

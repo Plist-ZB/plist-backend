@@ -6,11 +6,13 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FirebaseConfig {
 
+  @Bean
   public FirebaseMessaging firebaseMessaging() throws IOException {
     FileInputStream serviceAccount = new FileInputStream(
         "src/main/resources/firebase-service-account.json");
