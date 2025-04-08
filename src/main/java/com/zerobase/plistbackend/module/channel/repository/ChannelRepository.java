@@ -4,8 +4,6 @@ import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.type.ChannelStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import jakarta.persistence.LockModeType;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -52,15 +50,19 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
   Optional<Channel> findByIdFetchJoinPlaylist(@Param("channelId") Long channelId);
 
   @Query("SELECT c FROM Channel c " +
-          "JOIN FETCH c.channelHost " +
-          "WHERE c.channelHost.userId = :hostId " +
-          "AND c.channelStatus = :channelStatus " +
-          "AND c.channelCreatedAt >= :startDate " +
-          "AND c.channelCreatedAt < :endDate")
+      "JOIN FETCH c.channelHost " +
+      "WHERE c.channelHost.userId = :hostId " +
+      "AND c.channelStatus = :channelStatus " +
+      "AND c.channelCreatedAt >= :startDate " +
+      "AND c.channelCreatedAt < :endDate")
   List<Channel> findByChannelHostId(
-          @Param("hostId") Long hostId,
-          @Param("startDate") LocalDateTime startDate,
-          @Param("endDate") LocalDateTime endDate,
-          @Param("channelStatus") ChannelStatus channelStatus
+      @Param("hostId") Long hostId,
+      @Param("startDate") LocalDateTime startDate,
+      @Param("endDate") LocalDateTime endDate,
+      @Param("channelStatus") ChannelStatus channelStatus
   );
+
+  @Query("SELECT COUNT(c) > 0 FROM Channel c WHERE c.channelHost.userId = :userId AND c.channelStatus = :status")
+  boolean existsStatusChannelByUserId(@Param("userId") Long userId,
+      @Param("status") ChannelStatus status);
 }
