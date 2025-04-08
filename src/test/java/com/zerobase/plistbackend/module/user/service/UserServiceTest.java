@@ -74,17 +74,15 @@ class UserServiceTest {
   @DisplayName("유저 정보 찾기 성공")
   void testFindProfileSuccess() {
     String email = "test@example.com";
-    ProfileResponse response = new ProfileResponse("test@example.com", "Test User",
-        "test-image-url");
-    when(userRepository.findProfileByEmail(email)).thenReturn(response);
+    when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
 
     ProfileResponse actualResponse = userService.findProfile(email);
 
-    assertEquals(email, actualResponse.email());
-    assertEquals("Test User", actualResponse.nickname());
-    assertEquals("test-image-url", actualResponse.image());
+    assertEquals(email, actualResponse.getEmail());
+    assertEquals("Test User", actualResponse.getNickname());
+    assertEquals("test-image-url", actualResponse.getImage());
 
-    verify(userRepository).findProfileByEmail(email);
+    verify(userRepository).findByUserEmail(email);
   }
 
   @Test
@@ -107,8 +105,8 @@ class UserServiceTest {
     ProfileResponse response = userService.editProfile(request, userId);
 
     // Then
-    assertEquals("Updated User", response.nickname());
-    assertEquals("updated-image-url", response.image());
+    assertEquals("Updated User", response.getNickname());
+    assertEquals("updated-image-url", response.getImage());
   }
 
   @Test
