@@ -49,7 +49,8 @@ public class SecurityConfig {
       "/v3/api/channels",
       "/v3/api/channels/popular",
       "/v3/api/channels/search",
-      "/v3/api/channels/category/**"
+      "/v3/api/channels/category/**",
+      "/v3/api/user/profile/*"
   );
 
   private static final List<String> CORS_URLS = List.of(new String[]{
