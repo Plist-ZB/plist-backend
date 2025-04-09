@@ -62,7 +62,5 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
       @Param("channelStatus") ChannelStatus channelStatus
   );
 
-  @Query("SELECT COUNT(c) > 0 FROM Channel c WHERE c.channelHost.userId = :userId AND c.channelStatus = :status")
-  boolean existsStatusChannelByUserId(@Param("userId") Long userId,
-      @Param("status") ChannelStatus status);
+  boolean existsByChannelHost_UserIdAndChannelStatus(Long userId, ChannelStatus status);
 }

@@ -14,7 +14,6 @@ import com.zerobase.plistbackend.module.user.dto.response.UserPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
-import com.zerobase.plistbackend.module.user.model.auth.UserDetail;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
 import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.user.type.UserRole;
@@ -60,10 +59,11 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND));
 
     int followerCount = subscribeRepository.countByFollower(user);
-    boolean isLive = channelRepository.existsStatusChannelByUserId(userId,
+    boolean isLive = channelRepository.existsByChannelHost_UserIdAndChannelStatus(userId,
         ChannelStatus.CHANNEL_STATUS_ACTIVE);
     boolean isSubscribe = isSubscribe(user);
-    return OtherProfileResponse.createOtherProfileResponse(user, followerCount, isSubscribe, isLive);
+    return OtherProfileResponse.createOtherProfileResponse(user, followerCount, isSubscribe,
+        isLive);
   }
 
   boolean isSubscribe(User follower) {
