@@ -25,4 +25,6 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
           + "FROM Subscribe s "
           + "WHERE s.followee.userId = :followeeId")
   List<Long> findFollowersIdByFolloweeId(Long followeeId);
+
+  int countByFollower(User follower);
 }
