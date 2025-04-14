@@ -43,7 +43,7 @@ public class FCMTokenController {
       summary = "사용자 FCMToken 삭제",
       description = "요청한 FCMToken을 서버에서 삭제합니다."
   )
-  @DeleteMapping("/fcm/token/delete")
+  @DeleteMapping("/fcm/token")
   public ResponseEntity<Void> deleteFCMToken(
       @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody String token) {
 
