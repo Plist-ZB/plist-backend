@@ -8,6 +8,7 @@ import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.repository.ChannelRepository;
 import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.participant.repository.ParticipantRepository;
+import com.zerobase.plistbackend.module.subscribe.repository.SubscribeRepository;
 import com.zerobase.plistbackend.module.user.dto.request.UserProfileRequest;
 import com.zerobase.plistbackend.module.user.dto.response.HostPlaytimeResponse;
 import com.zerobase.plistbackend.module.user.dto.response.ProfileResponse;
@@ -43,7 +44,10 @@ class UserServiceTest {
   private UserRepository userRepository;
 
   @Mock
-  ParticipantRepository participantRepository;
+  private ParticipantRepository participantRepository;
+
+  @Mock
+  private SubscribeRepository subscribeRepository;
 
   private CustomOAuth2User mockOAuth2User;
 
@@ -75,12 +79,15 @@ class UserServiceTest {
   void testFindProfileSuccess() {
     String email = "test@example.com";
     when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
+    when(subscribeRepository.countByFollower(mockUser)).thenReturn(1000);
 
     ProfileResponse actualResponse = userService.findProfile(email);
 
     assertEquals(email, actualResponse.getEmail());
     assertEquals("Test User", actualResponse.getNickname());
     assertEquals("test-image-url", actualResponse.getImage());
+    assertEquals(1000, actualResponse.getFollowers());
+
 
     verify(userRepository).findByUserEmail(email);
   }
@@ -100,6 +107,7 @@ class UserServiceTest {
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
     when(s3Util.putImage(imageFile, mockUser.getUserEmail())).thenReturn("updated-image-url");
+    when(subscribeRepository.countByFollower(mockUser)).thenReturn(1000);
 
     // When
     ProfileResponse response = userService.editProfile(request, userId);
@@ -107,6 +115,7 @@ class UserServiceTest {
     // Then
     assertEquals("Updated User", response.getNickname());
     assertEquals("updated-image-url", response.getImage());
+    assertEquals(1000, response.getFollowers());
   }
 
   @Test
