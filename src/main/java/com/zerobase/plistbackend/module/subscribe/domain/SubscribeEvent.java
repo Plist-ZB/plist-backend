@@ -10,5 +10,7 @@ public class SubscribeEvent {
 
   private User user;
 
+  private Long followerId;
+
   private String followerName;
 }

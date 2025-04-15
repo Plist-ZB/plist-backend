@@ -60,6 +60,7 @@ public class FCMTokenServiceImpl implements FCMTokenService {
   @Override
   public void sendPushMessage(String title, String body, String link,
       List<String> followersFCMTokenList) {
+
     try {
       for (String token : followersFCMTokenList) {
         Message message = Message.builder()
@@ -89,7 +90,8 @@ public class FCMTokenServiceImpl implements FCMTokenService {
         firebaseMessaging.send(message);
       }
     } catch (FirebaseMessagingException e) {
-      log.error("푸시알림 메시지 오류! ErrorCode : {}, ErrorMessage : {}", e.getErrorCode(), e.getMessage());
+      log.error("푸시알림 메시지 오류! ErrorCode : {}, ErrorMessage : {}", e.getErrorCode(),
+          e.getMessage());
     }
   }
 }

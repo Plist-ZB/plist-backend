@@ -9,9 +9,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -26,8 +25,7 @@ public class ChannelEventPublisher {
   @Value("${login-url}")
   private String loginUrl;
 
-  @Async
-  @TransactionalEventListener
+  @EventListener
   public void handleChannelEvent(ChannelEvent event) {
     if (event.getEventType() == EventType.CREATED) {
       handleChannelCreatedEvent(event);
@@ -46,15 +44,20 @@ public class ChannelEventPublisher {
     String body = event.getHostName() + "님이 라이브 방송을 시작했습니다.";
     String link = loginUrl + "/channel/" + event.getChannelId();
 
-    fcmTokenService.sendPushMessage(title, body, link, followersFCMTokenList);
-
-    messageBatchRepository.batchInsertMessages(followersIds, body, link);
+    if (!followersFCMTokenList.isEmpty()) {
+      fcmTokenService.sendPushMessage(title, body, link, followersFCMTokenList);
+    }
+    if (!followersIds.isEmpty()) {
+      messageBatchRepository.batchInsertMessages(followersIds, body, link);
+    }
   }
 
   private void handleChannelClosedEvent(ChannelEvent event) {
 
     List<Long> followersIds = subscribeRepository.findFollowersIdByFolloweeId(event.getHostId());
 
-    messageBatchRepository.batchDeleteMessages(followersIds);
+    if (!followersIds.isEmpty()) {
+      messageBatchRepository.batchDeleteMessages(followersIds);
+    }
   }
 }
