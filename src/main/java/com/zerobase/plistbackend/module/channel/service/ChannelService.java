@@ -4,6 +4,7 @@ import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.OtherClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
@@ -41,6 +42,8 @@ public interface ChannelService {
   Slice<StreamingChannelResponse> findChannelListPopular(Long cursorId, Long cursorPopular, Pageable pageable);
 
   Slice<ClosedChannelResponse> findUserChannelHistory(CustomOAuth2User customOAuth2User, Long cursorId, Pageable pageable);
+
+  Slice<OtherClosedChannelResponse> findOtherUserChannelHistory(Long cursorId, Pageable pageable, Long userId);
 
   void likeVideo(CustomOAuth2User customOAuth2User, VideoRequest videoRequest);
 

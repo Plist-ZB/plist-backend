@@ -12,6 +12,7 @@ import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.OtherClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.entity.Channel;
 import com.zerobase.plistbackend.module.channel.exception.ChannelException;
@@ -26,8 +27,10 @@ import com.zerobase.plistbackend.module.participant.entity.Participant;
 import com.zerobase.plistbackend.module.playlist.domain.PlaylistCrudEvent;
 import com.zerobase.plistbackend.module.playlist.util.PlaylistVideoConverter;
 import com.zerobase.plistbackend.module.user.entity.User;
+import com.zerobase.plistbackend.module.user.exception.UserException;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
+import com.zerobase.plistbackend.module.user.type.UserErrorStatus;
 import com.zerobase.plistbackend.module.userplaylist.dto.request.VideoRequest;
 import com.zerobase.plistbackend.module.userplaylist.entity.UserPlaylist;
 import com.zerobase.plistbackend.module.userplaylist.exception.UserPlaylistException;
@@ -83,7 +86,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     channelRepository.save(channel);
     applicationEventPublisher.publishEvent(
-        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(), EventType.CREATED));
+        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(),
+            EventType.CREATED));
 
     return DetailChannelResponse.createDetailChannelResponse(channel, user);
   }
@@ -137,7 +141,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     applicationEventPublisher.publishEvent(new HostExitEvent(channelId));
     applicationEventPublisher.publishEvent(
-        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(), EventType.CLOSED));
+        new ChannelEvent(user.getUserId(), user.getUserName(), channel.getChannelId(),
+            EventType.CLOSED));
     Channel.closeChannel(channel);
     channelRepository.save(channel);
     videoSyncManager.removeCurrentTime(channelId);
@@ -318,6 +323,19 @@ public class ChannelServiceImpl implements ChannelService {
 
     return customChannelRepository.findClosedChannelOrderByChannelId(requestUser, cursorId,
         pageable);
+  }
+
+  @Override
+  public Slice<OtherClosedChannelResponse> findOtherUserChannelHistory(Long cursorId,
+      Pageable pageable, Long userId) {
+
+    User searchUser = userRepository.findByUserId(userId)
+        .orElseThrow(() -> new UserException(UserErrorStatus.USER_NOT_FOUND));
+
+    Slice<ClosedChannelResponse> channels = customChannelRepository.findClosedChannelOrderByChannelId(
+        searchUser, cursorId, pageable);
+
+    return channels.map(OtherClosedChannelResponse::new);
   }
 
   @Override
