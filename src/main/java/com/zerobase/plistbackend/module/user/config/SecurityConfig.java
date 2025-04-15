@@ -22,7 +22,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
@@ -42,7 +41,7 @@ public class SecurityConfig {
       "/", "index.html",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc","/env", "/actuator/**"
+      "/sc", "/env", "/actuator/**"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
