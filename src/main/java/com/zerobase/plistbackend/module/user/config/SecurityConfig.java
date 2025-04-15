@@ -22,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
@@ -50,7 +51,8 @@ public class SecurityConfig {
       "/v3/api/channels/popular",
       "/v3/api/channels/search",
       "/v3/api/channels/category/**",
-      "/v3/api/user/profile/*"
+      "/v3/api/user/profile/*",
+      "/v3/api/user/other/history/*"
   );
 
   private static final List<String> CORS_URLS = List.of(new String[]{
