@@ -4,6 +4,7 @@ import com.zerobase.plistbackend.module.channel.dto.request.ChannelRequest;
 import com.zerobase.plistbackend.module.channel.dto.response.ClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.DetailClosedChannelResponse;
+import com.zerobase.plistbackend.module.channel.dto.response.OtherClosedChannelResponse;
 import com.zerobase.plistbackend.module.channel.dto.response.StreamingChannelResponse;
 import com.zerobase.plistbackend.module.channel.service.ChannelService;
 import com.zerobase.plistbackend.module.channel.util.ControllerApiResponse;
@@ -265,6 +266,23 @@ public class ChannelController {
 
     Slice<ClosedChannelResponse> closedChannelResponsesList = channelService.findUserChannelHistory(
         customOAuth2User, cursorId, pageable);
+
+    return ResponseEntity.ok(new ControllerApiResponse<>(closedChannelResponsesList.getContent(),
+        closedChannelResponsesList.hasNext()));
+  }
+
+  @Operation(
+      summary = "특정 회원 과거 호스트 내역 전체조회",
+      description = "특정 회원의 과거 호스트 내역을 전체조회합니다. 정렬은 최신순입니다."
+  )
+  @GetMapping("/user/other/history/{userId}")
+  public ResponseEntity<ControllerApiResponse<OtherClosedChannelResponse>> findOtherChannelHistory(
+      @RequestParam(value = "cursorId", required = false) Long cursorId,
+      @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable,
+      @PathVariable Long userId) {
+
+    Slice<OtherClosedChannelResponse> closedChannelResponsesList = channelService.findOtherUserChannelHistory(
+        cursorId, pageable, userId);
 
     return ResponseEntity.ok(new ControllerApiResponse<>(closedChannelResponsesList.getContent(),
         closedChannelResponsesList.hasNext()));

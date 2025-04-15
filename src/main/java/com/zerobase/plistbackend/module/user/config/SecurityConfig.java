@@ -41,7 +41,7 @@ public class SecurityConfig {
       "/", "index.html",
       "/ws-connect/**",
       "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error",
-      "/sc","/env", "/actuator/**"
+      "/sc", "/env", "/actuator/**"
   };
 
   private static final List<String> PUBLIC_GET_URLS = List.of(
@@ -50,7 +50,8 @@ public class SecurityConfig {
       "/v3/api/channels/popular",
       "/v3/api/channels/search",
       "/v3/api/channels/category/**",
-      "/v3/api/user/profile/*"
+      "/v3/api/user/profile/*",
+      "/v3/api/user/other/history/*"
   );
 
   private static final List<String> CORS_URLS = List.of(new String[]{
