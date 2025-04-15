@@ -55,7 +55,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     Subscribe subscribe = Subscribe.from(followee, follower);
 
     applicationEventPublisher.publishEvent(
-        new SubscribeEvent(follower, followee.getUserName()));
+        new SubscribeEvent(follower, followee.getUserId(), followee.getUserName()));
     subscribeRepository.save(subscribe);
   }
 
