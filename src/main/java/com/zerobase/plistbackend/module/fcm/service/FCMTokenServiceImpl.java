@@ -5,7 +5,9 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.WebpushConfig;
 import com.zerobase.plistbackend.module.fcm.entity.FCMToken;
+import com.zerobase.plistbackend.module.fcm.exception.FCMTokenException;
 import com.zerobase.plistbackend.module.fcm.repository.FCMTokenRepository;
+import com.zerobase.plistbackend.module.fcm.type.FCMTokenErrorStatus;
 import com.zerobase.plistbackend.module.user.entity.User;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import com.zerobase.plistbackend.module.user.repository.UserRepository;
@@ -37,6 +39,21 @@ public class FCMTokenServiceImpl implements FCMTokenService {
         }).orElseGet(() -> FCMToken.from(token, user));
 
     fcmTokenRepository.save(fcmToken);
+  }
+
+  @Override
+  public void deleteFCMToken(CustomOAuth2User customOAuth2User, String token) {
+
+    User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
+
+    FCMToken fcmToken = fcmTokenRepository.findByFcmTokenValue(token).orElseThrow(() -> new FCMTokenException(
+        FCMTokenErrorStatus.NOT_FOUND));
+
+    if (!fcmToken.getUser().equals(user)) {
+      throw new FCMTokenException(FCMTokenErrorStatus.NOT_MY_TOKEN);
+    }
+
+    fcmTokenRepository.delete(fcmToken);
   }
 
   //TODO: 푸시 메시지 진행하면서 수정 필요.

@@ -8,4 +8,6 @@ public interface FCMTokenService {
   void upsertFCMToken(CustomOAuth2User customOAuth2User, String token);
 
   void sendPushMessage(String title, String body, String link, List<String> followersFCMTokenList);
+
+  void deleteFCMToken(CustomOAuth2User customOAuth2User, String token);
 }

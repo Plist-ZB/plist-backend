@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +37,20 @@ public class FCMTokenController {
     log.info("FCMToken upsert now! target user email: {}", customOAuth2User.findEmail());
 
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @Operation(
+      summary = "사용자 FCMToken 삭제",
+      description = "요청한 FCMToken을 서버에서 삭제합니다."
+  )
+  @DeleteMapping("/fcm/token")
+  public ResponseEntity<Void> deleteFCMToken(
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody String token) {
+
+    fcmTokenService.deleteFCMToken(customOAuth2User, token);
+
+    log.info("FCMToken delete now! target user email: {}", customOAuth2User.findEmail());
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
