@@ -63,8 +63,16 @@ public class FCMTokenServiceImpl implements FCMTokenService {
   public void sendPushMessage(String title, String body, String link,
       List<String> followersFCMTokenList) {
 
+    if (followersFCMTokenList == null || followersFCMTokenList.isEmpty()) {
+      return;
+    }
+
     try {
       for (String token : followersFCMTokenList) {
+        if (token == null || token.isBlank()) {
+          continue;
+        }
+
         Message message = Message.builder()
             .setWebpushConfig(WebpushConfig.builder()
                 .putHeader("TTL", "1")
