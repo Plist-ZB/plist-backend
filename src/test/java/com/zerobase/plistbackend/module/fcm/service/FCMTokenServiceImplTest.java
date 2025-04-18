@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.zerobase.plistbackend.module.fcm.dto.FCMTokenRequest;
 import com.zerobase.plistbackend.module.fcm.entity.FCMToken;
 import com.zerobase.plistbackend.module.fcm.repository.FCMTokenRepository;
 import com.zerobase.plistbackend.module.user.entity.User;
@@ -35,10 +36,12 @@ class FCMTokenServiceImplTest {
   @Mock
   private CustomOAuth2User customOAuth2User;
 
+  @Mock
+  private FCMTokenRequest token = new FCMTokenRequest("test_token");
+
   private User mockUser;
 
   private final String email = "test@test.com";
-  private final String token = "test_token";
 
   @BeforeEach
   void setUp() {
@@ -54,7 +57,7 @@ class FCMTokenServiceImplTest {
     // Given
     when(customOAuth2User.findEmail()).thenReturn(email);
     when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
-    when(fcmTokenRepository.findByFcmTokenValue(token)).thenReturn(Optional.empty());
+    when(fcmTokenRepository.findByFcmTokenValue(token.getToken())).thenReturn(Optional.empty());
 
     // When
     fcmTokenService.upsertFCMToken(customOAuth2User, token);
@@ -70,7 +73,7 @@ class FCMTokenServiceImplTest {
     FCMToken existsToken = mock(FCMToken.class);
     when(customOAuth2User.findEmail()).thenReturn(email);
     when(userRepository.findByUserEmail(email)).thenReturn(mockUser);
-    when(fcmTokenRepository.findByFcmTokenValue(token)).thenReturn(Optional.of(existsToken));
+    when(fcmTokenRepository.findByFcmTokenValue(token.getToken())).thenReturn(Optional.of(existsToken));
 
     // When
     fcmTokenService.upsertFCMToken(customOAuth2User, token);

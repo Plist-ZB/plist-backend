@@ -1,5 +1,6 @@
 package com.zerobase.plistbackend.module.fcm.controller;
 
+import com.zerobase.plistbackend.module.fcm.dto.FCMTokenRequest;
 import com.zerobase.plistbackend.module.fcm.service.FCMTokenService;
 import com.zerobase.plistbackend.module.user.model.auth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class FCMTokenController {
   )
   @PostMapping("/fcm/token")
   public ResponseEntity<Void> createFCMToken(
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody String token) {
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody FCMTokenRequest token) {
 
     fcmTokenService.upsertFCMToken(customOAuth2User, token);
 
@@ -45,7 +46,7 @@ public class FCMTokenController {
   )
   @DeleteMapping("/fcm/token")
   public ResponseEntity<Void> deleteFCMToken(
-      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody String token) {
+      @AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody FCMTokenRequest token) {
 
     fcmTokenService.deleteFCMToken(customOAuth2User, token);
 
