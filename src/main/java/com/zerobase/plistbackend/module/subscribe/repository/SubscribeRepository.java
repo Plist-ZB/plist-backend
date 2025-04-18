@@ -21,9 +21,9 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
   boolean existsByFolloweeAndFollower(User followee, User follower);
 
   @Query(
-      "SELECT s.follower.userId "
+      "SELECT s.followee.userId "
           + "FROM Subscribe s "
-          + "WHERE s.followee.userId = :followeeId")
+          + "WHERE s.follower.userId = :followeeId")
   List<Long> findFollowersIdByFolloweeId(Long followeeId);
 
   int countByFollower(User follower);

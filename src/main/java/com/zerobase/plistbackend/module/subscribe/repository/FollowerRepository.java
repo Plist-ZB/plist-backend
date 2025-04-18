@@ -9,7 +9,7 @@ public interface FollowerRepository extends JpaRepository<Subscribe, Long> {
 
   @Query(
       "SELECT f.fcmTokenValue FROM Subscribe s "
-          + "LEFT JOIN FCMToken f ON s.follower.userId = f.user.userId "
-          + "WHERE s.followee.userId = :followeeId")
+          + "LEFT JOIN FCMToken f ON s.followee.userId = f.user.userId "
+          + "WHERE s.follower.userId = :followeeId")
   List<String> findFollowersFCMtokenByFolloweeId(Long followeeId);
 }
