@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.WebpushConfig;
+import com.zerobase.plistbackend.module.fcm.dto.FCMTokenRequest;
 import com.zerobase.plistbackend.module.fcm.entity.FCMToken;
 import com.zerobase.plistbackend.module.fcm.exception.FCMTokenException;
 import com.zerobase.plistbackend.module.fcm.repository.FCMTokenRepository;
@@ -28,25 +29,26 @@ public class FCMTokenServiceImpl implements FCMTokenService {
 
   @Override
   @Transactional
-  public void upsertFCMToken(CustomOAuth2User customOAuth2User, String token) {
+  public void upsertFCMToken(CustomOAuth2User customOAuth2User, FCMTokenRequest token) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    FCMToken fcmToken = fcmTokenRepository.findByFcmTokenValue(token)
+    FCMToken fcmToken = fcmTokenRepository.findByFcmTokenValue(token.getToken())
         .map(existsToken -> {
           existsToken.updateFCMToken();
           return existsToken;
-        }).orElseGet(() -> FCMToken.from(token, user));
+        }).orElseGet(() -> FCMToken.from(token.getToken(), user));
 
     fcmTokenRepository.save(fcmToken);
   }
 
   @Override
-  public void deleteFCMToken(CustomOAuth2User customOAuth2User, String token) {
+  @Transactional
+  public void deleteFCMToken(CustomOAuth2User customOAuth2User, FCMTokenRequest token) {
 
     User user = userRepository.findByUserEmail(customOAuth2User.findEmail());
 
-    FCMToken fcmToken = fcmTokenRepository.findByFcmTokenValue(token).orElseThrow(() -> new FCMTokenException(
+    FCMToken fcmToken = fcmTokenRepository.findByFcmTokenValue(token.getToken()).orElseThrow(() -> new FCMTokenException(
         FCMTokenErrorStatus.NOT_FOUND));
 
     if (!fcmToken.getUser().equals(user)) {
@@ -61,8 +63,16 @@ public class FCMTokenServiceImpl implements FCMTokenService {
   public void sendPushMessage(String title, String body, String link,
       List<String> followersFCMTokenList) {
 
+    if (followersFCMTokenList == null || followersFCMTokenList.isEmpty()) {
+      return;
+    }
+
     try {
       for (String token : followersFCMTokenList) {
+        if (token == null || token.isBlank()) {
+          continue;
+        }
+
         Message message = Message.builder()
             .setWebpushConfig(WebpushConfig.builder()
                 .putHeader("TTL", "1")
